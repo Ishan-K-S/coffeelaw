@@ -116,3 +116,30 @@ def test_calibrate_logs_every_gate_run(tmp_path):
     assert sum(r["correct"] for r in rows if r["config"]["arm_id"] == "M") / 3 == \
         cal.matched_full_acc
     assert all(r["steps"] for r in rows)
+
+
+def test_prepare_resumes_gate_and_matching(tmp_path, monkeypatch):
+    from ceilings import experiment
+    from ceilings.agents import make_policy
+    from ceilings.analysis.report import load_gates
+
+    policy = make_policy("sim-bounded")
+    kw = dict(n_main=4, n_pilot=4, difficulty={"n": 2}, levels={"medium": 1.0}, n_match=3)
+    first = experiment.prepare("comm_parity", policy, tmp_path, **kw)
+    assert (tmp_path / "matching" / "comm_parity__sim-bounded.json").exists()
+    assert not list((tmp_path / "arms").glob("*/*.measurements.json"))
+    calls = []
+    monkeypatch.setattr(calibration, "_runs", lambda *a, **k: calls.append(1) or [])
+    again = experiment.prepare("comm_parity", policy, tmp_path, **kw)
+    assert calls == [] and again["table"] == first["table"]
+    assert load_gates(tmp_path)[("sim-bounded", "comm_parity")] == first["calibration"].passed
+
+
+def test_failed_search_counts_as_failed_gate(tmp_path):
+    from ceilings.analysis.report import load_gates
+
+    (tmp_path / "difficulty").mkdir()
+    (tmp_path / "difficulty" / "info__m.json").write_text(json.dumps(
+        {"family": "info", "model_id": "m", "chosen": None, "results": []}))
+    (tmp_path / "difficulty" / "info__m.settings.json").write_text("{}")
+    assert load_gates(tmp_path) == {("m", "info"): False}

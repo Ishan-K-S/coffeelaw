@@ -324,8 +324,16 @@ def assign_verdicts(
 
 
 def load_gates(root: Path | str) -> dict:
-    """(model, family) -> calibration gate result, from `<root>/calibration/*.json`."""
+    """(model, family) -> calibration gate result, from `<root>/calibration/*.json`; a family
+    whose difficulty search (`<root>/difficulty/*.json`) found no passing setting, and was
+    therefore never prepared, counts as a failed gate."""
     gates = {}
+    for path in Path(root).glob("difficulty/*.json"):
+        if path.name.endswith(".settings.json"):
+            continue
+        d = json.loads(path.read_text())
+        if d.get("chosen") is None:
+            gates[(d["model_id"], d["family"])] = False
     for path in Path(root).glob("calibration/*.json"):
         d = json.loads(path.read_text())
         gates[(d["model_id"], d["family_id"])] = bool(d["passed"])

@@ -9,7 +9,7 @@ from pathlib import Path
 from ceilings import arms, calibration, tasks, theory
 from ceilings.adapters import safe_model_dir
 from ceilings.agents import Policy
-from ceilings.records import TaskInstance
+from ceilings.records import CalibrationResult, TaskInstance
 from ceilings.runner import Cell
 
 DEFAULT_DIFFICULTY = {
@@ -57,15 +57,24 @@ def prepare(
     main = tasks.generate_many(family, n_main, "main", seed0, **diff)
     tasks.save_instances(pilot, root)
     tasks.save_instances(main, root)
-    cal = calibration.calibrate(
-        family, pilot, policy, concurrency,
-        log_path=root / "calibration" / "runs" / f"{family}__{safe_model_dir(policy.model_id)}.jsonl")
-    calibration.save_json(
-        cal.model_dump(), root / "calibration" / f"{family}__{safe_model_dir(policy.model_id)}.json"
-    )
+    tag = f"{family}__{safe_model_dir(policy.model_id)}"
+    cal_path = root / "calibration" / f"{tag}.json"
+    previous = json.loads(cal_path.read_text()) if cal_path.exists() else None
+    if previous and previous.get("n") == len(pilot) and previous.get("difficulty") == diff \
+            and previous.get("harness") == policy.options.non_default():
+        cal = CalibrationResult(**{k: v for k, v in previous.items()
+                                   if k not in ("difficulty", "harness")})
+    else:
+        log = root / "calibration" / "runs" / f"{tag}.jsonl"
+        if log.exists():
+            log.unlink()  # a partial log from an interrupted gate
+        cal = calibration.calibrate(family, pilot, policy, concurrency, log_path=log)
+        calibration.save_json({**cal.model_dump(), "difficulty": diff,
+                               "harness": policy.options.non_default()}, cal_path)
     if match:
         table = calibration.match_arms(family, pilot[: n_match or len(pilot)], policy, levels,
-                                       concurrency)
+                                       concurrency,
+                                       cache_path=root / "matching" / f"{tag}.json")
     else:
         table = calibration.unmatched_table(family, policy, diff, cal.baseline_mean_tokens or 0,
                                             levels)

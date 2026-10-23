@@ -185,6 +185,26 @@ def largest_fitting(strengths: list, measure, limit: float) -> tuple[object, flo
     return strengths[lo], cost(lo)
 
 
+class _Measurements:
+    """Disk cache of matching measurements (mean added cost per arm config on these instances), so
+    an interrupted `prepare` resumes instead of re-running every measurement."""
+
+    def __init__(self, path: Path | None, instances, policy) -> None:
+        self.path = Path(path) if path is not None else None
+        self.scope = content_hash([[i.instance_id for i in instances], policy.model_id,
+                                   policy.options.non_default()])
+        self.data = {}
+        if self.path is not None and self.path.exists():
+            self.data = json.loads(self.path.read_text()).get(self.scope, {})
+
+    def get(self, key: str, compute):
+        if key not in self.data:
+            self.data[key] = compute()
+            if self.path is not None:
+                save_json({self.scope: self.data}, self.path)
+        return self.data[key]
+
+
 def match_arms(
     family: str,
     instances: list[TaskInstance],
@@ -192,12 +212,24 @@ def match_arms(
     levels: dict[str, float] | None = None,
     concurrency: int = 1,
     refinements: int = 3,
+    cache_path: Path | None = None,
 ) -> dict:
-    """Choose each arm's strength and filler so its mean added cost is within 5% of the target."""
+    """Choose each arm's strength and filler so its mean added cost is within 5% of the target.
+    With `cache_path`, every measurement is saved as it completes and reused on a rerun."""
     levels = levels or arms.DELTA_MULTIPLIERS
-    base_outs = _runs(instances, arms.build("baseline", family), policy, concurrency)
-    base_cost = {i.instance_id: o.ledger.total_tokens for i, o in zip(instances, base_outs,
-                                                                         strict=True)}
+    memo = _Measurements(cache_path, instances, policy)
+
+    def baseline_costs():
+        outs = _runs(instances, arms.build("baseline", family), policy, concurrency)
+        return {i.instance_id: o.ledger.total_tokens for i, o in zip(instances, outs,
+                                                                     strict=True)}
+
+    base_cost = memo.get("baseline", baseline_costs)
+
+    def cost_of(cfg) -> float:
+        key = json.dumps(cfg.to_dict(), sort_keys=True, default=str)
+        return memo.get(key, lambda: _mean_added(instances, cfg, policy, base_cost, concurrency))
+
     base_mean = float(np.mean(list(base_cost.values())))
     n_bits = instances[0].payload.get("public", {}).get("n")
     table: dict = {
@@ -217,9 +249,7 @@ def match_arms(
             else:
                 strengths = arms.candidates(arm_id, family, n_bits)
             chosen, natural = largest_fitting(
-                strengths,
-                lambda s, arm_id=arm_id: _mean_added(instances, arms.build(arm_id, family, s),
-                                                     policy, base_cost, concurrency),
+                strengths, lambda s, arm_id=arm_id: cost_of(arms.build(arm_id, family, s)),
                 target * (1 + MATCH_TOLERANCE))
             cfg = arms.build(arm_id, family, chosen)
             if arm_id in ("P1", "P2"):
@@ -231,7 +261,7 @@ def match_arms(
             added = natural
             for _ in range(refinements):  # proportional correction of the filler size
                 cfg = replace(arms.build(arm_id, family, chosen), filler_tokens=filler)
-                added = _mean_added(instances, cfg, policy, base_cost, concurrency)
+                added = cost_of(cfg)
                 if abs(added - target) <= MATCH_TOLERANCE * target or filler == 0:
                     break
                 per_token = max(1e-6, (added - base_natural) / max(1, filler))
