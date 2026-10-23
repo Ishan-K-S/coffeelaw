@@ -169,13 +169,14 @@ def test_openai_compat_retry_after_and_request_cap(monkeypatch, openai_env):
     monkeypatch.setattr("time.sleep", lambda s: sleeps.append(s))
     limited = urllib.error.HTTPError("https://h/v1/chat/completions", 429, "slow down",
                                      {"Retry-After": "7"}, None)
+    gone = urllib.error.HTTPError("https://h/v1/chat/completions", 404, "not found", {}, None)
     good = json.dumps({"probabilities": {"even": 0.6, "odd": 0.4}, "answer": "even"})
     monkeypatch.setattr("urllib.request.urlopen",
-                        _fake_urlopen([limited, _openai_reply(good)], []))
+                        _fake_urlopen([limited, gone, _openai_reply(good)], []))
     adapter = OpenAICompatAdapter("m")
-    adapter.max_requests = 2
+    adapter.max_requests = 3
     res = adapter.complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
-    assert res.final_answer == "even" and sleeps == [7.0] and adapter.requests == 2
+    assert res.final_answer == "even" and sleeps[0] == 7.0 and adapter.requests == 3
     with pytest.raises(RequestCapExceeded):
         adapter.complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
 

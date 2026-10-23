@@ -10,7 +10,7 @@ self-hosted servers (vLLM, llama.cpp server, LM Studio, and so on). Model IDs lo
   `--max-cost` can stop a run
 - `CEILINGS_OPENAI_RPM`: requests per minute for this process (default 0: no limit). Free hosted
   tiers count requests, not dollars, so this is the throttle that matters there.
-- `CEILINGS_OPENAI_RETRIES`: attempts per request on 429/5xx/network errors (default 8), with
+- `CEILINGS_OPENAI_RETRIES`: attempts per request on 404/429/5xx/network errors (default 8), with
   exponential backoff capped at 60 s, or the server's `Retry-After` when it sends one
 - `CEILINGS_OPENAI_SCHEMA`: how to ask for structured output: `json_schema` (default; falls back
   to `nvext` and then to text on a 400), `nvext` (NVIDIA's `nvext.guided_json`), or `none`
@@ -133,7 +133,9 @@ class OpenAICompatAdapter(ChatAdapter):
             except urllib.error.HTTPError as e:
                 if e.code in (400, 422) and structured:
                     raise _SchemaUnsupported() from e
-                if e.code in (408, 409, 429) or e.code >= 500:
+                # 404 is retried too: NVIDIA's gateway briefly returns it for a model that is
+                # being redeployed (seen on muse-glimmer-30b, served again minutes later).
+                if e.code in (404, 408, 409, 429) or e.code >= 500:
                     last = e
                     time.sleep(_backoff(attempt, e.headers.get("Retry-After") if e.headers
                                         else None))
