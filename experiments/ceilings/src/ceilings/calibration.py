@@ -46,14 +46,34 @@ def _runs(instances, cfg, policy, concurrency):
     return pmap(lambda i: _run(i, cfg, policy), instances, concurrency)
 
 
+def _log_runs(path: Path, instances, cfg, outcomes, policy) -> None:
+    """Append each gate run's answer and full transcript, so a gate result can be audited."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a") as f:
+        for inst, o in zip(instances, outcomes, strict=True):
+            f.write(json.dumps({
+                "instance_id": inst.instance_id, "family": inst.family_id,
+                "difficulty": dict(inst.difficulty), "answer": inst.answer,
+                "model_id": policy.model_id, "harness": policy.harness_record(),
+                "config": cfg.to_dict(), "final_answer": o.final_answer,
+                "correct": o.final_answer == inst.answer, "valid": o.valid,
+                "probabilities": o.probabilities, "tokens": o.ledger.total_tokens,
+                "steps": o.transcript}, default=str) + "\n")
+
+
 def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
-              concurrency: int = 1) -> CalibrationResult:
+              concurrency: int = 1, log_path: Path | None = None) -> CalibrationResult:
     """Baseline must sit within 5 points of chance (allowing for sampling error); the family's own
-    full fix must reach 90%."""
+    full fix must reach 90%. With `log_path`, every run and its transcript is appended there."""
     chance = 1 / len(instances[0].answer_space)
-    base = _runs(instances, arms.build("baseline", family), policy, concurrency)
+    base_cfg = arms.build("baseline", family)
+    base = _runs(instances, base_cfg, policy, concurrency)
     arm_id, strength = arms.full_strength(family, dict(instances[0].difficulty))
-    full = _runs(instances, arms.build(arm_id, family, strength), policy, concurrency)
+    full_cfg = arms.build(arm_id, family, strength)
+    full = _runs(instances, full_cfg, policy, concurrency)
+    if log_path is not None:
+        _log_runs(log_path, instances, base_cfg, base, policy)
+        _log_runs(log_path, instances, full_cfg, full, policy)
     base_acc = float(np.mean([o.final_answer == i.answer for o, i in zip(base, instances,
                                                                        strict=True)]))
     full_acc = float(np.mean([o.final_answer == i.answer for o, i in zip(full, instances,
@@ -84,7 +104,7 @@ def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
 
 def search_difficulty(family: str, policy: Policy, n: int = 30, concurrency: int = 1,
                       grid: list[dict] | str | None = None, seed0: int = 3_000_000,
-                      stop_early: bool = True) -> dict:
+                      stop_early: bool = True, cache_path: Path | None = None) -> dict:
     """Try each difficulty on fresh calibration instances and choose one per family rule.
 
     - info and comm: the hardest setting whose gate passes (more room for the sweeps);
@@ -93,15 +113,33 @@ def search_difficulty(family: str, policy: Policy, n: int = 30, concurrency: int
     Returns {"chosen": difficulty or None, "results": [...]}; `chosen` is None when no setting
     passes, which is itself a finding: the model cannot exhibit that ceiling cleanly. With
     `stop_early`, settings that cannot change the choice are not run (`results` lists only the
-    settings tried).
+    settings tried). With `cache_path`, each finished setting is saved as it completes and reused
+    on a rerun with the same n (instances and seeds are deterministic), so a long search that is
+    interrupted resumes where it stopped.
     """
     if grid == "quick":
         grid = QUICK_GRID[family]
     grid = grid or DIFFICULTY_GRID[family]
     results = []
+    cache = {}
+    if cache_path is not None and Path(cache_path).exists():
+        cache = json.loads(Path(cache_path).read_text())
     for diff in grid:
-        insts = tasks.generate_many(family, n, "calibration", seed0, **diff)
-        cal = calibrate(family, insts, policy, concurrency)
+        key = json.dumps({"difficulty": diff, "n": n, "seed0": seed0,
+                          "harness": policy.options.non_default()}, sort_keys=True, default=list)
+        if key in cache:
+            cal = CalibrationResult(**cache[key])
+        else:
+            insts = tasks.generate_many(family, n, "calibration", seed0, **diff)
+            log = (None if cache_path is None else Path(cache_path).parent / "runs"
+                   / Path(cache_path).name.replace(".settings.json", "")
+                   / f"{tasks.difficulty_tag(diff)}_n{n}.jsonl")
+            if log is not None and log.exists():
+                log.unlink()  # a partial log from an interrupted setting
+            cal = calibrate(family, insts, policy, concurrency, log_path=log)
+            if cache_path is not None:
+                cache[key] = cal.model_dump()
+                save_json(cache, Path(cache_path))
         results.append({"difficulty": diff, **cal.model_dump()})
         # The grid runs from easy to hard, so once the full fix misses 90% no harder setting
         # can pass; reason takes the easiest passing setting, so its first pass ends the search.

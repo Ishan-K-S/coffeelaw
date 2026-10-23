@@ -57,7 +57,9 @@ def prepare(
     main = tasks.generate_many(family, n_main, "main", seed0, **diff)
     tasks.save_instances(pilot, root)
     tasks.save_instances(main, root)
-    cal = calibration.calibrate(family, pilot, policy, concurrency)
+    cal = calibration.calibrate(
+        family, pilot, policy, concurrency,
+        log_path=root / "calibration" / "runs" / f"{family}__{safe_model_dir(policy.model_id)}.jsonl")
     calibration.save_json(
         cal.model_dump(), root / "calibration" / f"{family}__{safe_model_dir(policy.model_id)}.json"
     )

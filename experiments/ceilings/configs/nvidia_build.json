@@ -33,9 +33,11 @@
       "text_max_tokens": 4000,
       "notes": "reasoning cannot be switched off; ignores response_format; hidden reasoning used the whole 1500-token cap on info with 15 probe reports, so the cap is 4000"
     },
-    "google/gemma-4-31b-it": {},
+    "google/gemma-4-31b-it": {
+      "notes": "unavailable on 2026-10-22 (no reply within 300 s on three checks over two hours); not in the pilot"
+    },
     "meta/llama-3.2-90b-vision-instruct": {
-      "notes": "not a reasoning model"
+      "notes": "not a reasoning model; unavailable on 2026-10-22 (no reply within 300 s on three checks over two hours); not in the pilot"
     },
     "nvidia/nemotron-3.5-super-vl-120b-a12b": {
       "extra_body": {
@@ -43,7 +45,10 @@
           "thinking": false
         }
       },
-      "notes": "the server reports private/nvidia/nemotron-3.5-super-120b-a12b; no alias is allowed until that is decided, so runs are marked invalid"
+      "notes": "the server reports private/nvidia/nemotron-3.5-super-120b-a12b for this model; allowed as an alias by the researcher on 2026-10-22 and recorded in every run",
+      "served_aliases": [
+        "private/nvidia/nemotron-3.5-super-120b-a12b"
+      ]
     },
     "z-ai/glm-5.3-flash": {
       "extra_body": {
@@ -72,10 +77,22 @@
           "thinking": false
         }
       },
-      "notes": "candidate replacement"
+      "notes": "replaces llama-3.2-90b-vision-instruct in the pilot"
     },
     "google/diffusiongemma-26b-a4b-it": {
-      "notes": "candidate replacement (diffusion LM); ignores response_format"
+      "notes": "replaces gemma-4-31b-it in the pilot (diffusion LM); ignores response_format"
     }
-  }
+  },
+  "pilot_models": [
+    "meta/llama-3.2-11b-vision-instruct",
+    "openai/gpt-oss-20b",
+    "google/diffusiongemma-26b-a4b-it",
+    "nvidia/nemotron-3.5-lightning-30b-a3b",
+    "meta/muse-glimmer-30b",
+    "nvidia/nemotron-3.5-super-vl-120b-a12b",
+    "z-ai/glm-5.3-flash",
+    "deepseek-ai/deepseek-v4.1-flash",
+    "nvidia/nemotron-3-ultra-550b-a55b",
+    "stepfun-ai/step-5-preview"
+  ]
 }

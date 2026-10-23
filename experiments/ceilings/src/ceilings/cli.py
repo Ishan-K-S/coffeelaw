@@ -68,8 +68,10 @@ def cmd_calibrate(a) -> int:
     policy = _policy(a)
     failed = False
     for fam in a.family.split(","):
+        out = experiment.difficulty_path(a.root, fam, policy.model_id)
         res = search_difficulty(fam, policy, n=a.n, concurrency=a.concurrency,
-                                grid="quick" if a.grid == "quick" else None)
+                                grid="quick" if a.grid == "quick" else None,
+                                cache_path=out.with_suffix(".settings.json"))
         save_json(res, experiment.difficulty_path(a.root, fam, policy.model_id))
         for r in res["results"]:
             print(f"{fam} {r['difficulty']}: baseline {r['baseline_acc']:.2f} (chance "

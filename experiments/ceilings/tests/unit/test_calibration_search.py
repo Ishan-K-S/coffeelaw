@@ -11,7 +11,7 @@ from ceilings.records import CalibrationResult
 def _fake_calibrate(full_by_setting, base_ok=lambda d: True):
     tried = []
 
-    def fake(family, insts, policy, concurrency=1):
+    def fake(family, insts, policy, concurrency=1, log_path=None):
         d = dict(insts[0].difficulty)
         key = d.get("d", d.get("n", d.get("k")))
         tried.append(key)
@@ -24,6 +24,7 @@ def _fake_calibrate(full_by_setting, base_ok=lambda d: True):
 
 class _P:
     model_id = "m"
+    from ceilings.options import DEFAULT as options
 
 
 def test_comm_search_stops_when_the_full_fix_fails(monkeypatch):
@@ -89,3 +90,29 @@ def test_largest_fitting_uses_few_measurements():
     assert len(seen) <= 6
     assert calibration.largest_fitting([1, 2], lambda s: 999.0, 10)[0] == 1
     assert calibration.largest_fitting([1, 2, 3], lambda s: 1.0, 10)[0] == 3
+
+
+def test_search_resumes_from_its_cache(monkeypatch, tmp_path):
+    fake, tried = _fake_calibrate({2: 1.0, 3: 0.95, 4: 0.8, 6: 0.99, 8: 0.99})
+    monkeypatch.setattr(calibration, "calibrate", fake)
+    cache = tmp_path / "settings.json"
+    first = calibration.search_difficulty("comm_ip", _P(), n=2, cache_path=cache)
+    tried.clear()
+    again = calibration.search_difficulty("comm_ip", _P(), n=2, cache_path=cache)
+    assert tried == [] and again["chosen"] == first["chosen"] == {"n": 3}
+    calibration.search_difficulty("comm_ip", _P(), n=3, cache_path=cache)
+    assert tried == [2, 3, 4]  # a different n is a different search
+
+
+def test_calibrate_logs_every_gate_run(tmp_path):
+    from ceilings import tasks
+    from ceilings.agents import make_policy
+
+    insts = tasks.generate_many("comm_parity", 3, "calibration", 0, n=2)
+    log = tmp_path / "gate.jsonl"
+    cal = calibration.calibrate("comm_parity", insts, make_policy("sim-bounded"), log_path=log)
+    rows = [json.loads(line) for line in log.read_text().splitlines()]
+    assert len(rows) == 6 and {r["config"]["arm_id"] for r in rows} == {"baseline", "M"}
+    assert sum(r["correct"] for r in rows if r["config"]["arm_id"] == "M") / 3 == \
+        cal.matched_full_acc
+    assert all(r["steps"] for r in rows)
