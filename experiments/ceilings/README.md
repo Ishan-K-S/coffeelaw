@@ -30,6 +30,46 @@ pytest -q        # no model calls: theory, contracts, generators, statistics, ve
 | `ollama/<model>` (e.g. `ollama/qwen2.5:7b`) | local open-weights model via Ollama | `OLLAMA_HOST` (default localhost) |
 | `openai/<model>` | any OpenAI-style `/chat/completions` server: hosted APIs, vLLM, llama.cpp | `CEILINGS_OPENAI_BASE_URL`, `CEILINGS_OPENAI_API_KEY`, optional `CEILINGS_OPENAI_PRICE_IN/OUT` |
 
+### Hosted OpenAI-style providers (NVIDIA build)
+
+`scripts/nvidia_env.sh <name> <command...>` runs a command in a capped `ceilings:dev` container
+against NVIDIA build's free endpoints. It reads the key from `~/.nvidia_api_key` (override with
+`KEY_FILE`) and passes every variable to Docker by name only, so the key never appears in a
+command line, log or file in the repository. Per-model settings live in
+[configs/nvidia_build.json](configs/nvidia_build.json) (`CEILINGS_OPENAI_PROFILES`): how to switch
+off a model's built-in reasoning, answer-token caps, and any served-name alias. The profile is
+stored in every run record.
+
+- `CEILINGS_OPENAI_RPM` spaces requests within one process; free tiers count requests, not
+  dollars, so `--max-cost` does not stop a run there. Use `--max-requests N` (exit code 4) or
+  `--limit`.
+- 429 and 5xx replies are retried with backoff (`CEILINGS_OPENAI_RETRIES`, default 8), honouring
+  `Retry-After`.
+- Hidden reasoning (`<think>` blocks or a `reasoning_content` field) is removed before parsing,
+  kept in the transcript, and charged through `completion_tokens`.
+- Servers that ignore `response_format` still answer: every answer turn states the JSON format,
+  and a reply that discusses several options without choosing one is scored as a parse failure
+  rather than guessed from.
+- `python scripts/doctor.py --model <m>` runs one instance per family (baseline and full fix)
+  and prints parse methods, validity, hidden reasoning, truncation, tokens and requests.
+
+### Ablations (`--harness`)
+
+Design choices the ablations vary are harness options, held fixed within one `--root`:
+`probe=agent` (the model picks probes instead of rotation), `sender=encode` (agent B gets no
+ready-made message), `schema=answer_first`, `shuffle=off`, `temp=0`, and
+`reason=0:128:512:1024:2048` (reasoning caps low..max). Delta levels need no option (`--delta`).
+Non-default options are part of every run ID and every run record stores the resolved set
+(`harness`), so ablation runs can never be mistaken for main-design runs. See
+[src/ceilings/options.py](src/ceilings/options.py).
+
+### Sample size
+
+`ceilings power` reads pilot runs and gives the per-cell n each pre-registered comparison needs
+(TOST at the margin under a true difference of 0, exact McNemar at the pilot gain), planned at
+Bonferroni alpha within each Holm family. Put the result in `prereg/config.json:
+sample_sizes.per_cell` before freezing.
+
 For models without a native effort setting, depth is a reasoning stage capped at
 `low 0 / medium 256 / high 1024 / xhigh 2048 / max 4096` tokens (override with
 `CEILINGS_REASONING_TOKENS`). Keep at least about 20 tokens per reasoning step the task needs.

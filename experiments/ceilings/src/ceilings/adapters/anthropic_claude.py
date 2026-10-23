@@ -17,7 +17,6 @@ from ceilings.adapters.base import (
     AdapterResult,
     ModelAdapter,
     Usage,
-    answer_schema,
     normalize_probabilities,
     probability_diagnostics,
 )
@@ -49,7 +48,8 @@ class ClaudeAdapter(ModelAdapter):
         convo = [m for m in messages if m["role"] != "system"]
         output_config: dict = {"effort": depth}
         if answer_space is not None:
-            output_config["format"] = {"type": "json_schema", "schema": answer_schema(answer_space, seed)}
+            output_config["format"] = {"type": "json_schema",
+                                       "schema": self.schema_for(answer_space, seed)}
         params = {
             "model": self.model_id,
             "max_tokens": max_tokens,

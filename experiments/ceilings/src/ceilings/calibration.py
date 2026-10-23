@@ -83,14 +83,17 @@ def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
 
 
 def search_difficulty(family: str, policy: Policy, n: int = 30, concurrency: int = 1,
-                      grid: list[dict] | str | None = None, seed0: int = 3_000_000) -> dict:
+                      grid: list[dict] | str | None = None, seed0: int = 3_000_000,
+                      stop_early: bool = True) -> dict:
     """Try each difficulty on fresh calibration instances and choose one per family rule.
 
     - info and comm: the hardest setting whose gate passes (more room for the sweeps);
     - reason: the easiest setting whose gate passes (baseline at chance, and the full fix still
       solves it).
     Returns {"chosen": difficulty or None, "results": [...]}; `chosen` is None when no setting
-    passes, which is itself a finding: the model cannot exhibit that ceiling cleanly.
+    passes, which is itself a finding: the model cannot exhibit that ceiling cleanly. With
+    `stop_early`, settings that cannot change the choice are not run (`results` lists only the
+    settings tried).
     """
     if grid == "quick":
         grid = QUICK_GRID[family]
@@ -100,6 +103,11 @@ def search_difficulty(family: str, policy: Policy, n: int = 30, concurrency: int
         insts = tasks.generate_many(family, n, "calibration", seed0, **diff)
         cal = calibrate(family, insts, policy, concurrency)
         results.append({"difficulty": diff, **cal.model_dump()})
+        # The grid runs from easy to hard, so once the full fix misses 90% no harder setting
+        # can pass; reason takes the easiest passing setting, so its first pass ends the search.
+        if stop_early and (cal.matched_full_acc < GATE_FULL
+                           or (family == "reason" and cal.passed)):
+            break
     passing = [r for r in results if r["passed"]]
     if not passing:
         chosen = None
@@ -115,6 +123,28 @@ def _mean_added(instances, cfg, policy, base_cost, concurrency) -> float:
     outs = _runs(instances, cfg, policy, concurrency)
     return float(np.mean([o.ledger.total_tokens - base_cost[i.instance_id]
                           for o, i in zip(outs, instances, strict=True)]))
+
+
+def largest_fitting(strengths: list, measure, limit: float) -> tuple[object, float]:
+    """The largest strength whose measured cost fits under `limit` (the first one if none fits),
+    and its cost. Cost rises with strength, so a binary search needs about log2(len) runs of the
+    matching instances instead of one per strength."""
+    cache: dict[int, float] = {}
+
+    def cost(i: int) -> float:
+        if i not in cache:
+            cache[i] = measure(strengths[i])
+        return cache[i]
+
+    lo, hi = 0, len(strengths) - 1
+    if cost(lo) > limit:
+        return strengths[lo], cost(lo)
+    if cost(hi) <= limit:
+        return strengths[hi], cost(hi)
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        lo, hi = (mid, hi) if cost(mid) <= limit else (lo, mid)
+    return strengths[lo], cost(lo)
 
 
 def match_arms(
@@ -148,14 +178,11 @@ def match_arms(
                 strengths = [table["arms"]["A2"][lvl]["strength"]]
             else:
                 strengths = arms.candidates(arm_id, family, n_bits)
-            chosen, natural = strengths[0], None
-            for s in strengths:
-                added = _mean_added(instances, arms.build(arm_id, family, s), policy, base_cost,
-                                    concurrency)
-                if natural is None or added <= target * (1 + MATCH_TOLERANCE):
-                    chosen, natural = s, added
-                if added > target * (1 + MATCH_TOLERANCE):
-                    break
+            chosen, natural = largest_fitting(
+                strengths,
+                lambda s, arm_id=arm_id: _mean_added(instances, arms.build(arm_id, family, s),
+                                                     policy, base_cost, concurrency),
+                target * (1 + MATCH_TOLERANCE))
             cfg = arms.build(arm_id, family, chosen)
             if arm_id in ("P1", "P2"):
                 filler = max(0, int(target / max(1, cfg.samples)))

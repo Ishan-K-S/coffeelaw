@@ -37,8 +37,12 @@ def run_id_for(
     model_id: str,
     replicate: int,
     sweep: dict | None = None,
+    harness: dict | None = None,
 ) -> str:
-    return content_hash([instance_id, arm_id, delta_level, model_id, replicate, sweep])
+    """Content hash of the run's identity. Non-default harness options are part of it (default
+    runs keep the IDs they had before options existed)."""
+    parts = [instance_id, arm_id, delta_level, model_id, replicate, sweep]
+    return content_hash(parts + [harness] if harness else parts)
 
 
 def runs_path(root: Path, model_id: str, family: str) -> Path:
@@ -56,7 +60,8 @@ def run_cell(
 ) -> RunRecord:
     inst, cfg = cell.instance, cell.cfg
     rid = run_id_for(
-        inst.instance_id, cfg.arm_id, cell.delta_level, policy.model_id, cell.replicate, cell.sweep
+        inst.instance_id, cfg.arm_id, cell.delta_level, policy.model_id, cell.replicate, cell.sweep,
+        policy.options.non_default(),
     )
     started = now()
     outcome = run_team(inst, cfg, policy, seed=int(rid[:8], 16))
@@ -67,7 +72,8 @@ def run_cell(
         Path(ref).write_text(json.dumps({
             "run_id": rid, "instance_id": inst.instance_id, "family": inst.family_id,
             "answer": inst.answer, "model_id": policy.model_id, "delta_level": cell.delta_level,
-            "sweep": cell.sweep, "config": cfg.to_dict(), "steps": outcome.transcript,
+            "sweep": cell.sweep, "config": cfg.to_dict(), "harness": policy.harness_record(),
+            "steps": outcome.transcript,
         }, default=str))
     return RunRecord(
         run_id=rid,
@@ -78,6 +84,7 @@ def run_cell(
         model_id=policy.model_id,
         replicate=cell.replicate,
         sweep=Sweep(**cell.sweep) if cell.sweep else None,
+        harness=policy.harness_record(),
         prereg_hash=prereg_hash,
         final_answer=outcome.final_answer,
         probabilities=outcome.probabilities,
@@ -117,7 +124,7 @@ def run_grid(
         if path not in done:
             done[path] = existing_run_ids(path)
         rid = run_id_for(cell.instance.instance_id, cell.cfg.arm_id, cell.delta_level,
-                         policy.model_id, cell.replicate, cell.sweep)
+                         policy.model_id, cell.replicate, cell.sweep, policy.options.non_default())
         if rid not in done[path]:
             done[path].add(rid)
             todo.append((cell, path))

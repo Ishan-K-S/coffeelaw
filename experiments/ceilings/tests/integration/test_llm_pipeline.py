@@ -128,4 +128,5 @@ def test_transcripts_record_every_turn_sent():
     call = next(s["call"] for s in out.transcript if s["step"] == "answer")
     assert len(call["sent"]) == 2  # the reasoning turn, then the final-answer turn
     assert call["sent"][0][-1]["content"].endswith("in the next turn.")
-    assert call["sent"][1][-1]["content"].endswith("in the required format.")
+    final = call["sent"][1][-1]["content"]
+    assert "in the required format." in final and "Reply with only a JSON object" in final

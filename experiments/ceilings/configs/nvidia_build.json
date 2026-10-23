@@ -1,0 +1,81 @@
+{
+  "provider": "NVIDIA build (https://integrate.api.nvidia.com/v1), free endpoints",
+  "checked": "2026-10-22",
+  "notes": [
+    "Built-in reasoning is switched off where the server allows it, so the harness's own reasoning stage is the only compute knob (research R3). Where it cannot be switched off, the lowest setting is used; hidden reasoning is stripped from the answer, kept in the transcript, and charged to the ledger through completion_tokens.",
+    "nvext.guided_json is rejected by this provider (unknown field); response_format json_schema is honoured by most models and silently ignored by the Llama 3.2 vision models and Muse Glimmer, which therefore answer from the prompt's JSON format note.",
+    "nvext.max_thinking_tokens=0 returns HTTP 500 on deepseek-v4.1-flash and muse-glimmer-30b and 400 on nemotron-3-ultra; chat_template_kwargs.thinking=false is ignored by glm-5.3-flash and muse-glimmer-30b."
+  ],
+  "models": {
+    "meta/llama-3.2-11b-vision-instruct": {
+      "notes": "not a reasoning model; ignores response_format"
+    },
+    "openai/gpt-oss-20b": {
+      "extra_body": {
+        "reasoning_effort": "low"
+      },
+      "answer_max_tokens": 4000,
+      "text_max_tokens": 4000,
+      "notes": "always reasons; low effort is the minimum; hidden reasoning used the whole 1500-token cap on info with 15 probe reports, so the cap is 4000"
+    },
+    "nvidia/nemotron-3.5-lightning-30b-a3b": {
+      "extra_body": {
+        "chat_template_kwargs": {
+          "thinking": false
+        }
+      }
+    },
+    "meta/muse-glimmer-30b": {
+      "extra_body": {
+        "reasoning_effort": "low"
+      },
+      "answer_max_tokens": 4000,
+      "text_max_tokens": 4000,
+      "notes": "reasoning cannot be switched off; ignores response_format; hidden reasoning used the whole 1500-token cap on info with 15 probe reports, so the cap is 4000"
+    },
+    "google/gemma-4-31b-it": {},
+    "meta/llama-3.2-90b-vision-instruct": {
+      "notes": "not a reasoning model"
+    },
+    "nvidia/nemotron-3.5-super-vl-120b-a12b": {
+      "extra_body": {
+        "chat_template_kwargs": {
+          "thinking": false
+        }
+      },
+      "notes": "the server reports private/nvidia/nemotron-3.5-super-120b-a12b; no alias is allowed until that is decided, so runs are marked invalid"
+    },
+    "z-ai/glm-5.3-flash": {
+      "extra_body": {
+        "nvext": {
+          "max_thinking_tokens": 0
+        }
+      }
+    },
+    "deepseek-ai/deepseek-v4.1-flash": {
+      "extra_body": {
+        "chat_template_kwargs": {
+          "thinking": false
+        }
+      }
+    },
+    "nvidia/nemotron-3-ultra-550b-a55b": {
+      "extra_body": {
+        "chat_template_kwargs": {
+          "thinking": false
+        }
+      }
+    },
+    "stepfun-ai/step-5-preview": {
+      "extra_body": {
+        "chat_template_kwargs": {
+          "thinking": false
+        }
+      },
+      "notes": "candidate replacement"
+    },
+    "google/diffusiongemma-26b-a4b-it": {
+      "notes": "candidate replacement (diffusion LM); ignores response_format"
+    }
+  }
+}

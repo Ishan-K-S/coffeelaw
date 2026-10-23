@@ -2,40 +2,142 @@
   "study": "Ceiling-discrimination experiment suite (Coffee Law, Bhatt 2026)",
   "spec": "specs/001-ceiling-discrimination-experiments/spec.md",
   "predictions": {
-    "H1": {"statement": "On information-bound tasks, E helps; K, M, A1, P1 and P2 do not", "paper_source": "Thm 1, Cor 1",
-           "falsified_if": "K gives a significant gain on leakage-free information-bound instances",
-           "test": "superiority(E) + TOST(K,M,A1,P1,P2)", "family": "info", "matching_arm": "E", "margin": 0.05},
-    "H2": {"statement": "On reasoning-bound tasks, K helps; E (restating held evidence), M and A1 do not", "paper_source": "Thm 2, Cor 3",
-           "falsified_if": "Restated evidence gives a gain as large as K at matched delta, not explained by easier presentation (checked with P1)",
-           "test": "superiority(K) + TOST(E,M,A1,P1,P2)", "family": "reason", "matching_arm": "K", "margin": 0.05},
-    "H3": {"statement": "On communication-bound tasks, M helps; K and same-kind private E do not", "paper_source": "Thm 5",
-           "falsified_if": "K alone lifts inner-product-like accuracy significantly above chance at fixed message budget",
-           "test": "superiority(M) + TOST(K,E,A1,P1,P2)", "family": ["comm_parity", "comm_ip"], "matching_arm": "M", "margin": 0.05},
-    "H4": {"statement": "A1 gives no gain on any family", "paper_source": "Cor 1, Thm 3",
-           "falsified_if": "A significant A1 gain on any family", "test": "TOST(A1) per family", "margin": 0.05},
-    "H5": {"statement": "The A2 gain equals the gain from the same delta compute given to one agent", "paper_source": "Thm 3",
-           "falsified_if": "Multi-agent A2 significantly beats single-agent + delta compute",
-           "test": "TOST(A2 - A2_single_ref) per family", "margin": 0.05},
-    "H6": {"statement": "Information-bound error never falls below the Fano floor", "paper_source": "Cor 2",
-           "falsified_if": "Error significantly below the floor (audited for leakage first)", "test": "floor_check", "margin": null},
-    "H7": {"statement": "Inner-product-like splits stay near chance until about n/2 bits; parity-like splits jump at 1 bit", "paper_source": "Thm 5, Sec IX.5",
-           "falsified_if": "Inner-product-like accuracy rises steadily from the first bits", "test": "changepoint_vs_linear", "margin": null},
-    "H8": {"statement": "Mixed tasks show a positive interaction between the two matching interventions", "paper_source": "decomposition",
-           "falsified_if": "No interaction", "test": "interaction", "margin": null},
-    "H9": {"statement": "The blind diagnostic names the binding ceiling well above chance on held-out constructed tasks", "paper_source": "Sec IX.1",
-           "falsified_if": "Accuracy not significantly above 1/3", "test": "classification_accuracy", "margin": null}
+    "H1": {
+      "statement": "On information-bound tasks, E helps; K, M, A1, P1 and P2 do not",
+      "paper_source": "Thm 1, Cor 1",
+      "falsified_if": "K gives a significant gain on leakage-free information-bound instances",
+      "test": "exact one-sided McNemar superiority (E vs baseline) + Newcombe paired TOST (K, M, A1, P1, P2 vs baseline)",
+      "family": "info",
+      "matching_arm": "E",
+      "margin": 0.05
+    },
+    "H2": {
+      "statement": "On reasoning-bound tasks, K helps; E (restating held evidence), M and A1 do not",
+      "paper_source": "Thm 2, Cor 3",
+      "falsified_if": "Restated evidence gives a gain as large as K at matched delta, not explained by easier presentation (checked with P1)",
+      "test": "exact one-sided McNemar superiority (K vs baseline) + Newcombe paired TOST (E, M, A1, P1, P2 vs baseline)",
+      "family": "reason",
+      "matching_arm": "K",
+      "margin": 0.05
+    },
+    "H3": {
+      "statement": "On communication-bound tasks, M helps; K and same-kind private E do not",
+      "paper_source": "Thm 5",
+      "falsified_if": "K alone lifts inner-product-like accuracy significantly above chance at fixed message budget",
+      "test": "exact one-sided McNemar superiority (M vs baseline) + Newcombe paired TOST (K, E, A1, P1, P2 vs baseline), on comm_parity and comm_ip",
+      "family": [
+        "comm_parity",
+        "comm_ip"
+      ],
+      "matching_arm": "M",
+      "margin": 0.05
+    },
+    "H4": {
+      "statement": "A1 gives no gain on any family",
+      "paper_source": "Cor 1, Thm 3",
+      "falsified_if": "A significant A1 gain on any family",
+      "test": "Newcombe paired TOST (A1 vs baseline) per family; falsifier: exact McNemar superiority of A1",
+      "margin": 0.05
+    },
+    "H5": {
+      "statement": "The A2 gain equals the gain from the same delta compute given to one agent",
+      "paper_source": "Thm 3",
+      "falsified_if": "Multi-agent A2 significantly beats single-agent + delta compute",
+      "test": "Newcombe paired TOST (A2 vs A2_single_ref) per family; falsifier: exact McNemar superiority of A2",
+      "margin": 0.05
+    },
+    "H6": {
+      "statement": "Information-bound error never falls below the Fano floor",
+      "paper_source": "Cor 2",
+      "falsified_if": "Error significantly below the floor (audited for leakage first)",
+      "test": "one-sided binomial test of error below the Fano floor in each (T, p) cell that could reject (zero errors would give p < alpha); Holm within each model",
+      "margin": null
+    },
+    "H7": {
+      "statement": "Inner-product-like splits stay near chance until about n/2 bits; parity-like splits jump at 1 bit",
+      "paper_source": "Thm 5, Sec IX.5",
+      "falsified_if": "Inner-product-like accuracy rises steadily from the first bits",
+      "test": "inner product: change-point vs linear by instance-grouped cross-validated log-likelihood, plus slope test; parity: accuracy at L=1 at least 90% of its ceiling, ceiling >= 0.7",
+      "margin": null
+    },
+    "H8": {
+      "statement": "Mixed tasks show a positive interaction between the two matching interventions",
+      "paper_source": "decomposition",
+      "falsified_if": "No interaction",
+      "test": "interaction",
+      "margin": null
+    },
+    "H9": {
+      "statement": "The blind diagnostic names the binding ceiling well above chance on held-out constructed tasks",
+      "paper_source": "Sec IX.1",
+      "falsified_if": "Accuracy not significantly above 1/3",
+      "test": "classification_accuracy",
+      "margin": null
+    }
   },
   "families": {
-    "info": {"k": null, "p": null},
-    "reason": {"d": null, "m": 4},
-    "comm_parity": {"n": null},
-    "comm_ip": {"n": null}
+    "info": {
+      "k": null,
+      "p": null
+    },
+    "reason": {
+      "d": null,
+      "m": 4
+    },
+    "comm_parity": {
+      "n": null
+    },
+    "comm_ip": {
+      "n": null
+    }
   },
-  "arms": ["baseline", "E", "K", "M", "A1", "A2", "A2_single_ref", "P1", "P2"],
-  "delta_levels": {"small": null, "medium": null, "large": null},
-  "models": {"A": "claude-opus-5-5", "B": null, "C": null},
-  "sample_sizes": {"per_cell": null, "power_target": 0.8, "equivalence_margin": 0.05},
-  "exclusion_rules": ["info-family instance solved at baseline beyond chance (leakage)", "malformed instance (schema validation failure)"],
-  "analysis": {"bootstrap_resamples": 10000, "multiple_comparisons": "holm", "alpha": 0.05,
-               "verdict_rule": "a prediction is supported/contradicted only if the per-model verdict agrees in at least 2 of 3 model families"}
+  "arms": [
+    "baseline",
+    "E",
+    "K",
+    "M",
+    "A1",
+    "A2",
+    "A2_single_ref",
+    "P1",
+    "P2"
+  ],
+  "delta_levels": {
+    "small": null,
+    "medium": null,
+    "large": null
+  },
+  "models": {
+    "A": "claude-opus-5-5",
+    "B": null,
+    "C": null
+  },
+  "sample_sizes": {
+    "per_cell": null,
+    "power_target": 0.8,
+    "equivalence_margin": 0.05,
+    "method": "ceilings power on pilot runs (see analysis.sample_size_method)"
+  },
+  "exclusion_rules": [
+    "info-family instance solved at baseline beyond chance (leakage)",
+    "malformed instance (schema validation failure)"
+  ],
+  "analysis": {
+    "alpha": 0.05,
+    "equivalence_margin": 0.05,
+    "superiority": "exact one-sided McNemar test on discordant pairs (binomial, p = 0.5)",
+    "equivalence": "TOST by inverting the Newcombe (1998, method 10) paired-difference interval at level 1 - 2 alpha; the p-value is the smallest alpha at which the interval lies inside (-margin, +margin)",
+    "non_binary_outcomes": "paired t-tests with the standard error floored at 0.5/n (only if replicates are averaged)",
+    "multiple_comparisons": "Holm, two families per model: support tests (every pre-registered test of H1-H5) and falsification tests (each hypothesis's own falsifier); each (family, arm, reference) comparison is counted once per family",
+    "support_rule": "a hypothesis is supported for a model when every one of its support tests rejects after Holm",
+    "contradiction_rule": "a hypothesis is contradicted for a model only by its own pre-registered falsifier (after Holm, with a gain above the margin); H2 additionally requires the restated-evidence gain to be at least the K gain and P1 not to help. A matching arm that fails to help leaves the hypothesis inconclusive, never contradicted",
+    "not_evaluable_rule": "a model's verdict on a hypothesis is 'not evaluable' (with reasons) when the calibration gate failed for a family it needs, a required arm is missing, or any of its tests has fewer paired instances than sample_sizes.per_cell",
+    "across_models": "a hypothesis is contradicted if at least 2 evaluable models are contradicted, otherwise supported if at least 2 evaluable models are supported, otherwise inconclusive; 'not evaluable' if no model is evaluable. The same rule applies to H6 and H7, each model judged on its own sweep cells",
+    "bootstrap_resamples": 10000,
+    "gains_reporting": "paired cluster bootstrap intervals over instances; gain versus realized cost is also reported",
+    "calibration_gate": "baseline within 5 points of chance, the tolerance applied to the 95% interval of the estimate; the family's own fix at full strength >= 90%; info leakage: baseline correct with p >= 0.9",
+    "difficulty_rule": "per model, the grid is searched from easy to hard; info and comm take the hardest passing setting, reason the easiest; the search stops when the full fix misses 90% (no harder setting can pass) or, for reason, at the first pass",
+    "cost_matching": "each arm's mean added tokens within +/-5% of the target delta on the pilot instances, by choosing the arm's strength (largest that fits) and topping up with neutral filler",
+    "sample_size_method": "ceilings power: per comparison, n for TOST under a true difference of 0 and n for McNemar at the pilot gain, from pilot discordance, alpha planned as alpha/k within each Holm family; per_cell is the maximum over the equivalence tests of families whose gate passed"
+  }
 }

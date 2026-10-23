@@ -33,6 +33,7 @@ class ArmConfig:
     answerers: tuple[str, ...] = ("A",)
     tool_rounds: int = 0
     probe_policy: str = "rotation"  # "rotation": attribute t mod k; "agent": the model chooses
+    comm_sender: str = "ready"  # "ready": B's notes include its message; "encode": B writes it
     message_mode: str = "tokens"
     message_budget: int = 0
     relay: bool = False

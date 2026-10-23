@@ -12,7 +12,7 @@ reply, so `ceilings check` and human reviewers can verify what each agent saw an
 from __future__ import annotations
 
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import numpy as np
 
@@ -22,6 +22,7 @@ from ceilings.channel import Channel
 from ceilings.ledger import Ledger
 from ceilings.records import TaskInstance
 from ceilings.tasks import evidence_for_arm_e
+from ceilings.tasks.comm import without_ready_message
 from ceilings.tools import ToolSimulator
 
 AGENT_NAMES = ["A", "B", "C", "D", "E", "F", "G", "H"]
@@ -41,6 +42,8 @@ class TeamOutcome:
 
 def _view(instance: TaskInstance, name: str, cfg: ArmConfig, answerer: bool) -> View:
     private_text = instance.private_evidence.get(name, "")
+    if cfg.comm_sender == "encode" and instance.family_id.startswith("comm_"):
+        private_text = without_ready_message(private_text)
     extra = ""
     if answerer and name == cfg.answerers[0]:
         evidence = (
@@ -63,6 +66,11 @@ def _view(instance: TaskInstance, name: str, cfg: ArmConfig, answerer: bool) -> 
 
 
 def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) -> TeamOutcome:
+    # Team-level harness options (ceilings.options) override the arm's defaults when set.
+    team_opts = {k: v for k, v in policy.options.non_default().items()
+                 if k in ("probe_policy", "comm_sender")}
+    if team_opts:
+        cfg = replace(cfg, **team_opts)
     rng = np.random.default_rng(seed)
     ledger = Ledger()
     transcript: list[dict] = []

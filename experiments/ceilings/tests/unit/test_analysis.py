@@ -115,3 +115,33 @@ def test_changepoint_prefers_linear_on_linear_data():
     p = 1 / (1 + np.exp(-(-2.0 + 0.25 * L)))
     y = (rng.random(len(L)) < p).astype(float)
     assert not changepoint.compare(L, y, chance=0.5)["threshold_wins"]
+
+
+def test_sample_size_formulas_match_the_planning_figure():
+    from ceilings.analysis.power import n_equivalence, n_superiority
+
+    # research R10: sigma_d ~ 0.49 (pi_d ~ 0.24) at a 5-point margin gives ~820-850.
+    assert 800 <= n_equivalence(0.24, 0.05, 0.05, 0.8) <= 860
+    assert n_equivalence(0.24, 0.05, 0.05 / 10, 0.8) > n_equivalence(0.24, 0.05, 0.05, 0.8)
+    assert n_superiority(0.3, 0.2, 0.05, 0.8) < n_superiority(0.3, 0.1, 0.05, 0.8)
+    assert n_superiority(0.3, 0.0, 0.05, 0.8) == float("inf")
+
+
+def test_power_command_on_sim_runs(tmp_path):
+    from ceilings import experiment
+    from ceilings.agents import make_policy
+    from ceilings.analysis.gains import runs_frame
+    from ceilings.analysis.power import sample_sizes
+    from ceilings.runner import load_runs, run_grid
+
+    policy = make_policy("sim-bounded")
+    for fam in ("info", "comm_parity"):
+        prep = experiment.prepare(fam, policy, tmp_path, n_main=12, n_pilot=6,
+                                  levels={"medium": 1.0}, match=False)
+        cells = experiment.main_cells(prep["main"], prep["table"], deltas=("medium",))
+        run_grid(cells, policy, tmp_path)
+    res = sample_sizes(runs_frame(load_runs(tmp_path)))
+    rows = res["models"]["sim-bounded"]["rows"]
+    assert {r["holm_family"] for r in rows} == {"support", "falsify"}
+    assert all(r["alpha_planned"] < 0.05 for r in rows)
+    assert res["per_cell"] is not None and res["per_cell"] > 0

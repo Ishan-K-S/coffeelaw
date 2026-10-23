@@ -20,6 +20,7 @@ from ceilings import theory
 from ceilings.records import TaskInstance, TheoryQuantities, content_hash
 
 VERSION = "4"
+READY_PREFIX = "\nYour message to agent A, already written in the message format: "
 SKILLS = [
     "Python",
     "SQL",
@@ -113,7 +114,7 @@ def generate(seed: int, n: int = 8, variant: str = "ip", split: str = "main") ->
     priv_a = "\n".join(f"Candidate has {s}: {_yes(b)}" for s, b in zip(skills, x, strict=True))
     priv_b = "\n".join(f"Role requires {s}: {_yes(b)}" for s, b in zip(skills, y, strict=True))
     ready = str(sum(y) % 2) if variant == "parity" else "".join(str(b) for b in y)
-    priv_b += f"\nYour message to agent A, already written in the message format: {ready}"
+    priv_b += f"{READY_PREFIX}{ready}"
     h = theory.theta_entropy_comm(n, variant)
     alone = theory.agent_alone_information(n, variant)
     if variant == "ip":
@@ -147,6 +148,12 @@ def generate(seed: int, n: int = 8, variant: str = "ip", split: str = "main") ->
             "hidden": {"value": value},
         },
     )
+
+
+def without_ready_message(private_text: str) -> str:
+    """B's notes with the ready-made message removed (the `sender=encode` ablation): B must then
+    encode its own list in the stated format."""
+    return private_text.split(READY_PREFIX, 1)[0]
 
 
 def same_kind_private_evidence(instance: TaskInstance, amount: int) -> str:

@@ -27,6 +27,8 @@ from ceilings.adapters.base import (
     approx_tokens,
     normalize_probabilities,
 )
+from ceilings.options import DEFAULT as DEFAULT_OPTIONS
+from ceilings.options import HarnessOptions
 from ceilings.records import content_hash
 from ceilings.tasks.info import probe_text
 
@@ -79,6 +81,14 @@ class Action:
 
 class Policy:
     model_id: str
+    options: HarnessOptions = DEFAULT_OPTIONS
+
+    def harness_record(self) -> dict:
+        """The harness options in effect, resolved (stored in every run record)."""
+        return self.options.non_default() | {"resolved": {
+            "probe_policy": self.options.probe_policy, "comm_sender": self.options.comm_sender,
+            "answer_order": self.options.answer_order,
+            "shuffle_options": self.options.shuffle_options}}
 
     def choose_probe(self, view: View, depth: str, seed: int) -> Action:
         raise NotImplementedError
@@ -247,9 +257,21 @@ def clean_bits(text: str) -> str:
 
 
 class LLMPolicy(Policy):
-    def __init__(self, adapter: ModelAdapter) -> None:
+    def __init__(self, adapter: ModelAdapter, options: HarnessOptions = DEFAULT_OPTIONS) -> None:
         self.adapter = adapter
         self.model_id = adapter.model_id
+        self.options = options
+        adapter.configure(options)
+
+    def harness_record(self) -> dict:
+        from ceilings.adapters.base import DEPTHS
+
+        rec = super().harness_record()
+        rec["resolved"]["temperature"] = getattr(self.adapter, "temperature", None)
+        rec["resolved"]["reasoning_tokens"] = [self.adapter.reasoning_budget(d) for d in DEPTHS]
+        if getattr(self.adapter, "profile", None):
+            rec["resolved"]["provider_profile"] = self.adapter.profile
+        return rec
 
     def _messages(self, view: View, instruction: str) -> list[dict]:
         return [
@@ -266,7 +288,10 @@ class LLMPolicy(Policy):
                 "sent": res.extra.get("sent"),
                 "raw_prob_sum": res.extra.get("raw_prob_sum"),
                 "answer_not_argmax": res.extra.get("answer_not_argmax"),
-                "usage": [res.usage.input_tokens, res.usage.output_tokens]}
+                "hidden_reasoning": res.extra.get("hidden_reasoning"),
+                "schema_mode": res.extra.get("schema_mode"),
+                "usage": [res.usage.input_tokens, res.usage.output_tokens,
+                          res.usage.reasoning_tokens]}
 
     def choose_probe(self, view, depth, seed):
         attrs = view.public["attributes"]
@@ -314,12 +339,14 @@ class LLMPolicy(Policy):
         return self.adapter.count_tokens(text)
 
 
-def make_policy(model_id: str) -> Policy:
+def make_policy(model_id: str, options: HarnessOptions = DEFAULT_OPTIONS) -> Policy:
     if model_id == "sim-bounded":
-        return SimPolicy()
+        policy = SimPolicy()
+        policy.options = options
+        return policy
     from ceilings.adapters import make_adapter
 
-    return LLMPolicy(make_adapter(model_id))
+    return LLMPolicy(make_adapter(model_id), options)
 
 
 __all__ = ["View", "Action", "Policy", "SimPolicy", "LLMPolicy", "make_policy", "STEP_BUDGET"]

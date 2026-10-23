@@ -87,6 +87,13 @@
         }
       }
     },
+    "harness": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Harness options in effect (ceilings.options): the non-default options plus a 'resolved' block."
+    },
     "prereg_hash": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"

@@ -39,6 +39,16 @@ ANSWER_RULES = (
 )
 
 
+def json_format_note(schema: dict) -> str:
+    """The answer format in words, for servers that ignore `response_format` (same key and
+    option order as the schema)."""
+    order = schema["properties"]["answer"]["enum"]
+    probs = "{" + ", ".join(f'"{o}": <number>' for o in order) + "}"
+    parts = {"probabilities": f'"probabilities": {probs}', "answer": '"answer": "<option>"'}
+    body = ", ".join(parts[k] for k in schema["properties"])
+    return f"Reply with only a JSON object: {{{body}}}."
+
+
 @dataclass
 class Usage:
     input_tokens: int
@@ -71,27 +81,29 @@ def option_order(answer_space: list[str], seed: int | None) -> list[str]:
     return order
 
 
-def answer_schema(answer_space: list[str], seed: int | None = None) -> dict:
+def answer_schema(answer_space: list[str], seed: int | None = None,
+                  answer_first: bool = False) -> dict:
     """Structured-output JSON schema: a probability for every option first, then the answer.
 
     Probabilities come first because constrained decoders emit properties in schema order; asking
-    for the answer first makes the model commit before weighing the options. With a seed, the
-    options are listed in a shuffled order.
+    for the answer first makes the model commit before weighing the options (`answer_first` keeps
+    that order for the schema ablation). With a seed, the options are listed in a shuffled order.
     """
     order = option_order(answer_space, seed)
+    probabilities = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": order,
+        "properties": {a: {"type": "number"} for a in order},
+    }
+    answer = {"type": "string", "enum": order}
+    keys = ["answer", "probabilities"] if answer_first else ["probabilities", "answer"]
+    props = {"probabilities": probabilities, "answer": answer}
     return {
         "type": "object",
         "additionalProperties": False,
-        "required": ["probabilities", "answer"],
-        "properties": {
-            "probabilities": {
-                "type": "object",
-                "additionalProperties": False,
-                "required": order,
-                "properties": {a: {"type": "number"} for a in order},
-            },
-            "answer": {"type": "string", "enum": order},
-        },
+        "required": keys,
+        "properties": {k: props[k] for k in keys},
     }
 
 
@@ -127,26 +139,58 @@ def normalize_probabilities(
     return {a: v / total for a, v in clipped.items()}
 
 
-def parse_answer(text: str, answer_space: list[str]) -> tuple[str | None, dict[str, float], str]:
-    """Parse structured output; fall back to the first option named in free text.
+def _parse_json_obj(data, answer_space):
+    if not isinstance(data, dict):
+        return None
+    answer, probs = data.get("answer"), data.get("probabilities")
+    if answer in answer_space:
+        return answer, normalize_probabilities(probs, answer_space), "json"
+    if isinstance(probs, dict) and probs:
+        norm = normalize_probabilities(probs, answer_space)
+        return max(norm, key=norm.get), norm, "json_argmax"
+    return None
 
-    Returns (answer or None, normalized probabilities, how it was parsed: json|text|failed).
+
+def _named(option: str, text: str) -> bool:
+    return re.search(rf"(?<![\w-]){re.escape(option)}(?![\w-])", text) is not None
+
+
+def parse_answer(text: str, answer_space: list[str]) -> tuple[str | None, dict[str, float], str]:
+    """Parse structured output, then fall back step by step for servers that ignore the schema.
+
+    1. the whole reply as JSON (`json`, or `json_argmax` when only probabilities are usable);
+    2. a JSON object embedded in the reply, e.g. in a code fence (`json_embedded`);
+    3. an explicit statement such as "answer: host-03" (`text`), or the only option named;
+    4. otherwise `failed`: a reply that discusses several options without choosing one is not
+       guessed from, since the first option it names is no more likely to be its answer.
     """
+    text = text or ""
     try:
-        data = json.loads(text)
-        answer = data.get("answer") if isinstance(data, dict) else None
-        probs = data.get("probabilities") if isinstance(data, dict) else None
-        if answer in answer_space:
-            return answer, normalize_probabilities(probs, answer_space), "json"
-        if isinstance(probs, dict) and probs:
-            norm = normalize_probabilities(probs, answer_space)
-            return max(norm, key=norm.get), norm, "json_argmax"
+        got = _parse_json_obj(json.loads(text), answer_space)
+        if got:
+            return got
     except (json.JSONDecodeError, TypeError, AttributeError):
         pass
-    for a in sorted(answer_space, key=len, reverse=True):
-        if re.search(rf"(?<![\w-]){re.escape(a)}(?![\w-])", text or ""):
-            rest = (1 - 0.6) / max(1, len(answer_space) - 1)
-            return a, {o: (0.6 if o == a else rest) for o in answer_space}, "text"
+    for m in reversed(list(re.finditer(r"\{(?:[^{}]|\{[^{}]*\})*\}", text))):
+        try:
+            got = _parse_json_obj(json.loads(m.group(0)), answer_space)
+        except (json.JSONDecodeError, TypeError, AttributeError):
+            continue
+        if got:
+            return got[0], got[1], "json_embedded"
+    rest = (1 - 0.6) / max(1, len(answer_space) - 1)
+    options = sorted(answer_space, key=len, reverse=True)
+    alts = "|".join(re.escape(a) for a in options)
+    stated = re.findall(rf"(?:final answer|answer)\W{{0,4}}(?:is\W{{0,3}})?\**\W{{0,2}}({alts})"
+                        rf"(?![\w-])", text, re.I)
+    named = [a for a in options if _named(a, text)]
+    chosen = None
+    if stated:
+        chosen = next(a for a in answer_space if a.lower() == stated[-1].lower())
+    elif len(named) == 1:
+        chosen = named[0]
+    if chosen is not None:
+        return chosen, {o: (0.6 if o == chosen else rest) for o in answer_space}, "text"
     return None, normalize_probabilities(None, answer_space), "failed"
 
 
@@ -160,6 +204,31 @@ class ModelAdapter(abc.ABC):
 
     model_id: str
     supports_batch: bool = False
+    # Harness options (ceilings.options), set by `configure`; the defaults are the main design.
+    answer_order: str = "probs_first"
+    shuffle_options: bool = True
+    reasoning_caps: tuple[int, ...] | None = None
+
+    def configure(self, options) -> None:
+        """Apply the adapter-level harness options (schema order, shuffling, temperature,
+        reasoning caps)."""
+        self.answer_order = options.answer_order
+        self.shuffle_options = options.shuffle_options
+        if options.reasoning_tokens is not None:
+            self.reasoning_caps = tuple(options.reasoning_tokens)
+        if options.temperature is not None:
+            if not hasattr(self, "temperature"):
+                raise ValueError(f"{self.model_id} has no temperature setting")
+            self.temperature = options.temperature
+
+    def reasoning_budget(self, depth: str) -> int:
+        if self.reasoning_caps is not None:
+            return dict(zip(DEPTHS, self.reasoning_caps, strict=True))[depth]
+        return reasoning_tokens(depth)
+
+    def schema_for(self, answer_space: list[str], seed: int) -> dict:
+        return answer_schema(answer_space, seed if self.shuffle_options else None,
+                             answer_first=self.answer_order == "answer_first")
 
     @abc.abstractmethod
     def complete(
@@ -184,6 +253,12 @@ class ChatReply:
     request_id: str
     model_served: str
     stop: str = ""
+    hidden_reasoning: str = ""  # a reasoning model's own thinking, removed from `text`
+    reasoning_tokens: int | None = None  # part of output_tokens, when the provider reports it
+
+
+class RequestCapExceeded(RuntimeError):
+    """The adapter's `--max-requests` cap was reached (CLI exit code 4)."""
 
 
 class ChatAdapter(ModelAdapter):
@@ -198,11 +273,13 @@ class ChatAdapter(ModelAdapter):
         """One chat call; `schema` constrains the output to JSON when given."""
 
     def complete(self, messages, depth, answer_space, seed, max_tokens=16000):
-        budget = reasoning_tokens(depth)
+        budget = self.reasoning_budget(depth)
         convo = [dict(m) for m in messages]
         in_tok = out_tok = 0
         reasoning = ""
         reasoning_stop = ""
+        hidden: list[str] = []
+        hidden_tokens: list[int] = []
         ids = []
         served = set()
         sent: list[list[dict]] = []
@@ -215,22 +292,33 @@ class ChatAdapter(ModelAdapter):
             reasoning_stop = r.stop
             ids.append(r.request_id)
             served.add(r.model_served)
+            hidden.append(r.hidden_reasoning)
+            if r.reasoning_tokens is not None:
+                hidden_tokens.append(r.reasoning_tokens)
             final = FINAL_ANSWER_PROMPT if answer_space else FINAL_TEXT_PROMPT
             if r.stop == "length":
                 final = TRUNCATED_NOTE + final
             convo = convo + [{"role": "assistant", "content": r.text},
                              {"role": "user", "content": final}]
-        schema = answer_schema(answer_space, seed) if answer_space else None
+        schema = self.schema_for(answer_space, seed) if answer_space else None
+        if schema is not None:
+            convo[-1] = {**convo[-1],
+                         "content": f"{convo[-1]['content']} {json_format_note(schema)}"}
         cap = self.answer_max_tokens if answer_space else self.text_max_tokens
         sent.append([dict(m) for m in convo])
         reply = self._chat(convo, schema, cap, seed + 1)
         in_tok, out_tok = in_tok + reply.input_tokens, out_tok + reply.output_tokens
         ids.append(reply.request_id)
         served.add(reply.model_served)
-        valid = all(_same_model(s, self.model_name) for s in served if s)
-        usage = Usage(in_tok, out_tok, reasoning_tokens=None)
+        hidden.append(reply.hidden_reasoning)
+        if reply.reasoning_tokens is not None:
+            hidden_tokens.append(reply.reasoning_tokens)
+        valid = all(self.served_ok(s) for s in served if s)
+        usage = Usage(in_tok, out_tok, reasoning_tokens=sum(hidden_tokens) if hidden_tokens
+                      else None)
         extra = {"raw": reply.text, "reasoning": reasoning, "reasoning_stop": reasoning_stop,
-                 "stop": reply.stop, "sent": sent}
+                 "stop": reply.stop, "sent": sent,
+                 "hidden_reasoning": [h for h in hidden if h] or None}
         if answer_space is None:
             return AdapterResult(None, {}, None, usage, ";".join(ids), text=reply.text,
                                  valid=valid, extra=extra)
@@ -241,6 +329,10 @@ class ChatAdapter(ModelAdapter):
                              valid=valid, extra=extra)
 
     model_name: str = ""
+
+    def served_ok(self, served: str) -> bool:
+        """Whether the provider served the requested model (no silent substitution)."""
+        return _same_model(served, self.model_name)
 
 
 def _same_model(served: str, requested: str) -> bool:

@@ -92,19 +92,44 @@ def test_flat_sweep_is_not_contradiction():
     """Regression: a flat line at n=4 was read as 'steadily rising'."""
     rows = _sweep("comm_ip", {0: 0.75, 1: 0.75, 2: 0.75, 4: 0.75}, n=4)
     rows += _sweep("comm_parity", {0: 0.75, 1: 0.75, 2: 0.75, 4: 0.75}, n=4)
-    verdict, _ = threshold_verdict(pd.DataFrame(rows))
+    verdict, _ = threshold_verdict(pd.DataFrame(rows), min_models=1)
     assert verdict != "contradicted"
 
 
 def test_threshold_and_parity_jump_supported():
     rows = _sweep("comm_ip", {0: 0.5, 2: 0.5, 4: 0.5, 6: 0.55, 8: 0.97, 10: 0.98}, n=80)
     rows += _sweep("comm_parity", {0: 0.5, 1: 0.97, 2: 0.97, 4: 0.98}, n=80)
-    verdict, detail = threshold_verdict(pd.DataFrame(rows))
+    verdict, detail = threshold_verdict(pd.DataFrame(rows), min_models=1)
     assert verdict == "supported", detail
 
 
 def test_steady_rise_contradicts_h7():
     rows = _sweep("comm_ip", {L: 0.6 + 0.04 * L for L in range(0, 10, 2)}, n=200)
     rows += _sweep("comm_parity", {0: 0.5, 1: 0.97, 2: 0.97, 4: 0.98}, n=80)
-    verdict, detail = threshold_verdict(pd.DataFrame(rows))
+    verdict, detail = threshold_verdict(pd.DataFrame(rows), min_models=1)
     assert verdict == "contradicted", detail
+
+
+def test_h7_needs_two_models_to_agree():
+    rows = _sweep("comm_ip", {0: 0.5, 2: 0.5, 4: 0.5, 6: 0.55, 8: 0.97, 10: 0.98}, n=80)
+    rows += _sweep("comm_parity", {0: 0.5, 1: 0.97, 2: 0.97, 4: 0.98}, n=80)
+    one = pd.DataFrame(rows)
+    assert threshold_verdict(one)[0] == "inconclusive"  # pre-registered: 2 models must agree
+    two = pd.concat([one, one.assign(model="m2")])
+    assert threshold_verdict(two)[0] == "supported"
+
+
+def test_h6_judges_each_model_and_needs_two_to_agree():
+    from ceilings.analysis.report import fano_verdict
+
+    def cells(model, errors, n=60):
+        return [{"model": model, "family": "info", "is_sweep": True, "T": 2, "flip_rate": 0.0,
+                 "correct": i >= errors} for i in range(n)]
+
+    floors = {(2, 0.0): 0.5}
+    below = pd.DataFrame(cells("m1", 5))  # 8% error against a 50% floor
+    assert fano_verdict(below, floors)[0] == "inconclusive"
+    assert fano_verdict(pd.concat([below, pd.DataFrame(cells("m2", 4))]), floors)[0] == \
+        "contradicted"
+    at_floor = pd.DataFrame(cells("m1", 30) + cells("m2", 31))
+    assert fano_verdict(at_floor, floors)[0] == "supported"

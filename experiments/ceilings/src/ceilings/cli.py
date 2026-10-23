@@ -10,8 +10,10 @@ import time
 from pathlib import Path
 
 from ceilings import arms, experiment, prereg, tasks
+from ceilings.adapters.base import RequestCapExceeded
 from ceilings.agents import make_policy
 from ceilings.audit import audit
+from ceilings.options import HarnessOptions
 from ceilings.runner import BudgetExceeded, load_runs, run_grid
 
 ALL_FAMILIES = "info,reason,comm_parity,comm_ip"
@@ -41,6 +43,16 @@ def _progress(label: str):
     return report
 
 
+def _policy(a):
+    """The model policy with `--harness` options, and `--max-requests` applied to adapters that
+    count requests."""
+    policy = make_policy(a.model, HarnessOptions.parse(getattr(a, "harness", None)))
+    adapter = getattr(policy, "adapter", None)
+    if getattr(a, "max_requests", None) is not None and adapter is not None:
+        adapter.max_requests = a.max_requests
+    return policy
+
+
 def cmd_generate(a) -> int:
     for fam in a.family.split(","):
         diff = _difficulty(a.difficulty, fam) or experiment.DEFAULT_DIFFICULTY[fam]
@@ -53,7 +65,7 @@ def cmd_calibrate(a) -> int:
     """Search each family's difficulty grid for a setting that passes the gate on this model."""
     from ceilings.calibration import save_json, search_difficulty
 
-    policy = make_policy(a.model)
+    policy = _policy(a)
     failed = False
     for fam in a.family.split(","):
         res = search_difficulty(fam, policy, n=a.n, concurrency=a.concurrency,
@@ -69,7 +81,7 @@ def cmd_calibrate(a) -> int:
 
 
 def cmd_prepare(a) -> int:
-    policy = make_policy(a.model)
+    policy = _policy(a)
     failed = False
     for fam in a.family.split(","):
         res = experiment.prepare(
@@ -90,7 +102,7 @@ def cmd_prepare(a) -> int:
 
 
 def cmd_run(a) -> int:
-    policy = make_policy(a.model)
+    policy = _policy(a)
     total = 0
     for fam in a.family.split(","):
         table = experiment.load_table(a.root, fam, policy.model_id)
@@ -106,7 +118,7 @@ def cmd_run(a) -> int:
 
 
 def cmd_sweep(a) -> int:
-    policy = make_policy(a.model)
+    policy = _policy(a)
     n_new = 0
     if a.family in ("info", "all"):
         Ts = [int(t) for t in a.T.split(",")]
@@ -151,6 +163,29 @@ def cmd_analyze(a) -> int:
         why = p.detail.get("reasons", {})
         note = "; ".join(f"{m}: {', '.join(r)}" for m, r in why.items() if r) if why else ""
         print(f"{p.prediction_id}: {p.verdict}" + (f"  ({note})" if note else ""))
+    return 0
+
+
+def cmd_power(a) -> int:
+    from ceilings.analysis.gains import runs_frame
+    from ceilings.analysis.power import sample_sizes
+    from ceilings.analysis.report import load_gates
+
+    df = runs_frame(load_runs(a.root, a.model))
+    if df.empty:
+        print("no runs")
+        return 2
+    res = sample_sizes(df, delta=a.delta, margin=a.margin, alpha=a.alpha, power=a.power,
+                       gates=load_gates(a.root))
+    Path(a.out).mkdir(parents=True, exist_ok=True)
+    (Path(a.out) / "power.json").write_text(json.dumps(res, indent=2, default=str))
+    for model, m in res["models"].items():
+        print(f"{model}: per-cell n for equivalence = {m['per_cell']}")
+        for r in m["rows"]:
+            print(f"  {r['family']:12s} {r['arm']:3s} vs {r['reference']:13s} {r['test']:7s} "
+                  f"pilot n={r['pilot_n']:4d} pi_d={r['pi_d']:.2f} gain={r['gain']:+.2f} "
+                  f"-> n={r['n_required']}" + ("" if r["gate_passed"] else "  (gate failed)"))
+    print(f"recommended sample_sizes.per_cell: {res['per_cell']}")
     return 0
 
 
@@ -230,6 +265,12 @@ def build_parser() -> argparse.ArgumentParser:
     def conc_opt(sp):
         sp.add_argument("--concurrency", type=int, default=1,
                         help="parallel team runs (model calls are I/O-bound)")
+        sp.add_argument("--max-requests", type=int, default=None,
+                        help="stop after this many HTTP requests (openai/ models; exit code 4)")
+        sp.add_argument("--harness", default=None,
+                        help="ablation options, e.g. probe=agent,sender=encode,"
+                             "schema=answer_first,shuffle=off,temp=0,reason=0:128:512:1024:2048 "
+                             "(use a separate --root per ablation)")
 
     g = sub.add_parser("generate", help="generate instances only")
     g.add_argument("--family", required=True)
@@ -300,6 +341,15 @@ def build_parser() -> argparse.ArgumentParser:
                             help="evaluable models that must agree (pre-registered: 2)")
         sp.set_defaults(fn=fn)
 
+    pw = sub.add_parser("power", help="per-cell sample size from pilot runs (FR-017)")
+    pw.add_argument("--model", default=None)
+    pw.add_argument("--out", default="reports")
+    pw.add_argument("--delta", default="medium")
+    pw.add_argument("--margin", type=float, default=0.05)
+    pw.add_argument("--alpha", type=float, default=0.05)
+    pw.add_argument("--power", type=float, default=0.8)
+    pw.set_defaults(fn=cmd_power)
+
     for name, fn, helptext in (("show", cmd_show, "print gain rows in a stable format"),
                                ("numbers", cmd_numbers, "write paper/numbers.json entries")):
         sp = sub.add_parser(name, help=helptext)
@@ -324,7 +374,7 @@ def main(argv: list[str] | None = None) -> int:
     except prereg.PreregHashMismatch as e:
         print(f"error: {e}", file=sys.stderr)
         return 3
-    except BudgetExceeded as e:
+    except (BudgetExceeded, RequestCapExceeded) as e:
         print(f"error: {e}", file=sys.stderr)
         return 4
 
