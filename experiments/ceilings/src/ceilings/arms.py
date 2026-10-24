@@ -108,6 +108,8 @@ def candidates(arm_id: str, family: str, n_bits: int | None = None) -> list[obje
     if arm_id == "K":
         return ["medium", "high", "xhigh", "max"]
     if arm_id == "M":
+        if family == "comm_parity":
+            return [1]
         return [n_bits] if family.startswith("comm_") else [50, 100, 200]
     if arm_id == "A2":
         return ["low", "medium", "high"]
@@ -128,7 +130,9 @@ def full_strength(family: str, difficulty: dict) -> tuple[str, object]:
         return "E", k if p == 0 else 5 * k
     if family == "reason":
         return "K", "xhigh"
-    return "M", int(difficulty["n"])
+    # Parity needs one bit (the stated message format is a single character); inner product
+    # needs the whole list.
+    return "M", 1 if family == "comm_parity" else int(difficulty["n"])
 
 
 def extra_text(kind: str | None, amount: int, filler_tokens: int, evidence: str) -> str:

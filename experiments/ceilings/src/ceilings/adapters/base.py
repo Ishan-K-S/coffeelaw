@@ -147,6 +147,9 @@ def _parse_json_obj(data, answer_space):
         return answer, normalize_probabilities(probs, answer_space), "json"
     if isinstance(probs, dict) and probs:
         norm = normalize_probabilities(probs, answer_space)
+        top = max(norm.values())
+        if sum(abs(v - top) < 1e-9 for v in norm.values()) > 1:
+            return None, norm, "failed"  # no answer and a tie at the top: nothing was chosen
         return max(norm, key=norm.get), norm, "json_argmax"
     return None
 
@@ -327,6 +330,10 @@ class ChatAdapter(ModelAdapter):
             return AdapterResult(None, {}, None, usage, ";".join(ids), text=reply.text,
                                  valid=valid, extra=extra)
         answer, probs, how = parse_answer(reply.text, answer_space)
+        if how == "text" and reply.stop == "length":
+            # A reply cut off by the length cap names options mid-list (often the one it gave
+            # ~0 probability); naming one is not choosing it.
+            answer, probs, how = None, normalize_probabilities(None, answer_space), "failed"
         extra["parse"] = how
         extra.update(probability_diagnostics(reply.text, answer, probs, answer_space))
         return AdapterResult(answer, probs, None, usage, ";".join(ids), text=reply.text,

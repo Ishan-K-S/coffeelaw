@@ -292,6 +292,8 @@ def default_strength(arm_id: str, family: str, difficulty: dict) -> object:
     if arm_id == "K":
         return "high"
     if arm_id == "M":
+        if family == "comm_parity":
+            return 1
         return int(difficulty["n"]) if family.startswith("comm_") else 100
     if arm_id in ("A2", "A2_single_ref"):
         return "medium"

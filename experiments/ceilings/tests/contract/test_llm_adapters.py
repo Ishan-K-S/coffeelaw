@@ -336,3 +336,14 @@ def test_reasoning_stage_keeps_text_before_a_closing_think_tag(monkeypatch, open
     passed_on = seen[1][1]["messages"][-2]
     assert passed_on["role"] == "assistant" and passed_on["content"].startswith("Shift of Gus")
     assert "D: 1.0" in passed_on["content"] and res.extra["reasoning"].startswith("Shift")
+
+
+def test_truncated_reply_and_top_ties_are_parse_failures(monkeypatch, openai_env):
+    cut = {"id": "r", "model": "m", "usage": {"prompt_tokens": 1, "completion_tokens": 400},
+           "choices": [{"message": {"content": '{"probabilities": {"odd": 0.0000000000000'},
+                        "finish_reason": "length"}]}
+    monkeypatch.setattr("urllib.request.urlopen", _fake_urlopen([cut], []))
+    res = OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+    assert res.final_answer is None and res.extra["parse"] == "failed"
+    tie = json.dumps({"probabilities": {"even": 0.5, "odd": 0.5}})
+    assert parse_answer(tie, SPACE)[0] is None and parse_answer(tie, SPACE)[2] == "failed"
