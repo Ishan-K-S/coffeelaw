@@ -143,3 +143,18 @@ def test_failed_search_counts_as_failed_gate(tmp_path):
         {"family": "info", "model_id": "m", "chosen": None, "results": []}))
     (tmp_path / "difficulty" / "info__m.settings.json").write_text("{}")
     assert load_gates(tmp_path) == {("m", "info"): False}
+
+
+def test_prepare_skips_matching_when_the_gate_fails(tmp_path, monkeypatch):
+    from ceilings import experiment
+    from ceilings.agents import make_policy
+
+    failing = CalibrationResult(family_id="reason", model_id="sim-bounded", n=4, baseline_acc=0.9,
+                                chance_acc=0.25, matched_full_acc=1.0, leak_rate=0.0,
+                                refusal_rate=0.0, passed=False, baseline_mean_tokens=100.0)
+    monkeypatch.setattr(calibration, "calibrate", lambda *a, **k: failing)
+    monkeypatch.setattr(calibration, "match_arms",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("matched")))
+    res = experiment.prepare("reason", make_policy("sim-bounded"), tmp_path, n_main=2, n_pilot=2,
+                             difficulty={"d": 2}, levels={"medium": 1.0})
+    assert res["table"]["gate_failed"] and not res["calibration"].passed

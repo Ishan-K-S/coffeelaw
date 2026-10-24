@@ -48,7 +48,8 @@ def prepare(
     """Generate instances, run the calibration gate and cost matching; save all three.
 
     Difficulty precedence: the explicit argument, then the model's searched setting, then the
-    default. Matching uses the first `n_match` pilot instances (all of them by default).
+    default. Matching uses the first `n_match` pilot instances (all of them by default), and is
+    skipped when the gate fails.
     """
     root = Path(root)
     diff = difficulty or chosen_difficulty(root, family, policy.model_id) or \
@@ -71,13 +72,16 @@ def prepare(
         cal = calibration.calibrate(family, pilot, policy, concurrency, log_path=log)
         calibration.save_json({**cal.model_dump(), "difficulty": diff,
                                "harness": policy.options.non_default()}, cal_path)
-    if match:
+    if match and cal.passed:
         table = calibration.match_arms(family, pilot[: n_match or len(pilot)], policy, levels,
                                        concurrency,
                                        cache_path=root / "matching" / f"{tag}.json")
     else:
+        # No matching for a family whose gate failed: it is not evaluable, so its main grid is
+        # not run and matching it would only spend requests.
         table = calibration.unmatched_table(family, policy, diff, cal.baseline_mean_tokens or 0,
                                             levels)
+        table["gate_failed"] = not cal.passed
     calibration.save_json(table, root / "arms" / family / f"{safe_model_dir(policy.model_id)}.json")
     return {"calibration": cal, "table": table, "main": main, "pilot": pilot, "difficulty": diff}
 
