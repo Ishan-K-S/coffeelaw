@@ -6,7 +6,8 @@
 #   scripts/nvidia_env.sh <container-name> <command...>
 #   e.g. scripts/nvidia_env.sh doc_lightning python scripts/doctor.py --model openai/<name>
 #
-# DETACH=1 runs the container in the background. CPUS / MEMORY set the caps (default 1 / 1g).
+# DETACH=1 runs the container in the background; RESTART=1 also restarts it automatically.
+# CPUS / MEMORY set the caps (default 1 / 1g).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 KEY_FILE="${KEY_FILE:-$HOME/.nvidia_api_key}"
@@ -30,5 +31,8 @@ for v in CEILINGS_OPENAI_API_KEY CEILINGS_OPENAI_BASE_URL CEILINGS_OPENAI_PROFIL
 done
 mode=(--rm)
 [ "${DETACH:-0}" = 1 ] && mode=(-d --rm)
+# RESTART=1: detached and restarted by Docker after a crash, a Docker restart or the Mac waking up
+# (every phase resumes from its cache).
+[ "${RESTART:-0}" = 1 ] && mode=(-d --restart unless-stopped)
 exec docker run "${mode[@]}" --name "$name" --cpus "${CPUS:-1}" --memory "${MEMORY:-1g}" \
   "${envs[@]}" -v "$PWD":/work -w /work ceilings:dev "$@"
