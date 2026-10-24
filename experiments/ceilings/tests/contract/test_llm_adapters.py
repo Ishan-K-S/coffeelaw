@@ -304,3 +304,22 @@ def test_probability_diagnostics_and_argmax_fallback():
     assert probability_diagnostics(text, answer, probs, SPACE)["answer_not_argmax"]
     answer, _, how = parse_answer(json.dumps({"probabilities": {"even": 0.3, "odd": 0.7}}), SPACE)
     assert (answer, how) == ("odd", "json_argmax")
+
+
+def test_rate_limit_replies_have_their_own_allowance(monkeypatch, openai_env):
+    monkeypatch.setenv("CEILINGS_OPENAI_RETRIES", "2")
+    monkeypatch.setenv("CEILINGS_OPENAI_RETRIES_429", "5")
+    monkeypatch.setattr("time.sleep", lambda s: None)
+
+    def limited():
+        return urllib.error.HTTPError("https://h/v1/chat/completions", 429, "slow", {}, None)
+
+    good = json.dumps({"probabilities": {"even": 0.6, "odd": 0.4}, "answer": "even"})
+    replies = [limited() for _ in range(4)] + [_openai_reply(good)]
+    monkeypatch.setattr("urllib.request.urlopen", _fake_urlopen(replies, []))
+    res = OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+    assert res.final_answer == "even"  # 4 rate-limit replies, more than RETRIES=2
+    monkeypatch.setattr("urllib.request.urlopen",
+                        _fake_urlopen([limited() for _ in range(5)], []))
+    with pytest.raises(RuntimeError, match="5 rate-limit replies"):
+        OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "low", SPACE, 0)

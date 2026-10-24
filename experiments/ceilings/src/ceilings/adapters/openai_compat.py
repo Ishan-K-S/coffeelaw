@@ -10,8 +10,10 @@ self-hosted servers (vLLM, llama.cpp server, LM Studio, and so on). Model IDs lo
   `--max-cost` can stop a run
 - `CEILINGS_OPENAI_RPM`: requests per minute for this process (default 0: no limit). Free hosted
   tiers count requests, not dollars, so this is the throttle that matters there.
-- `CEILINGS_OPENAI_RETRIES`: attempts per request on 404/429/5xx/network errors (default 8), with
+- `CEILINGS_OPENAI_RETRIES`: attempts per request on 404/5xx/network errors (default 8), with
   exponential backoff capped at 60 s, or the server's `Retry-After` when it sends one
+- `CEILINGS_OPENAI_RETRIES_429`: separate allowance for rate-limit replies (default 80, about an
+  hour of backoff), since those clear once the load drops
 - `CEILINGS_OPENAI_SCHEMA`: how to ask for structured output: `json_schema` (default; falls back
   to `nvext` and then to text on a 400), `nvext` (NVIDIA's `nvext.guided_json`), or `none`
 - `CEILINGS_OPENAI_EXTRA_BODY`: optional JSON merged into every request body, e.g.
@@ -87,6 +89,7 @@ class OpenAICompatAdapter(ChatAdapter):
         self.api_key = api_key if api_key is not None else os.environ.get("CEILINGS_OPENAI_API_KEY")
         self.timeout = timeout
         self.retries = retries or int(os.environ.get("CEILINGS_OPENAI_RETRIES", "8") or 8)
+        self.retries_429 = int(os.environ.get("CEILINGS_OPENAI_RETRIES_429", "80") or 80)
         self.price_in = float(os.environ.get("CEILINGS_OPENAI_PRICE_IN", "0") or 0)
         self.price_out = float(os.environ.get("CEILINGS_OPENAI_PRICE_OUT", "0") or 0)
         self.profile = load_profile(model_name)
@@ -122,7 +125,10 @@ class OpenAICompatAdapter(ChatAdapter):
             headers["Authorization"] = f"Bearer {self.api_key}"
         structured = "response_format" in body or "nvext" in body
         last: Exception | None = None
-        for attempt in range(self.retries):
+        attempt = limited = 0
+        # Rate limiting (429) clears once the load drops, so it has its own, longer allowance
+        # (CEILINGS_OPENAI_RETRIES_429): 20 straight 429s ended a calibration run on GLM.
+        while attempt < self.retries and limited < self.retries_429:
             self._count()
             self.limiter.wait()
             req = urllib.request.Request(f"{self.base_url}/chat/completions",
@@ -135,17 +141,22 @@ class OpenAICompatAdapter(ChatAdapter):
                     raise _SchemaUnsupported() from e
                 # 404 is retried too: NVIDIA's gateway briefly returns it for a model that is
                 # being redeployed (seen on muse-glimmer-30b, served again minutes later).
-                if e.code in (404, 408, 409, 429) or e.code >= 500:
-                    last = e
+                if e.code == 429:
+                    last, limited = e, limited + 1
+                    time.sleep(_backoff(min(limited, 6), e.headers.get("Retry-After")
+                                        if e.headers else None))
+                    continue
+                if e.code in (404, 408, 409) or e.code >= 500:
+                    last, attempt = e, attempt + 1
                     time.sleep(_backoff(attempt, e.headers.get("Retry-After") if e.headers
                                         else None))
                     continue
                 raise
             except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
-                last = e
+                last, attempt = e, attempt + 1
                 time.sleep(_backoff(attempt, None))
-        raise RuntimeError(f"request to {self.base_url} failed after {self.retries} attempts: "
-                           f"{last}")
+        raise RuntimeError(f"request to {self.base_url} failed after {attempt} errors and "
+                           f"{limited} rate-limit replies: {last}")
 
     def _body(self, messages, schema, max_tokens, seed, mode) -> dict:
         body = {"model": self.model_name, "messages": messages, "max_tokens": max_tokens,
