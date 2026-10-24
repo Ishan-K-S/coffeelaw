@@ -153,7 +153,9 @@ def main() -> int:
 
     ceilings(["calibrate", "--model", m, "--n", "30", "--concurrency", "6",
               "--max-requests", "7000"], rpm=6)
-    (STATE / "calibrated" / safe(m)).touch()
+    marker = STATE / "calibrated" / safe(m)
+    if not marker.exists():  # keep the first finish time: the straggler timeout counts from it
+        marker.touch()
     picked = wait_for_selection()
     log(f"selected: {picked}")
     if m not in picked:
