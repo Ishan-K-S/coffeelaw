@@ -49,6 +49,9 @@ ABLATIONS = {  # name: (--harness options, families it can affect)
     "temp0": ("temp=0", FAMILIES),
 }
 ROOT = Path(os.environ.get("ROOT", "data/pilot"))
+# A model whose calibration is still running this many hours after the last other model finished
+# (e.g. stuck behind a provider's per-model rate limit) no longer holds up the others.
+WAIT_HOURS = float(os.environ.get("PILOT_WAIT_HOURS", "2"))
 STATE = ROOT / "state"
 
 
@@ -90,8 +93,37 @@ def gate_passed(model: str, family: str) -> bool:
     return path.exists() and bool(json.loads(path.read_text())["passed"])
 
 
-def selection() -> list[str]:
-    ranked = sorted(PILOT_MODELS, key=lambda m: (-len(passing(m)), PILOT_MODELS.index(m)))
+def calibrated() -> list[str]:
+    return [x for x in PILOT_MODELS if (STATE / "calibrated" / safe(x)).exists()]
+
+
+def wait_for_selection() -> list[str]:
+    """The selected models: read from selection.json if another container already chose, else
+    chosen here once every model is calibrated or the stragglers have had WAIT_HOURS."""
+    path = STATE / "selection.json"
+    while not path.exists():
+        done = calibrated()
+        if len(done) == len(PILOT_MODELS):
+            break
+        newest = max((STATE / "calibrated" / safe(x)).stat().st_mtime for x in done)
+        if time.time() - newest > WAIT_HOURS * 3600:
+            log(f"not calibrated after {WAIT_HOURS} h: {sorted(set(PILOT_MODELS) - set(done))}")
+            break
+        time.sleep(120)
+    if path.exists():
+        return json.loads(path.read_text())["selected"]
+    pool = calibrated()
+    picked = selection(pool)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps({"selected": picked, "from": pool,
+                               "passing": {x: passing(x) for x in pool}}, indent=1))
+    os.replace(tmp, path)
+    return picked
+
+
+def selection(pool: list[str] | None = None) -> list[str]:
+    pool = PILOT_MODELS if pool is None else pool
+    ranked = sorted(pool, key=lambda m: (-len(passing(m)), PILOT_MODELS.index(m)))
     picked, developers = [], set()
     for m in ranked:
         dev = m.split("/")[-2] if m.count("/") >= 1 else m
@@ -122,11 +154,7 @@ def main() -> int:
     ceilings(["calibrate", "--model", m, "--n", "30", "--concurrency", "6",
               "--max-requests", "7000"], rpm=6)
     (STATE / "calibrated" / safe(m)).touch()
-    while not all((STATE / "calibrated" / safe(x)).exists() for x in PILOT_MODELS):
-        time.sleep(120)
-    picked = selection()
-    (STATE / "selection.json").write_text(json.dumps(
-        {"selected": picked, "passing": {x: passing(x) for x in PILOT_MODELS}}, indent=1))
+    picked = wait_for_selection()
     log(f"selected: {picked}")
     if m not in picked:
         log("not selected; done")
