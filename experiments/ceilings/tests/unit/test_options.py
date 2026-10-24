@@ -91,3 +91,21 @@ def test_run_records_store_the_harness(tmp_path):
     assert harness[0] == {"resolved": harness[0]["resolved"]}
     assert harness[2]["answer_order"] == "answer_first"
     assert json.load(open(runs[2]["transcript_ref"]))["harness"] == harness[2]
+
+
+def test_comm_depth_floors_reasoning_in_comm_families_only():
+    comm = tasks.generate_many("comm_parity", 1, "main", n=2)[0]
+    info = tasks.generate_many("info", 1, "main", k=2, p=0.0)[0]
+    pol = _policy("comm_depth=medium")
+    out = run_team(comm, arms.build("baseline", "comm_parity"), pol, 1)
+    call = next(s["call"] for s in out.transcript if s["step"] == "answer")
+    assert len(call["sent"]) == 2  # a reasoning turn, then the answer turn
+    out = run_team(comm, arms.build("K", "comm_parity", "high"), pol, 1)
+    call = next(s["call"] for s in out.transcript if s["step"] == "answer")
+    assert len(call["sent"]) == 2  # K above the floor keeps its own depth
+    out = run_team(info, arms.build("baseline", "info"), pol, 1)
+    call = next(s["call"] for s in out.transcript if s["step"] == "answer")
+    assert len(call["sent"]) == 1  # other families unchanged
+    assert HarnessOptions.parse("comm_depth=medium").non_default() == {"comm_depth": "medium"}
+    with pytest.raises(ValueError):
+        HarnessOptions.parse("comm_depth=deep")

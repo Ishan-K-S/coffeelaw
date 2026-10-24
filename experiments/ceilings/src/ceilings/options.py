@@ -11,6 +11,7 @@ under the default choice shows up as a difference between roots:
 | `shuffle` | `shuffle_options`  | `on`          | `off`: options in their given order            |
 | `temp`    | `temperature`      | adapter's     | e.g. `0`                                       |
 | `reason`  | `reasoning_tokens` | adapter's     | five caps low..max, e.g. `0:128:512:1024:2048` |
+| `comm_depth` | `comm_depth`    | none          | every call in the comm families reasons at least this deep (e.g. `medium`), so the gate tests communication rather than mental arithmetic |
 
 Delta levels (small/medium/large) need no option: `--delta` already selects them.
 
@@ -26,9 +27,11 @@ CHOICES = {
     "probe_policy": ("rotation", "agent"),
     "comm_sender": ("ready", "encode"),
     "answer_order": ("probs_first", "answer_first"),
+    "comm_depth": (None, "low", "medium", "high", "xhigh", "max"),
 }
 KEYS = {"probe": "probe_policy", "sender": "comm_sender", "schema": "answer_order",
-        "shuffle": "shuffle_options", "temp": "temperature", "reason": "reasoning_tokens"}
+        "shuffle": "shuffle_options", "temp": "temperature", "reason": "reasoning_tokens",
+        "comm_depth": "comm_depth"}
 
 
 @dataclass(frozen=True)
@@ -39,6 +42,7 @@ class HarnessOptions:
     shuffle_options: bool = True
     temperature: float | None = None  # None: the adapter's setting (CEILINGS_TEMPERATURE)
     reasoning_tokens: tuple[int, ...] | None = None  # None: the adapter's caps
+    comm_depth: str | None = None  # floor on reasoning depth for every comm-family call
 
     def __post_init__(self) -> None:
         for name, allowed in CHOICES.items():

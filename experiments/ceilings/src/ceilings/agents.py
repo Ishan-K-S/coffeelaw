@@ -88,7 +88,8 @@ class Policy:
         return self.options.non_default() | {"resolved": {
             "probe_policy": self.options.probe_policy, "comm_sender": self.options.comm_sender,
             "answer_order": self.options.answer_order,
-            "shuffle_options": self.options.shuffle_options}}
+            "shuffle_options": self.options.shuffle_options,
+            "comm_depth": self.options.comm_depth}}
 
     def choose_probe(self, view: View, depth: str, seed: int) -> Action:
         raise NotImplementedError

@@ -17,7 +17,7 @@ from dataclasses import dataclass, field, replace
 import numpy as np
 
 from ceilings.agents import Policy, View
-from ceilings.arms import ArmConfig, extra_text
+from ceilings.arms import DEPTH_ORDER, ArmConfig, extra_text
 from ceilings.channel import Channel
 from ceilings.ledger import Ledger
 from ceilings.records import TaskInstance
@@ -71,6 +71,10 @@ def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) 
                  if k in ("probe_policy", "comm_sender")}
     if team_opts:
         cfg = replace(cfg, **team_opts)
+    floor = policy.options.comm_depth
+    if floor and instance.family_id.startswith("comm_") \
+            and DEPTH_ORDER.index(cfg.depth) < DEPTH_ORDER.index(floor):
+        cfg = replace(cfg, depth=floor)
     rng = np.random.default_rng(seed)
     ledger = Ledger()
     transcript: list[dict] = []
