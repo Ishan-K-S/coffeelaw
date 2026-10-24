@@ -110,6 +110,14 @@ def main() -> int:
     m = a.model
     reports = Path("reports/pilot") / safe(m)
     (STATE / "calibrated").mkdir(parents=True, exist_ok=True)
+    (STATE / "done").mkdir(parents=True, exist_ok=True)
+    done = STATE / "done" / safe(m)
+    if done.exists():
+        # Docker's restart policy brings the container back after it exits; stay idle instead
+        # of re-running cached steps until the container is stopped.
+        log("already done; idle")
+        while True:
+            time.sleep(3600)
 
     ceilings(["calibrate", "--model", m, "--n", "30", "--concurrency", "6",
               "--max-requests", "7000"], rpm=6)
@@ -122,6 +130,7 @@ def main() -> int:
     log(f"selected: {picked}")
     if m not in picked:
         log("not selected; done")
+        done.touch()
         return 0
     rpm = 36 / len(picked)
     fams = passing(m)
@@ -167,6 +176,7 @@ def main() -> int:
             ceilings(["check", "--model", m, "--out", str(reports / f"ablation_{name}")],
                      root=root)
     log("pilot steps for this model done")
+    done.touch()
     return 0
 
 
