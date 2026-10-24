@@ -180,7 +180,8 @@ class OpenAICompatAdapter(ChatAdapter):
         choice = (d.get("choices") or [{}])[0]
         message = choice.get("message") or {}
         usage = d.get("usage") or {}
-        text, hidden = split_think(message.get("content") or "")
+        content = message.get("content") or ""
+        text, hidden = split_think(content)
         field_reasoning = message.get("reasoning_content") or message.get("reasoning") or ""
         details = usage.get("completion_tokens_details") or {}
         return ChatReply(
@@ -191,6 +192,7 @@ class OpenAICompatAdapter(ChatAdapter):
             model_served=d.get("model", ""),
             stop=choice.get("finish_reason") or "",
             hidden_reasoning="\n".join(p for p in (field_reasoning, hidden) if p),
+            full_text=content.replace("<think>", "").replace("</think>", "").strip(),
             reasoning_tokens=details.get("reasoning_tokens"),
         )
 

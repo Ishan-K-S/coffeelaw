@@ -323,3 +323,16 @@ def test_rate_limit_replies_have_their_own_allowance(monkeypatch, openai_env):
                         _fake_urlopen([limited() for _ in range(5)], []))
     with pytest.raises(RuntimeError, match="5 rate-limit replies"):
         OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+
+
+def test_reasoning_stage_keeps_text_before_a_closing_think_tag(monkeypatch, openai_env):
+    seen = []
+    stage = _openai_reply("Shift of Gus is D, so Dina is D.</think>A: 0.0\nD: 1.0")
+    good = json.dumps({"probabilities": {"even": 0.1, "odd": 0.9}, "answer": "odd"})
+    monkeypatch.setattr("urllib.request.urlopen",
+                        _fake_urlopen([stage, _openai_reply(good)], seen))
+    res = OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "medium",
+                                            SPACE, 0)
+    passed_on = seen[1][1]["messages"][-2]
+    assert passed_on["role"] == "assistant" and passed_on["content"].startswith("Shift of Gus")
+    assert "D: 1.0" in passed_on["content"] and res.extra["reasoning"].startswith("Shift")

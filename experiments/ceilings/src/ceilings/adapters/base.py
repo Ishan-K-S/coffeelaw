@@ -255,6 +255,10 @@ class ChatReply:
     stop: str = ""
     hidden_reasoning: str = ""  # a reasoning model's own thinking, removed from `text`
     reasoning_tokens: int | None = None  # part of output_tokens, when the provider reports it
+    # Everything the model wrote in its visible reply, think tags dropped but their text kept.
+    # The reasoning stage passes this on: a model that writes "<reasoning></think><result>" in
+    # its reply would otherwise reach the answer turn with only <result> (seen on Nemotron Ultra).
+    full_text: str = ""
 
 
 class RequestCapExceeded(RuntimeError):
@@ -288,7 +292,7 @@ class ChatAdapter(ModelAdapter):
             sent.append([dict(m) for m in convo])
             r = self._chat(convo, None, min(budget, max_tokens), seed)
             in_tok, out_tok = in_tok + r.input_tokens, out_tok + r.output_tokens
-            reasoning = r.text
+            reasoning = r.full_text or r.text
             reasoning_stop = r.stop
             ids.append(r.request_id)
             served.add(r.model_served)
@@ -298,7 +302,7 @@ class ChatAdapter(ModelAdapter):
             final = FINAL_ANSWER_PROMPT if answer_space else FINAL_TEXT_PROMPT
             if r.stop == "length":
                 final = TRUNCATED_NOTE + final
-            convo = convo + [{"role": "assistant", "content": r.text},
+            convo = convo + [{"role": "assistant", "content": reasoning},
                              {"role": "user", "content": final}]
         schema = self.schema_for(answer_space, seed) if answer_space else None
         if schema is not None:
