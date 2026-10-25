@@ -53,6 +53,17 @@ def baseline(family: str) -> ArmConfig:
     return ArmConfig(message_mode=mode)
 
 
+def pooled_depth(depth: str, n_agents: int) -> str:
+    """The shallowest depth whose reasoning-token cap covers `n_agents` agents at `depth`, so the
+    single-agent reference gets A2's pooled reasoning budget in the experiment's currency
+    (tokens). The earlier step-budget mapping gave one agent a 1024-token stage against four
+    A2 agents with none at "low"."""
+    from ceilings.adapters.base import reasoning_tokens
+
+    pooled = n_agents * reasoning_tokens(depth)
+    return next((d for d in DEPTH_ORDER if reasoning_tokens(d) >= pooled), DEPTH_ORDER[-1])
+
+
 def _level_for_budget(steps: int) -> str:
     for level in DEPTH_ORDER:
         if STEP_BUDGET[level] >= steps:
@@ -90,8 +101,7 @@ def build(arm_id: str, family: str, strength: object = None, filler_tokens: int 
             message_budget=200 if not family.startswith("comm_") else 0,
         )
     elif arm_id == "A2_single_ref":
-        steps = 4 * STEP_BUDGET[str(strength)]
-        cfg = replace(base, n_agents=1, samples=1, depth=_level_for_budget(steps))
+        cfg = replace(base, n_agents=1, samples=1, depth=pooled_depth(str(strength), 4))
     elif arm_id == "P1":
         cfg = replace(base, extra_kind="irrelevant")
     elif arm_id == "P2":

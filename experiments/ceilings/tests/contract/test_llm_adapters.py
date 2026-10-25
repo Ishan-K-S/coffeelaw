@@ -248,6 +248,9 @@ def test_parse_probe_and_clean_bits():
     assert parse_probe("I'd probe the power feed.", attrs) == 2
     assert parse_probe("1", attrs) == 1
     assert parse_probe("colour", attrs) == "colour"
+    # prose naming several attributes, or a reply cut off mid-sentence, is not a choice
+    assert parse_probe("The rack, row and power feed results identify host-03.", attrs) != 0
+    assert parse_probe("Row.", attrs) == 1 and parse_probe("**power feed**", attrs) == 2
     assert clean_bits("```\n0 1 1\n```") == "011"
     assert clean_bits("yes") == "yes"
 

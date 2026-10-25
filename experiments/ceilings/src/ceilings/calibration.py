@@ -10,7 +10,7 @@ import numpy as np
 
 from ceilings import arms, tasks
 from ceilings.agents import Policy
-from ceilings.orchestrator import run_team
+from ceilings.orchestrator import effective_config, run_team
 from ceilings.records import CalibrationResult, TaskInstance, content_hash
 from ceilings.runner import pmap
 
@@ -55,7 +55,8 @@ def _log_runs(path: Path, instances, cfg, outcomes, policy) -> None:
                 "instance_id": inst.instance_id, "family": inst.family_id,
                 "difficulty": dict(inst.difficulty), "answer": inst.answer,
                 "model_id": policy.model_id, "harness": policy.harness_record(),
-                "config": cfg.to_dict(), "final_answer": o.final_answer,
+                "config": effective_config(cfg, policy, inst.family_id).to_dict(),
+                "final_answer": o.final_answer,
                 "correct": o.final_answer == inst.answer, "valid": o.valid,
                 "probabilities": o.probabilities, "tokens": o.ledger.total_tokens,
                 "steps": o.transcript}, default=str) + "\n")

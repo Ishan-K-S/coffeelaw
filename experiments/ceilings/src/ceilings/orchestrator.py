@@ -65,16 +65,22 @@ def _view(instance: TaskInstance, name: str, cfg: ArmConfig, answerer: bool) -> 
     )
 
 
-def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) -> TeamOutcome:
-    # Team-level harness options (ceilings.options) override the arm's defaults when set.
+def effective_config(cfg: ArmConfig, policy: Policy, family_id: str) -> ArmConfig:
+    """The arm config after the team-level harness options (ceilings.options) are applied: the
+    one actually run, and the one transcripts record."""
     team_opts = {k: v for k, v in policy.options.non_default().items()
                  if k in ("probe_policy", "comm_sender")}
     if team_opts:
         cfg = replace(cfg, **team_opts)
     floor = policy.options.comm_depth
-    if floor and instance.family_id.startswith("comm_") \
+    if floor and family_id.startswith("comm_") \
             and DEPTH_ORDER.index(cfg.depth) < DEPTH_ORDER.index(floor):
         cfg = replace(cfg, depth=floor)
+    return cfg
+
+
+def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) -> TeamOutcome:
+    cfg = effective_config(cfg, policy, instance.family_id)
     rng = np.random.default_rng(seed)
     ledger = Ledger()
     transcript: list[dict] = []

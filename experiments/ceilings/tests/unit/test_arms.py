@@ -40,12 +40,15 @@ def test_a1_keeps_total_answer_calls():
 
 
 def test_a2_single_ref_has_the_pooled_budget():
-    from ceilings.agents import STEP_BUDGET
+    from ceilings.adapters.base import reasoning_tokens
 
-    a2 = arms.build("A2", "reason", "medium")
-    ref = arms.build("A2_single_ref", "reason", "medium")
-    assert ref.n_agents == 1
-    assert STEP_BUDGET[ref.depth] == a2.n_agents * STEP_BUDGET[a2.depth]
+    for depth in ("low", "medium", "high"):
+        a2 = arms.build("A2", "reason", depth)
+        ref = arms.build("A2_single_ref", "reason", depth)
+        assert ref.n_agents == 1
+        assert reasoning_tokens(ref.depth) >= a2.n_agents * reasoning_tokens(a2.depth)
+    assert arms.build("A2_single_ref", "reason", "low").depth == "low"  # 4 x 0 tokens
+    assert arms.build("A2_single_ref", "reason", "medium").depth == "high"  # 4 x 256 <= 1024
 
 
 def test_irrelevant_text_has_no_answer_tokens():

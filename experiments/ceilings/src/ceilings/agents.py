@@ -239,14 +239,19 @@ SYSTEM = (
 
 
 def parse_probe(text: str, attributes: list) -> object:
-    """Map a reply to an attribute index; anything else is passed through (the tool returns ERR)."""
-    low = (text or "").strip().lower()
-    for i, (name, _, _) in enumerate(attributes):
-        if re.search(rf"\b{re.escape(name.lower())}\b", low):
-            return i
+    """Map a reply to an attribute index: the reply is an attribute name (or its index), or names
+    exactly one attribute. Anything else (prose naming several, a reply cut off mid-sentence) is
+    passed through and the tool returns ERR, so the harness never chooses for the model."""
+    low = (text or "").strip().lower().strip(" .\"'`*")
+    names = [name.lower() for name, _, _ in attributes]
+    if low in names:
+        return names.index(low)
     m = re.fullmatch(r"\s*(\d+)\s*", low)
     if m and int(m.group(1)) < len(attributes):
         return int(m.group(1))
+    named = [i for i, n in enumerate(names) if re.search(rf"\b{re.escape(n)}\b", low)]
+    if len(named) == 1:
+        return named[0]
     return (text or "").strip()[:40]
 
 

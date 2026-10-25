@@ -13,7 +13,7 @@ from ceilings import prereg
 from ceilings.adapters import safe_model_dir
 from ceilings.agents import Policy
 from ceilings.arms import ArmConfig
-from ceilings.orchestrator import run_team
+from ceilings.orchestrator import effective_config, run_team
 from ceilings.records import Refusal, RunRecord, Sweep, TaskInstance, content_hash, now
 
 
@@ -72,7 +72,9 @@ def run_cell(
         Path(ref).write_text(json.dumps({
             "run_id": rid, "instance_id": inst.instance_id, "family": inst.family_id,
             "answer": inst.answer, "model_id": policy.model_id, "delta_level": cell.delta_level,
-            "sweep": cell.sweep, "config": cfg.to_dict(), "harness": policy.harness_record(),
+            "sweep": cell.sweep,
+            "config": effective_config(cfg, policy, inst.family_id).to_dict(),
+            "harness": policy.harness_record(),
             "steps": outcome.transcript,
         }, default=str))
     return RunRecord(
