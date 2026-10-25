@@ -1,0 +1,31 @@
+{
+ "selected": [
+  "openai/nvidia/nemotron-3-ultra-550b-a55b",
+  "openai/stepfun-ai/step-5-preview"
+ ],
+ "from": [
+  "openai/nvidia/nemotron-3-ultra-550b-a55b",
+  "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+  "openai/stepfun-ai/step-5-preview",
+  "openai/nvidia/nemotron-3.5-lightning-30b-a3b",
+  "openai/meta/llama-3.2-11b-vision-instruct"
+ ],
+ "passing": {
+  "openai/nvidia/nemotron-3-ultra-550b-a55b": [
+   "info",
+   "reason"
+  ],
+  "openai/nvidia/nemotron-3.5-super-vl-120b-a12b": [
+   "info",
+   "reason"
+  ],
+  "openai/stepfun-ai/step-5-preview": [
+   "info",
+   "reason"
+  ],
+  "openai/nvidia/nemotron-3.5-lightning-30b-a3b": [
+   "reason"
+  ],
+  "openai/meta/llama-3.2-11b-vision-instruct": []
+ }
+}

@@ -1,0 +1,503 @@
+{
+ "pilot/info__openai_openai_gpt-oss-20b": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.13333333333333333,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ],
+ "pilot/comm_ip__openai_meta_llama-3.2-11b-vision-instruct": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.5666666666666667,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.4,
+   "passed": false
+  }
+ ],
+ "pilot/comm_parity__openai_stepfun-ai_step-5-preview": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.5,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.6,
+   "passed": false
+  }
+ ],
+ "pilot/reason__openai_stepfun-ai_step-5-preview": [
+  {
+   "difficulty": {
+    "d": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.36666666666666664,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ],
+ "pilot/comm_ip__openai_stepfun-ai_step-5-preview": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.5,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.6,
+   "passed": false
+  }
+ ],
+ "pilot/info__openai_google_diffusiongemma-26b-a4b-it": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.13333333333333333,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ],
+ "pilot/reason__openai_nvidia_nemotron-3-ultra-550b-a55b": [
+  {
+   "difficulty": {
+    "d": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.43333333333333335,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ],
+ "pilot/reason__openai_nvidia_nemotron-3.5-lightning-30b-a3b": [
+  {
+   "difficulty": {
+    "d": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.2,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ],
+ "pilot/reason__openai_nvidia_nemotron-3.5-super-vl-120b-a12b": [
+  {
+   "difficulty": {
+    "d": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.36666666666666664,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ],
+ "pilot/info__openai_meta_muse-glimmer-30b": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.13333333333333333,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ],
+ "pilot/comm_parity__openai_nvidia_nemotron-3.5-super-vl-120b-a12b": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.5,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.4666666666666667,
+   "passed": false
+  }
+ ],
+ "pilot/comm_ip__openai_nvidia_nemotron-3-ultra-550b-a55b": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.4666666666666667,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.7333333333333333,
+   "passed": false
+  }
+ ],
+ "pilot/info__openai_nvidia_nemotron-3.5-lightning-30b-a3b": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.23333333333333334,
+   "chance_acc": 0.25,
+   "matched_full_acc": 0.7333333333333333,
+   "passed": false
+  }
+ ],
+ "pilot/reason__openai_meta_llama-3.2-11b-vision-instruct": [
+  {
+   "difficulty": {
+    "d": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.3333333333333333,
+   "chance_acc": 0.25,
+   "matched_full_acc": 0.7666666666666667,
+   "passed": false
+  }
+ ],
+ "pilot/info__openai_z-ai_glm-5.3-flash": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.16666666666666666,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "k": 3,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.06666666666666667,
+   "chance_acc": 0.125,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "k": 3,
+    "p": 0.1
+   },
+   "harness": {},
+   "baseline_acc": 0.2,
+   "chance_acc": 0.125,
+   "matched_full_acc": 0.6,
+   "passed": false
+  }
+ ],
+ "pilot/info__openai_meta_llama-3.2-11b-vision-instruct": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.3,
+   "chance_acc": 0.25,
+   "matched_full_acc": 0.8333333333333334,
+   "passed": false
+  }
+ ],
+ "pilot/info__openai_stepfun-ai_step-5-preview": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.13333333333333333,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "k": 3,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.03333333333333333,
+   "chance_acc": 0.125,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "k": 3,
+    "p": 0.1
+   },
+   "harness": {},
+   "baseline_acc": 0.03333333333333333,
+   "chance_acc": 0.125,
+   "matched_full_acc": 0.6333333333333333,
+   "passed": false
+  }
+ ],
+ "pilot/comm_parity__openai_nvidia_nemotron-3-ultra-550b-a55b": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.4666666666666667,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.5333333333333333,
+   "passed": false
+  }
+ ],
+ "pilot/info__openai_nvidia_nemotron-3-ultra-550b-a55b": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.13333333333333333,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "k": 3,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.03333333333333333,
+   "chance_acc": 0.125,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "k": 3,
+    "p": 0.1
+   },
+   "harness": {},
+   "baseline_acc": 0.1,
+   "chance_acc": 0.125,
+   "matched_full_acc": 0.7333333333333333,
+   "passed": false
+  }
+ ],
+ "pilot/info__openai_nvidia_nemotron-3.5-super-vl-120b-a12b": [
+  {
+   "difficulty": {
+    "k": 2,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.23333333333333334,
+   "chance_acc": 0.25,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "k": 3,
+    "p": 0.0
+   },
+   "harness": {},
+   "baseline_acc": 0.1,
+   "chance_acc": 0.125,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "k": 3,
+    "p": 0.1
+   },
+   "harness": {},
+   "baseline_acc": 0.2,
+   "chance_acc": 0.125,
+   "matched_full_acc": 0.7333333333333333,
+   "passed": false
+  }
+ ],
+ "pilot/comm_parity__openai_meta_llama-3.2-11b-vision-instruct": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.5333333333333333,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.5333333333333333,
+   "passed": false
+  }
+ ],
+ "pilot/comm_ip__openai_nvidia_nemotron-3.5-lightning-30b-a3b": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.3,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.6,
+   "passed": false
+  }
+ ],
+ "pilot/comm_parity__openai_nvidia_nemotron-3.5-lightning-30b-a3b": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.5666666666666667,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.5666666666666667,
+   "passed": false
+  }
+ ],
+ "pilot/comm_ip__openai_nvidia_nemotron-3.5-super-vl-120b-a12b": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {},
+   "baseline_acc": 0.6,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.6,
+   "passed": false
+  }
+ ],
+ "pilot/prepare_gate/info__openai_nvidia_nemotron-3-ultra-550b-a55b": {
+  "n": 30,
+  "baseline_acc": 0.16666666666666666,
+  "chance_acc": 0.125,
+  "matched_full_acc": 1.0,
+  "passed": true
+ },
+ "pilot/prepare_gate/reason__openai_stepfun-ai_step-5-preview": {
+  "n": 30,
+  "baseline_acc": 0.26666666666666666,
+  "chance_acc": 0.25,
+  "matched_full_acc": 1.0,
+  "passed": true
+ },
+ "pilot/prepare_gate/reason__openai_nvidia_nemotron-3-ultra-550b-a55b": {
+  "n": 30,
+  "baseline_acc": 0.6,
+  "chance_acc": 0.25,
+  "matched_full_acc": 1.0,
+  "passed": false
+ },
+ "pilot/prepare_gate/info__openai_stepfun-ai_step-5-preview": {
+  "n": 30,
+  "baseline_acc": 0.13333333333333333,
+  "chance_acc": 0.125,
+  "matched_full_acc": 1.0,
+  "passed": true
+ },
+ "pilot_comm_reason/comm_parity__openai_nvidia_nemotron-3.5-super-vl-120b-a12b": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {
+    "comm_depth": "medium"
+   },
+   "baseline_acc": 0.4666666666666667,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.9666666666666667,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "n": 3
+   },
+   "harness": {
+    "comm_depth": "medium"
+   },
+   "baseline_acc": 0.5333333333333333,
+   "chance_acc": 0.5,
+   "matched_full_acc": 0.9333333333333333,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "n": 4
+   },
+   "harness": {
+    "comm_depth": "medium"
+   },
+   "baseline_acc": 0.6666666666666666,
+   "chance_acc": 0.5,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "n": 6
+   },
+   "harness": {
+    "comm_depth": "medium"
+   },
+   "baseline_acc": 0.3,
+   "chance_acc": 0.5,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "n": 8
+   },
+   "harness": {
+    "comm_depth": "medium"
+   },
+   "baseline_acc": 0.43333333333333335,
+   "chance_acc": 0.5,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ],
+ "pilot_comm_reason/comm_ip__openai_nvidia_nemotron-3.5-super-vl-120b-a12b": [
+  {
+   "difficulty": {
+    "n": 2
+   },
+   "harness": {
+    "comm_depth": "medium"
+   },
+   "baseline_acc": 0.5666666666666667,
+   "chance_acc": 0.5,
+   "matched_full_acc": 1.0,
+   "passed": true
+  },
+  {
+   "difficulty": {
+    "n": 3
+   },
+   "harness": {
+    "comm_depth": "medium"
+   },
+   "baseline_acc": 0.5666666666666667,
+   "chance_acc": 0.5,
+   "matched_full_acc": 1.0,
+   "passed": true
+  }
+ ]
+}

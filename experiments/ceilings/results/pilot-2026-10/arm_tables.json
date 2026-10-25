@@ -1,0 +1,250 @@
+{
+ "info/openai/stepfun-ai/step-5-preview": {
+  "baseline_mean_tokens": 1738.5,
+  "gate_failed": false,
+  "medium": {
+   "E": {
+    "strength": 16,
+    "filler_tokens": 169,
+    "added": 1743.0,
+    "target": 1738,
+    "matched": true
+   },
+   "K": {
+    "strength": "medium",
+    "filler_tokens": 0,
+    "added": 3495.5,
+    "target": 1738,
+    "matched": false
+   },
+   "M": {
+    "strength": 200,
+    "filler_tokens": 119,
+    "added": 1806.3333333333333,
+    "target": 1738,
+    "matched": true
+   },
+   "A1": {
+    "strength": null,
+    "filler_tokens": 1431,
+    "added": 1735.5,
+    "target": 1738,
+    "matched": true
+   },
+   "A2": {
+    "strength": "low",
+    "filler_tokens": 644,
+    "added": 1703.3333333333333,
+    "target": 1738,
+    "matched": true
+   },
+   "A2_single_ref": {
+    "strength": "low",
+    "filler_tokens": 2529,
+    "added": 1734.6666666666667,
+    "target": 1738,
+    "matched": true
+   },
+   "P1": {
+    "strength": null,
+    "filler_tokens": 409,
+    "added": 1715.0,
+    "target": 1738,
+    "matched": true
+   },
+   "P2": {
+    "strength": null,
+    "filler_tokens": 364,
+    "added": 1747.1666666666667,
+    "target": 1738,
+    "matched": true
+   }
+  }
+ },
+ "info/openai/nvidia/nemotron-3-ultra-550b-a55b": {
+  "baseline_mean_tokens": 1945.8333333333333,
+  "gate_failed": false,
+  "medium": {
+   "E": {
+    "strength": 16,
+    "filler_tokens": 196,
+    "added": 1948.8333333333333,
+    "target": 1946,
+    "matched": true
+   },
+   "K": {
+    "strength": "medium",
+    "filler_tokens": 0,
+    "added": 3436.0,
+    "target": 1946,
+    "matched": false
+   },
+   "M": {
+    "strength": 200,
+    "filler_tokens": 174,
+    "added": 1928.6666666666667,
+    "target": 1946,
+    "matched": true
+   },
+   "A1": {
+    "strength": null,
+    "filler_tokens": 1388,
+    "added": 1948.8333333333333,
+    "target": 1946,
+    "matched": true
+   },
+   "A2": {
+    "strength": "low",
+    "filler_tokens": 1427,
+    "added": 1999.0,
+    "target": 1946,
+    "matched": true
+   },
+   "A2_single_ref": {
+    "strength": "low",
+    "filler_tokens": 2432,
+    "added": 1945.6666666666667,
+    "target": 1946,
+    "matched": true
+   },
+   "P1": {
+    "strength": null,
+    "filler_tokens": 422,
+    "added": 1967.5,
+    "target": 1946,
+    "matched": true
+   },
+   "P2": {
+    "strength": null,
+    "filler_tokens": 346,
+    "added": 1941.3333333333333,
+    "target": 1946,
+    "matched": true
+   }
+  }
+ },
+ "reason/openai/stepfun-ai/step-5-preview": {
+  "baseline_mean_tokens": 867.6666666666666,
+  "gate_failed": false,
+  "medium": {
+   "E": {
+    "strength": 8,
+    "filler_tokens": 74,
+    "added": 851.5,
+    "target": 868,
+    "matched": true
+   },
+   "K": {
+    "strength": "medium",
+    "filler_tokens": 0,
+    "added": 2880.1666666666665,
+    "target": 868,
+    "matched": false
+   },
+   "M": {
+    "strength": 200,
+    "filler_tokens": 106,
+    "added": 781.3333333333334,
+    "target": 868,
+    "matched": false
+   },
+   "A1": {
+    "strength": null,
+    "filler_tokens": 723,
+    "added": 862.3333333333334,
+    "target": 868,
+    "matched": true
+   },
+   "A2": {
+    "strength": "low",
+    "filler_tokens": 142,
+    "added": 881.1666666666666,
+    "target": 868,
+    "matched": true
+   },
+   "A2_single_ref": {
+    "strength": "low",
+    "filler_tokens": 1268,
+    "added": 869.1666666666666,
+    "target": 868,
+    "matched": true
+   },
+   "P1": {
+    "strength": null,
+    "filler_tokens": 217,
+    "added": 881.1666666666666,
+    "target": 868,
+    "matched": true
+   },
+   "P2": {
+    "strength": null,
+    "filler_tokens": 182,
+    "added": 865.1666666666666,
+    "target": 868,
+    "matched": true
+   }
+  }
+ },
+ "reason/openai/nvidia/nemotron-3-ultra-550b-a55b": {
+  "baseline_mean_tokens": 865.5,
+  "gate_failed": true,
+  "medium": {
+   "E": {
+    "strength": 8,
+    "filler_tokens": 0,
+    "added": null,
+    "target": 866,
+    "matched": false
+   },
+   "K": {
+    "strength": "high",
+    "filler_tokens": 0,
+    "added": null,
+    "target": 866,
+    "matched": false
+   },
+   "M": {
+    "strength": 100,
+    "filler_tokens": 0,
+    "added": null,
+    "target": 866,
+    "matched": false
+   },
+   "A1": {
+    "strength": null,
+    "filler_tokens": 0,
+    "added": null,
+    "target": 866,
+    "matched": false
+   },
+   "A2": {
+    "strength": "medium",
+    "filler_tokens": 0,
+    "added": null,
+    "target": 866,
+    "matched": false
+   },
+   "A2_single_ref": {
+    "strength": "medium",
+    "filler_tokens": 0,
+    "added": null,
+    "target": 866,
+    "matched": false
+   },
+   "P1": {
+    "strength": null,
+    "filler_tokens": 216,
+    "added": null,
+    "target": 866,
+    "matched": false
+   },
+   "P2": {
+    "strength": null,
+    "filler_tokens": 216,
+    "added": null,
+    "target": 866,
+    "matched": false
+   }
+  }
+ }
+}

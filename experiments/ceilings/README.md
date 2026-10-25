@@ -9,6 +9,7 @@ resource budgets.
 - Paper and formal proofs: [../../paper/](../../paper/), [../../formal_proofs/](../../formal_proofs/)
 - Notebook: [notebooks/ceilings_small_run.ipynb](notebooks/ceilings_small_run.ipynb)
 - Local test-run findings: [TESTING.md](TESTING.md)
+- Free-tier pilot on NVIDIA build (Oct 2026): [PILOT_RESULTS.md](PILOT_RESULTS.md)
 
 The fork is public: <https://github.com/Ishan-K-S/coffeelaw>; this project lives in
 `experiments/ceilings/`. The rest of the repository is the upstream paper code from

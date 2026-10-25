@@ -1,0 +1,429 @@
+[
+  {
+    "prediction_id": "H1",
+    "statement": "On information-bound tasks, E helps; K, M, A1, P1 and P2 do not",
+    "paper_source": "Thm 1, Cor 1",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": "inconclusive",
+        "openai/stepfun-ai/step-5-preview": "inconclusive"
+      },
+      "reasons": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": [
+          "K on info (p_equiv)",
+          "M on info (p_equiv)",
+          "A1 on info (p_equiv)",
+          "P1 on info (p_equiv)",
+          "P2 on info (p_equiv)"
+        ],
+        "openai/stepfun-ai/step-5-preview": [
+          "K on info (p_equiv)",
+          "M on info (p_equiv)",
+          "A1 on info (p_equiv)",
+          "P1 on info (p_equiv)",
+          "P2 on info (p_equiv)"
+        ]
+      },
+      "min_n": 30,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H2",
+    "statement": "On reasoning-bound tasks, K helps; E (restated evidence), M, A1, P1, P2 do not",
+    "paper_source": "Thm 2, Cor 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": "not evaluable",
+        "openai/stepfun-ai/step-5-preview": "inconclusive"
+      },
+      "reasons": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": [
+          "calibration gate failed for reason",
+          "missing arm A1 vs baseline on reason",
+          "missing arm E vs baseline on reason",
+          "missing arm K vs baseline on reason",
+          "missing arm M vs baseline on reason",
+          "missing arm P1 vs baseline on reason",
+          "missing arm P2 vs baseline on reason"
+        ],
+        "openai/stepfun-ai/step-5-preview": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ]
+      },
+      "min_n": 30,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H3",
+    "statement": "On communication-bound tasks, M helps; K, same-kind E, A1, P1, P2 do not",
+    "paper_source": "Thm 5",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "not evaluable",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": "not evaluable",
+        "openai/stepfun-ai/step-5-preview": "not evaluable"
+      },
+      "reasons": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": [
+          "calibration gate failed for comm_ip",
+          "calibration gate failed for comm_parity",
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ],
+        "openai/stepfun-ai/step-5-preview": [
+          "calibration gate failed for comm_ip",
+          "calibration gate failed for comm_parity",
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ]
+      },
+      "min_n": 30,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H4",
+    "statement": "A1 (more agents, same totals) gives no gain on any family",
+    "paper_source": "Cor 1, Thm 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": "inconclusive",
+        "openai/stepfun-ai/step-5-preview": "contradicted"
+      },
+      "reasons": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": [
+          "A1 on info (p_equiv)"
+        ],
+        "openai/stepfun-ai/step-5-preview": [
+          "A1 vs baseline on reason"
+        ]
+      },
+      "min_n": 30,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H5",
+    "statement": "A2 gain equals the gain from the same compute given to one agent",
+    "paper_source": "Thm 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": "inconclusive",
+        "openai/stepfun-ai/step-5-preview": "contradicted"
+      },
+      "reasons": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": [
+          "A2 on info (p_equiv)"
+        ],
+        "openai/stepfun-ai/step-5-preview": [
+          "A2 vs A2_single_ref on reason"
+        ]
+      },
+      "min_n": 30,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H6",
+    "statement": "Information-bound error never falls significantly below the Fano floor",
+    "paper_source": "Cor 2",
+    "test": "binomial floor check on powered cells, Holm",
+    "verdict": "supported",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "cells": [
+        {
+          "model": "openai/nvidia/nemotron-3-ultra-550b-a55b",
+          "T": 0,
+          "p": 0.0,
+          "n": 20,
+          "error": 0.9,
+          "floor": 0.7124143742160444,
+          "powered": true,
+          "p_below": 0.9897096375900457,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3-ultra-550b-a55b",
+          "T": 0,
+          "p": 0.1,
+          "n": 20,
+          "error": 0.85,
+          "floor": 0.7124143742160444,
+          "powered": true,
+          "p_below": 0.9545959795829618,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3-ultra-550b-a55b",
+          "T": 1,
+          "p": 0.0,
+          "n": 20,
+          "error": 0.75,
+          "floor": 0.3562071871080222,
+          "powered": true,
+          "p_below": 0.9999360952001574,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3-ultra-550b-a55b",
+          "T": 1,
+          "p": 0.1,
+          "n": 20,
+          "error": 0.75,
+          "floor": 0.5232667882665172,
+          "powered": true,
+          "p_below": 0.9896329231297264,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3-ultra-550b-a55b",
+          "T": 2,
+          "p": 0.0,
+          "n": 20,
+          "error": 0.4,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3-ultra-550b-a55b",
+          "T": 2,
+          "p": 0.1,
+          "n": 20,
+          "error": 0.6,
+          "floor": 0.33411920231699005,
+          "powered": true,
+          "p_below": 0.9961873329009596,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3-ultra-550b-a55b",
+          "T": 4,
+          "p": 0.0,
+          "n": 20,
+          "error": 0.0,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3-ultra-550b-a55b",
+          "T": 4,
+          "p": 0.1,
+          "n": 20,
+          "error": 0.15,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/stepfun-ai/step-5-preview",
+          "T": 0,
+          "p": 0.0,
+          "n": 20,
+          "error": 0.85,
+          "floor": 0.7124143742160444,
+          "powered": true,
+          "p_below": 0.9545959795829618,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/stepfun-ai/step-5-preview",
+          "T": 0,
+          "p": 0.1,
+          "n": 20,
+          "error": 0.85,
+          "floor": 0.7124143742160444,
+          "powered": true,
+          "p_below": 0.9545959795829618,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/stepfun-ai/step-5-preview",
+          "T": 1,
+          "p": 0.0,
+          "n": 20,
+          "error": 0.75,
+          "floor": 0.3562071871080222,
+          "powered": true,
+          "p_below": 0.9999360952001574,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/stepfun-ai/step-5-preview",
+          "T": 1,
+          "p": 0.1,
+          "n": 20,
+          "error": 0.7,
+          "floor": 0.5232667882665172,
+          "powered": true,
+          "p_below": 0.9665830592494342,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/stepfun-ai/step-5-preview",
+          "T": 2,
+          "p": 0.0,
+          "n": 20,
+          "error": 0.55,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/stepfun-ai/step-5-preview",
+          "T": 2,
+          "p": 0.1,
+          "n": 20,
+          "error": 0.7,
+          "floor": 0.33411920231699005,
+          "powered": true,
+          "p_below": 0.999827533391649,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/stepfun-ai/step-5-preview",
+          "T": 4,
+          "p": 0.0,
+          "n": 20,
+          "error": 0.0,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/stepfun-ai/step-5-preview",
+          "T": 4,
+          "p": 0.1,
+          "n": 20,
+          "error": 0.45,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        }
+      ],
+      "per_model": {
+        "openai/nvidia/nemotron-3-ultra-550b-a55b": "supported",
+        "openai/stepfun-ai/step-5-preview": "supported"
+      },
+      "reasons": {
+        "all": []
+      },
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H7",
+    "statement": "Inner-product splits stay flat then rise; parity splits jump at 1 bit",
+    "paper_source": "Thm 5",
+    "test": "change-point vs linear (instance-grouped CV) + slope test",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {},
+      "reasons": {
+        "openai/stepfun-ai/step-5-preview/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/nvidia/nemotron-3.5-super-vl-120b-a12b/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/meta/llama-3.2-11b-vision-instruct/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/meta/llama-3.2-11b-vision-instruct/comm_parity": [
+          "calibration gate failed"
+        ],
+        "openai/stepfun-ai/step-5-preview/comm_parity": [
+          "calibration gate failed"
+        ],
+        "openai/nvidia/nemotron-3.5-super-vl-120b-a12b/comm_parity": [
+          "calibration gate failed"
+        ],
+        "openai/nvidia/nemotron-3-ultra-550b-a55b/comm_parity": [
+          "calibration gate failed"
+        ],
+        "openai/nvidia/nemotron-3.5-lightning-30b-a3b/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/nvidia/nemotron-3.5-lightning-30b-a3b/comm_parity": [
+          "calibration gate failed"
+        ],
+        "openai/nvidia/nemotron-3-ultra-550b-a55b/comm_ip": [
+          "calibration gate failed"
+        ]
+      }
+    }
+  }
+]
