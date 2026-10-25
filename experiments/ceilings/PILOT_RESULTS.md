@@ -45,7 +45,7 @@ outputs are in [results/pilot-2026-10/](results/pilot-2026-10/); raw runs and tr
 | nemotron-3.5-super-vl | pass (k=3) | pass (d=2) | fail | fail |
 | nemotron-3.5-lightning | fail (full fix 0.73) | pass (d=2) | fail | fail |
 | llama-3.2-11b | fail | fail | fail | fail |
-| super-vl, comm with a reasoning stage | | | **pass up to n=8** (full fix 0.93–1.00) | **pass at n=2, 3** (1.00); search continuing |
+| super-vl, comm with a reasoning stage | | | **pass up to n=8** (full fix 0.93–1.00) | **pass at n=2, 3, 4** (1.00); n=6 interrupted, resumed in a follow-up |
 
 - **Communication gates fail because of reasoning, not communication.** With B's correct message
   in hand, agent A (answering with no reasoning stage) repeats B's bit as the answer in 80–94% of
@@ -54,6 +54,10 @@ outputs are in [results/pilot-2026-10/](results/pilot-2026-10/); raw runs and tr
   run should do this.
 - **Noisy probes (p = 0.1) fail for every model** (full fix 0.60–0.73) although a majority vote
   over the logged reports is right 30/30: again an aggregation (reasoning) failure.
+- **comm_ip's search stopped at n=6** when the calibration process reached its 8,000-request
+  cap: it started before 429 replies stopped counting against the cap, so rate-limit retries used
+  it up. The comm-with-reasoning variant therefore went on with comm_parity only; a follow-up
+  resumes comm_ip from its cached settings and runs its `prepare` and main grid.
 - **The n = 30 gate is loose.** Its tolerance passes any baseline from about 0.05 to 0.45 at chance
   0.25; Ultra's reason gate passed in the search at 13/30 and failed on fresh instances at 18/30.
 
