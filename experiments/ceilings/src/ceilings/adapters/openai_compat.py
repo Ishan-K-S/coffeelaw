@@ -12,6 +12,8 @@ self-hosted servers (vLLM, llama.cpp server, LM Studio, and so on). Model IDs lo
   tiers count requests, not dollars, so this is the throttle that matters there.
 - `CEILINGS_OPENAI_RETRIES`: attempts per request on 404/5xx/network errors (default 8), with
   exponential backoff capped at 60 s, or the server's `Retry-After` when it sends one
+- `CEILINGS_OPENAI_TIMEOUT`: seconds to wait for one reply before retrying (default 600); a
+  flaky endpoint that sometimes hangs is cheaper with a short timeout (NVIDIA build: 120)
 - `CEILINGS_OPENAI_RETRIES_429`: separate allowance for rate-limit replies (default 80, about an
   hour of backoff), since those clear once the load drops
 - `CEILINGS_OPENAI_SCHEMA`: how to ask for structured output: `json_schema` (default; falls back
@@ -79,7 +81,7 @@ class RateLimiter:
 
 class OpenAICompatAdapter(ChatAdapter):
     def __init__(self, model_name: str, base_url: str | None = None, api_key: str | None = None,
-                 timeout: float = 600.0, retries: int | None = None) -> None:
+                 timeout: float | None = None, retries: int | None = None) -> None:
         self.model_name = model_name
         self.model_id = f"openai/{model_name}"
         base = base_url or os.environ.get("CEILINGS_OPENAI_BASE_URL")
@@ -87,7 +89,7 @@ class OpenAICompatAdapter(ChatAdapter):
             raise ValueError("set CEILINGS_OPENAI_BASE_URL (for example https://host/v1)")
         self.base_url = base.rstrip("/")
         self.api_key = api_key if api_key is not None else os.environ.get("CEILINGS_OPENAI_API_KEY")
-        self.timeout = timeout
+        self.timeout = timeout or float(os.environ.get("CEILINGS_OPENAI_TIMEOUT", "600") or 600)
         self.retries = retries or int(os.environ.get("CEILINGS_OPENAI_RETRIES", "8") or 8)
         self.retries_429 = int(os.environ.get("CEILINGS_OPENAI_RETRIES_429", "80") or 80)
         self.price_in = float(os.environ.get("CEILINGS_OPENAI_PRICE_IN", "0") or 0)

@@ -351,3 +351,10 @@ def test_truncated_reply_and_top_ties_are_parse_failures(monkeypatch, openai_env
     assert res.final_answer is None and res.extra["parse"] == "failed"
     tie = json.dumps({"probabilities": {"even": 0.5, "odd": 0.5}})
     assert parse_answer(tie, SPACE)[0] is None and parse_answer(tie, SPACE)[2] == "failed"
+
+
+def test_timeout_comes_from_the_environment(monkeypatch, openai_env):
+    monkeypatch.setenv("CEILINGS_OPENAI_TIMEOUT", "120")
+    assert OpenAICompatAdapter("m").timeout == 120.0
+    monkeypatch.delenv("CEILINGS_OPENAI_TIMEOUT")
+    assert OpenAICompatAdapter("m").timeout == 600.0
