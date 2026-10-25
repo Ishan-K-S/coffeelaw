@@ -167,7 +167,8 @@ def main() -> int:
     ceilings(["prepare", "--model", m, "--family", ",".join(fams), "--n-main", "30",
               "--n-pilot", "30", "--n-match", "6", "--delta", "medium", "--concurrency", "6",
               "--max-requests", "12000"], rpm=rpm)
-    run_fams = [f for f in fams if gate_passed(m, f)]
+    run_fams = [f for f in fams if gate_passed(m, f)
+                and (ROOT / "arms" / f / f"{safe(m)}.json").exists()]
     log(f"gate passed after prepare: {run_fams}")
     if run_fams:
         ceilings(["run", "--model", m, "--family", ",".join(run_fams), "--delta", "medium",

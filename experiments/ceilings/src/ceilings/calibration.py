@@ -205,6 +205,19 @@ class _Measurements:
         return self.data[key]
 
 
+def refine_filler(filler: int, added: float, base_natural: float, target: float,
+                  samples: int) -> int:
+    """Next filler size by proportional correction. Filler is read once per answer call, so a
+    token of filler costs about `samples` tokens; when the measured slope is not plausibly
+    positive (noisy arms such as A2 can cost less with more filler), that nominal slope is used,
+    and the result is capped at 4x the target. An unguarded slope near zero once asked for a
+    ~250-million-token filler and exhausted memory."""
+    slope = (added - base_natural) / max(1, filler)
+    if slope < 0.25 * max(1, samples):
+        slope = float(max(1, samples))
+    return int(min(4 * target, max(0, filler + (target - added) / slope)))
+
+
 def match_arms(
     family: str,
     instances: list[TaskInstance],
@@ -264,8 +277,7 @@ def match_arms(
                 added = cost_of(cfg)
                 if abs(added - target) <= MATCH_TOLERANCE * target or filler == 0:
                     break
-                per_token = max(1e-6, (added - base_natural) / max(1, filler))
-                filler = max(0, int(filler + (target - added) / per_token))
+                filler = refine_filler(filler, added, base_natural, target, cfg.samples)
             table["arms"][arm_id][lvl] = {
                 "strength": chosen,
                 "filler_tokens": filler,

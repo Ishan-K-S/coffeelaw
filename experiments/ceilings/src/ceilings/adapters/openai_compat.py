@@ -143,6 +143,8 @@ class OpenAICompatAdapter(ChatAdapter):
                 # being redeployed (seen on muse-glimmer-30b, served again minutes later).
                 if e.code == 429:
                     last, limited = e, limited + 1
+                    with self._count_lock:
+                        self.requests -= 1  # a rate-limited reply did no work; not capped
                     time.sleep(_backoff(min(limited, 6), e.headers.get("Retry-After")
                                         if e.headers else None))
                     continue

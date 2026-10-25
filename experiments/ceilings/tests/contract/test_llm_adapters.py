@@ -174,9 +174,10 @@ def test_openai_compat_retry_after_and_request_cap(monkeypatch, openai_env):
     monkeypatch.setattr("urllib.request.urlopen",
                         _fake_urlopen([limited, gone, _openai_reply(good)], []))
     adapter = OpenAICompatAdapter("m")
-    adapter.max_requests = 3
+    adapter.max_requests = 2
     res = adapter.complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
-    assert res.final_answer == "even" and sleeps[0] == 7.0 and adapter.requests == 3
+    # the 429 is not counted against the cap; the 404 and the success are
+    assert res.final_answer == "even" and sleeps[0] == 7.0 and adapter.requests == 2
     with pytest.raises(RequestCapExceeded):
         adapter.complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
 

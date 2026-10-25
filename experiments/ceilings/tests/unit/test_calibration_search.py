@@ -158,3 +158,11 @@ def test_prepare_skips_matching_when_the_gate_fails(tmp_path, monkeypatch):
     res = experiment.prepare("reason", make_policy("sim-bounded"), tmp_path, n_main=2, n_pilot=2,
                              difficulty={"d": 2}, levels={"medium": 1.0})
     assert res["table"]["gate_failed"] and not res["calibration"].passed
+
+
+def test_refine_filler_survives_a_negative_slope():
+    # A2 measured +712 with no filler and +617 with 155 tokens of filler (noise).
+    nxt = calibration.refine_filler(155, 617.0, 712.0, 868.0, samples=1)
+    assert 0 < nxt <= 4 * 868 and nxt == int(155 + (868 - 617) / 1.0)
+    assert calibration.refine_filler(100, 500.0, 100.0, 900.0, samples=4) == 200  # slope 4
+    assert calibration.refine_filler(10, -1e5, 0.0, 100.0, samples=1) == 400  # capped
