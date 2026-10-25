@@ -105,6 +105,8 @@ def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) 
             if cfg.probe_policy == "agent":
                 action = policy.choose_probe(views[prober], cfg.depth, call_seed())
                 charge(prober, action.usage)
+                if action.log.get("request_id"):
+                    request_ids.append(action.log["request_id"])
                 query, log = action.value, action.log
             else:
                 query, log = t % instance.payload["public"]["k"], None
@@ -129,6 +131,8 @@ def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) 
                 action = policy.compose(views[sender], receiver, cfg.depth, cfg.message_mode,
                                         cfg.message_budget, retry, call_seed())
                 charge(sender, action.usage)
+                if action.log.get("request_id"):
+                    request_ids.append(action.log["request_id"])
                 calls.append(action.log)
                 return action.value
 

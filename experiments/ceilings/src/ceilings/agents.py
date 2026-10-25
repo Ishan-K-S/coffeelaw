@@ -282,7 +282,7 @@ class LLMPolicy(Policy):
 
     @staticmethod
     def _log(kind: str, messages: list[dict], res: AdapterResult, value) -> dict:
-        return {"kind": kind, "prompt": messages, "raw": res.text,
+        return {"kind": kind, "prompt": messages, "raw": res.text, "request_id": res.request_id,
                 "reasoning": res.extra.get("reasoning", ""),
                 "reasoning_stop": res.extra.get("reasoning_stop"), "parse": res.extra.get("parse"),
                 "stop": res.extra.get("stop"), "value": value,

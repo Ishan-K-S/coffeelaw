@@ -130,3 +130,9 @@ def test_transcripts_record_every_turn_sent():
     assert call["sent"][0][-1]["content"].endswith("in the next turn.")
     final = call["sent"][1][-1]["content"]
     assert "in the required format." in final and "Reply with only a JSON object" in final
+
+
+def test_request_ids_cover_message_and_probe_calls():
+    inst = tasks.generate_many("comm_ip", 1, "main", n=4)[0]
+    out = run_team(inst, arms.build("M", "comm_ip", 4), _policy(), 2)
+    assert len(out.request_ids) == 5  # one message call, four answer calls
