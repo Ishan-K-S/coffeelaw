@@ -23,7 +23,7 @@ outputs are in [results/pilot-2026-10/](results/pilot-2026-10/); raw runs and tr
 |---|---|---|---|
 | nemotron-3-ultra-550b-a55b | NVIDIA | yes | yes (info) |
 | step-5-preview | StepFun | yes | yes (info, reason) |
-| nemotron-3.5-super-vl-120b-a12b | NVIDIA | yes | comm-with-reasoning variant |
+| nemotron-3.5-super-vl-120b-a12b | NVIDIA | yes | comm_parity with reasoning (n = 20, unmatched) |
 | nemotron-3.5-lightning-30b-a3b | NVIDIA | yes | no |
 | llama-3.2-11b-vision-instruct | Meta | yes | no |
 | glm-5.3-flash | Z.ai | info only (rate-limited out) | no |
@@ -90,7 +90,7 @@ Gain over baseline with a 95% paired bootstrap interval ([gain_table.csv](result
 - **Verdicts** ([predictions.json](results/pilot-2026-10/predictions.json)), with the pilot's
   n = 30 as the minimum and 2 models required to agree: H1 inconclusive (the equivalence tests need
   more data), H2 inconclusive (one evaluable model), H3 not evaluable (no comm gate passed in the
-  main pilot), H4 inconclusive, H5 inconclusive (see below), **H6 supported** (no cell is below its
+  main pilot; see the communication section for a first look), H4 inconclusive, H5 inconclusive (see below), **H6 supported** (no cell is below its
   Fano floor; both models), H7 inconclusive.
 - **H5 cannot be read from this pilot.** Step 5's A2 beats its single-agent reference on reason
   (+0.80 vs +0.13), which the analysis scores as "contradicted" for that model. The reference got
@@ -98,6 +98,32 @@ Gain over baseline with a 95% paired bootstrap interval ([gain_table.csv](result
   target with neutral filler, while A2's relay messages are themselves reasoning. The reference
   never received the Δ compute the prediction is about. The paid run should cost-match the
   reference with reasoning tokens, not filler.
+
+## Communication with a reasoning stage (Nemotron Super VL, comm_parity, n = 20)
+
+Every call in the communication families gets a medium reasoning stage
+(`--harness comm_depth=medium`). The gate passed on 30 fresh instances at n = 8 bits (baseline
+0.57 vs chance 0.50, full fix 0.97). The grid was trimmed to fit the free tier: 20 instances,
+7 arms (no A2 or A2_single_ref), and **arms not cost-matched** (default strengths; P1 and P2 carry
+much more text than the others), so read effect directions, not equivalence
+([gains](results/pilot-2026-10/comm_parity_with_reasoning_gains.txt),
+[checks](results/pilot-2026-10/comm_parity_with_reasoning_checks.json)).
+
+| Arm | Accuracy | Gain over baseline [95% CI] | Mean tokens per run |
+|---|---|---|---|
+| baseline | 0.35 | | 4.5k |
+| **M** (1 bit from B) | **0.95** | **+0.60** [+0.35, +0.85] | 5.0k |
+| E (8 lines of same-kind private evidence) | 0.45 | +0.10 [−0.20, +0.40] | 5.3k |
+| K (high) | 0.40 | +0.05 [−0.20, +0.30] | 9.0k |
+| P1 | 0.45 | +0.10 [−0.15, +0.35] | 14.9k |
+| A1 | 0.25 | −0.10 [−0.35, +0.15] | 4.3k |
+| P2 | 0.25 | −0.10 [−0.35, +0.15] | 17.1k |
+
+Only the message helps, as H3 predicts, once reasoning no longer binds; the other arms' intervals
+all include zero at this n. The comm_ip search reached n = 4 (all passing) before the pilot was
+cut down, and the H7 bit sweep was not run. All 140 runs are valid. (`ceilings check` first flagged
+every run because its one-resource check compared arms with the default baseline instead of the
+baseline under the reasoning floor; fixed, and the checks pass.)
 
 ## Ablations (Nemotron Ultra, info family, baseline and E, n = 20)
 

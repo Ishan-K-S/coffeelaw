@@ -1,0 +1,6 @@
+gain model=openai/nvidia/nemotron-3.5-super-vl-120b-a12b family=comm_parity arm=A1 delta=medium n=20 gain=-0.100 ci=[-0.350,+0.150] baseline_acc=0.350 arm_acc=0.250
+gain model=openai/nvidia/nemotron-3.5-super-vl-120b-a12b family=comm_parity arm=E delta=medium n=20 gain=+0.100 ci=[-0.200,+0.400] baseline_acc=0.350 arm_acc=0.450
+gain model=openai/nvidia/nemotron-3.5-super-vl-120b-a12b family=comm_parity arm=K delta=medium n=20 gain=+0.050 ci=[-0.200,+0.300] baseline_acc=0.350 arm_acc=0.400
+gain model=openai/nvidia/nemotron-3.5-super-vl-120b-a12b family=comm_parity arm=M delta=medium n=20 gain=+0.600 ci=[+0.350,+0.850] baseline_acc=0.350 arm_acc=0.950
+gain model=openai/nvidia/nemotron-3.5-super-vl-120b-a12b family=comm_parity arm=P1 delta=medium n=20 gain=+0.100 ci=[-0.150,+0.350] baseline_acc=0.350 arm_acc=0.450
+gain model=openai/nvidia/nemotron-3.5-super-vl-120b-a12b family=comm_parity arm=P2 delta=medium n=20 gain=-0.100 ci=[-0.350,+0.150] baseline_acc=0.350 arm_acc=0.250

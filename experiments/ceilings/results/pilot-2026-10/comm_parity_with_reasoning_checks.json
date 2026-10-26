@@ -1,0 +1,196 @@
+{
+  "passed": true,
+  "n_records": 140,
+  "n_transcripts": 140,
+  "integrity": {
+    "no_answer_leak": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "private_isolation": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "message_budget": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "arm_changes_one_resource": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "step_counts": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "ledger_totals": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "instance_available": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    }
+  },
+  "quality": {
+    "answer_parse_failed": {
+      "status": "PASS",
+      "threshold": 0.05,
+      "worst": 0.0,
+      "rows": []
+    },
+    "answer_not_argmax": {
+      "status": "PASS",
+      "threshold": 0.1,
+      "worst": 0.0,
+      "rows": []
+    },
+    "probabilities_not_summing_to_1": {
+      "status": "PASS",
+      "threshold": 0.2,
+      "worst": 0.0375,
+      "rows": [
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 80,
+          "rate": 0.0375
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 80,
+          "rate": 0.0125
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 80,
+          "rate": 0.0125
+        }
+      ]
+    },
+    "answer_parse_text_fallback": {
+      "status": "PASS",
+      "threshold": 0.2,
+      "worst": 0.0,
+      "rows": []
+    },
+    "probe_invalid": {
+      "status": "PASS",
+      "threshold": 0.1,
+      "worst": 0.0,
+      "rows": []
+    },
+    "message_rejected": {
+      "status": "PASS",
+      "threshold": 0.2,
+      "worst": 0.0,
+      "rows": []
+    },
+    "reasoning_truncated": {
+      "status": "WARN",
+      "threshold": 0.25,
+      "worst": 1.0,
+      "rows": [
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 80,
+          "rate": 0.9375
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 80,
+          "rate": 0.9875
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 80,
+          "rate": 0.5375
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 100,
+          "rate": 0.37
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 80,
+          "rate": 1.0
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 80,
+          "rate": 1.0
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 80,
+          "rate": 0.9625
+        }
+      ]
+    },
+    "refused": {
+      "status": "PASS",
+      "threshold": 0.05,
+      "worst": 0.0,
+      "rows": []
+    },
+    "invalid_model": {
+      "status": "PASS",
+      "threshold": 0.0,
+      "worst": 0.0,
+      "rows": []
+    }
+  },
+  "expectations": {
+    "baseline_at_chance": [
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "family": "comm_parity",
+        "n": 20,
+        "baseline_acc": 0.35,
+        "chance": 0.5,
+        "status": "too few instances"
+      }
+    ],
+    "matching_arm_helps": [
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl-120b-a12b",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 20,
+        "gain": 0.6,
+        "ci": [
+          0.35,
+          0.85
+        ],
+        "status": "met"
+      }
+    ]
+  }
+}
