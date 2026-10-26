@@ -49,7 +49,25 @@ ALLOWED_CHANGES = {
     "P2": {"extra_kind"},
     "baseline": set(),
 }
-IGNORED_FIELDS = {"arm_id", "strength", "filler_tokens"}
+# Harness-wide settings (ceilings.options), not resources an arm may change.
+IGNORED_FIELDS = {"arm_id", "strength", "filler_tokens", "probe_policy", "comm_sender"}
+
+
+def _baseline_for(t: dict, fam: str) -> dict:
+    """The baseline config this run is compared with: the default baseline after the run's own
+    harness options (e.g. a comm_depth reasoning floor applies to the baseline too)."""
+    from types import SimpleNamespace
+
+    from ceilings.options import HarnessOptions
+    from ceilings.orchestrator import effective_config
+
+    given = {k: v for k, v in (t.get("harness") or {}).items() if k != "resolved"}
+    if "reasoning_tokens" in given and given["reasoning_tokens"] is not None:
+        given["reasoning_tokens"] = tuple(given["reasoning_tokens"])
+    policy = SimpleNamespace(options=HarnessOptions(**given))
+    base = asdict(effective_config(arms.baseline(fam), policy, fam))
+    base["answerers"] = list(base["answerers"])
+    return base
 
 
 def load_instances_index(root: Path | str) -> dict[str, TaskInstance]:
@@ -79,8 +97,7 @@ def _check_transcript(t: dict, inst: TaskInstance | None, problems: dict, rates:
     key = (t["model_id"], fam, cfg["arm_id"])
 
     # Each arm changes exactly one resource relative to baseline.
-    base = asdict(arms.baseline(fam))
-    base["answerers"] = list(base["answerers"])
+    base = _baseline_for(t, fam)
     changed = {k for k in base if base[k] != cfg.get(k)} - IGNORED_FIELDS
     if t.get("sweep") is None and not changed <= ALLOWED_CHANGES.get(cfg["arm_id"], set()):
         problems["arm_changes_one_resource"].append(f"{rid[:12]} {cfg['arm_id']}: {sorted(changed)}")

@@ -109,3 +109,16 @@ def test_comm_depth_floors_reasoning_in_comm_families_only():
     assert HarnessOptions.parse("comm_depth=medium").non_default() == {"comm_depth": "medium"}
     with pytest.raises(ValueError):
         HarnessOptions.parse("comm_depth=deep")
+
+
+def test_checks_compare_arms_with_the_harness_baseline(tmp_path):
+    from ceilings import checks
+
+    insts = tasks.generate_many("comm_parity", 2, "main", n=2)
+    tasks.save_instances(insts, tmp_path)
+    pol = _policy("comm_depth=medium")
+    cells = [Cell(i, arms.build(a, "comm_parity", s), "medium")
+             for i in insts for a, s in (("baseline", None), ("M", 1), ("K", "high"))]
+    run_grid(cells, pol, tmp_path)
+    res = checks.run_checks(tmp_path, load_runs(tmp_path))
+    assert res["integrity"]["arm_changes_one_resource"]["status"] == "PASS", res["integrity"]
