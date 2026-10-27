@@ -113,7 +113,7 @@
     "C": null
   },
   "sample_sizes": {
-    "per_cell": null,
+    "per_cell": 850,
     "power_target": 0.8,
     "equivalence_margin": 0.05,
     "method": "ceilings power on pilot runs (see analysis.sample_size_method)",
@@ -157,5 +157,13 @@
     "K": "strength is a depth plus how many of the 4 answer samples reason at it (e.g. 'medium:1'); the others answer at the family's baseline depth; candidates in cost order, matched to the target",
     "A2_single_ref": "one agent whose reasoning depth is chosen by cost matching to A2's target (not A2's own strength topped up with filler)",
     "ablations": "each harness option is cost-matched in its own run root; `ceilings run` refuses an arms table matched under different harness options"
+  },
+  "run_plan": {
+    "decided": "2026-10-26, by the researcher, to fit a budget of about $500",
+    "models": "the 10 in configs/openrouter.json (10 developers), each pinned to one hosting provider",
+    "main_grid": "all 9 arms at the medium delta, n = 850 paired instances per cell, for every (model, family) whose confirmation gate passes",
+    "delta_curves": "all three delta levels (small, medium, large) on 3 models, chosen after calibration as the models with the most passing families, at most one per developer; a documented deviation from FR-009 for the other 7",
+    "gate": "prepare --gate confirm on about 300 fresh instances per family",
+    "estimate": "about $260-500 including calibration and prepare"
   }
 }
