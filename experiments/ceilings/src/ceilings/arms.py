@@ -9,8 +9,6 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, replace
 
-from ceilings.agents import STEP_BUDGET
-
 DEPTH_ORDER = ["low", "medium", "high", "xhigh", "max"]
 ARMS = ["baseline", "E", "K", "M", "A1", "A2", "A2_single_ref", "P1", "P2"]
 DELTA_MULTIPLIERS = {"small": 0.5, "medium": 1.0, "large": 2.0}
@@ -41,6 +39,9 @@ class ArmConfig:
     extra_amount: int = 0
     filler_tokens: int = 0
     strength: object = None
+    # How many answer samples reason at `depth`; the rest answer at the family's baseline depth.
+    # None: all of them. Lets K add compute in steps smaller than "every sample reasons".
+    reason_samples: int | None = None
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -48,9 +49,30 @@ class ArmConfig:
         return d
 
 
+# Baseline reasoning depth per family. The communication families reason at "medium" in every arm:
+# in the pilot no model could combine B's (correct) message with its own list without a reasoning
+# stage, so the comm gate tested arithmetic, not communication; with one, only M helped (+0.60).
+COMM_BASE_DEPTH = "medium"
+
+
+def base_depth(family: str) -> str:
+    return COMM_BASE_DEPTH if family.startswith("comm_") else "low"
+
+
 def baseline(family: str) -> ArmConfig:
     mode = "bits" if family.startswith("comm_") else "tokens"
-    return ArmConfig(message_mode=mode)
+    return ArmConfig(message_mode=mode, depth=base_depth(family))
+
+
+def parse_compute(strength: object) -> tuple[str, int | None]:
+    """K's strength: "high" (every sample reasons) or "high:2" (two of the samples do)."""
+    depth, _, n = str(strength).partition(":")
+    return depth, (int(n) if n else None)
+
+
+def _above(family: str, depths: list[str]) -> list[str]:
+    floor = DEPTH_ORDER.index(base_depth(family))
+    return [d for d in depths if DEPTH_ORDER.index(d.partition(":")[0]) > floor]
 
 
 def pooled_depth(depth: str, n_agents: int) -> str:
@@ -62,13 +84,6 @@ def pooled_depth(depth: str, n_agents: int) -> str:
 
     pooled = n_agents * reasoning_tokens(depth)
     return next((d for d in DEPTH_ORDER if reasoning_tokens(d) >= pooled), DEPTH_ORDER[-1])
-
-
-def _level_for_budget(steps: int) -> str:
-    for level in DEPTH_ORDER:
-        if STEP_BUDGET[level] >= steps:
-            return level
-    return DEPTH_ORDER[-1]
 
 
 def build(arm_id: str, family: str, strength: object = None, filler_tokens: int = 0) -> ArmConfig:
@@ -83,7 +98,8 @@ def build(arm_id: str, family: str, strength: object = None, filler_tokens: int 
             kind = "restated" if family == "reason" else "same_kind"
             cfg = replace(base, extra_kind=kind, extra_amount=int(strength))
     elif arm_id == "K":
-        cfg = replace(base, depth=str(strength))
+        depth, n = parse_compute(strength)
+        cfg = replace(base, depth=depth, reason_samples=n)
     elif arm_id == "M":
         cfg = replace(base, message_budget=int(strength), relay=family == "reason")
     elif arm_id == "A1":
@@ -101,7 +117,10 @@ def build(arm_id: str, family: str, strength: object = None, filler_tokens: int 
             message_budget=200 if not family.startswith("comm_") else 0,
         )
     elif arm_id == "A2_single_ref":
-        cfg = replace(base, n_agents=1, samples=1, depth=pooled_depth(str(strength), 4))
+        # One agent given A2's added budget as its own reasoning, chosen by cost matching (the
+        # pilot topped it up with filler instead, so H5 compared A2 with an agent that got no
+        # extra compute).
+        cfg = replace(base, n_agents=1, samples=1, depth=str(strength))
     elif arm_id == "P1":
         cfg = replace(base, extra_kind="irrelevant")
     elif arm_id == "P2":
@@ -116,15 +135,18 @@ def candidates(arm_id: str, family: str, n_bits: int | None = None) -> list[obje
     if arm_id == "E":
         return list(range(1, 17)) if family == "info" else [2, 4, 8, 16, 32, 64]
     if arm_id == "K":
-        return ["medium", "high", "xhigh", "max"]
+        # Reasoning on 1, 2 or all 4 samples, then deeper: K could not reach a medium delta in
+        # the pilot because a reasoning stage on every sample cost 1.8-2x the target.
+        return _above(family, ["medium:1", "medium:2", "high:1", "medium", "high:2", "xhigh:1",
+                               "high", "xhigh:2", "xhigh", "max"])
     if arm_id == "M":
         if family == "comm_parity":
             return [1]
         return [n_bits] if family.startswith("comm_") else [50, 100, 200]
     if arm_id == "A2":
-        return ["low", "medium", "high"]
+        return [base_depth(family)] + _above(family, ["medium", "high"])
     if arm_id == "A2_single_ref":
-        return ["low", "medium", "high"]
+        return [base_depth(family)] + _above(family, ["medium", "high", "xhigh", "max"])
     return [None]
 
 

@@ -24,7 +24,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import shutil
 import subprocess
 import sys
 import time
@@ -165,8 +164,8 @@ def main() -> int:
     rpm = 36 / len(picked)
     fams = passing(m)
     ceilings(["prepare", "--model", m, "--family", ",".join(fams), "--n-main", "30",
-              "--n-pilot", "30", "--n-match", "6", "--delta", "medium", "--concurrency", "6",
-              "--max-requests", "12000"], rpm=rpm)
+              "--n-pilot", "30", "--n-match", "6", "--delta", "medium", "--gate", "screen",
+              "--concurrency", "6", "--max-requests", "12000"], rpm=rpm)
     run_fams = [f for f in fams if gate_passed(m, f)
                 and (ROOT / "arms" / f / f"{safe(m)}.json").exists()]
     log(f"gate passed after prepare: {run_fams}")
@@ -196,9 +195,14 @@ def main() -> int:
                 log(f"ablation {name}: no evaluable family; skipped")
                 continue
             root = ROOT.parent / f"{ROOT.name}_ablations" / name
-            for sub in ("instances", "arms", "calibration", "difficulty"):
-                if (ROOT / sub).exists() and not (root / sub).exists():
-                    shutil.copytree(ROOT / sub, root / sub)
+            # Each ablation is cost-matched under its own option (`run` refuses a table matched
+            # under different harness options); the difficulty is the model's searched setting.
+            for f in fs:
+                diff = ",".join(f"{k}={v}" for k, v in chosen(m, f).items())
+                ceilings(["prepare", "--model", m, "--family", f, "--difficulty", diff,
+                          "--n-main", "30", "--n-pilot", "30", "--n-match", "6", "--delta",
+                          "medium", "--gate", "screen", "--harness", opts, "--concurrency", "6",
+                          "--max-requests", "6000"], root=root, rpm=rpm)
             for f in fs:
                 ceilings(["run", "--model", m, "--family", f, "--delta", "medium",
                           "--arms", f"baseline,{MATCHING_ARM[f]}", "--limit", "20",

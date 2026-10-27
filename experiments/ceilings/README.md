@@ -71,8 +71,19 @@ Non-default options are part of every run ID and every run record stores the res
 Bonferroni alpha within each Holm family. Put the result in `prereg/config.json:
 sample_sizes.per_cell` before freezing.
 
+### Design changes after the October 2026 pilot
+
+See [PILOT_RESULTS.md](PILOT_RESULTS.md). True answers are balanced across instances; the
+information family lists its host table in a random order per instance and can state `known`
+attributes up front (`--difficulty k=3,p=0,known=1`); the communication families reason at
+`medium` depth in every arm; K's strength can put reasoning on some samples only (`medium:1`); the
+single-agent A2 reference is matched by its own reasoning depth; `prepare` confirms the gate with
+an equivalence test (`--gate confirm`, the default; about 250+ pilot instances per family); ties
+are broken with the run's seed; run records carry `p_true`; H6 uses the full Fano bound; and each
+ablation must be cost-matched under its own `--harness` options.
+
 For models without a native effort setting, depth is a reasoning stage capped at
-`low 0 / medium 256 / high 1024 / xhigh 2048 / max 4096` tokens (override with
+`low 0 / medium 512 / high 1024 / xhigh 2048 / max 4096` tokens (override with
 `CEILINGS_REASONING_TOKENS`). Keep at least about 20 tokens per reasoning step the task needs.
 Temperature is sent explicitly (`CEILINGS_TEMPERATURE`, default 0.7). Claude keeps refusal fallbacks
 **off**, so no model substitution can occur, and every adapter marks a run invalid if the provider

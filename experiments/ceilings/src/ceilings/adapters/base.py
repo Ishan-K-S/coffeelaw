@@ -13,7 +13,9 @@ PROB_FLOOR = 1e-6
 # Models without a native reasoning-effort setting get depth as an explicit reasoning stage:
 # the model first writes free-form reasoning capped at this many tokens, then answers. `low`
 # answers directly. Claude uses its native `effort` instead.
-REASONING_TOKENS = {"low": 0, "medium": 256, "high": 1024, "xhigh": 2048, "max": 4096}
+# medium was 256: in the pilot the stage hit that cap in 80-100% of calls, so depth was set by the
+# cap rather than by the task.
+REASONING_TOKENS = {"low": 0, "medium": 512, "high": 1024, "xhigh": 2048, "max": 4096}
 
 
 def reasoning_tokens(depth: str) -> int:

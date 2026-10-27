@@ -102,7 +102,10 @@ class ScriptedChat(ChatAdapter):
             names = re.search(r"probe next: (.+?)\. Reply", last).group(1).split(", ")
             asked = Counter(re.findall(r"the failing host's (.+?) is", text))
             return self._reply(min(names, key=lambda n: asked[n]), messages, 2)
-        m = re.search(r"You may send at most (\d+) characters", last)
+        # The message instruction is in the last user turn, or one turn earlier when the agent
+        # had a reasoning stage first (the comm families reason by design).
+        m = re.search(r"You may send at most (\d+) characters", last) or \
+            re.search(r"You may send at most (\d+) characters", text)
         if m:
             own = [("1" if v == "yes" else "0")
                    for v in re.findall(r"^Role requires [^:]+: (yes|no)$", text, re.M)]

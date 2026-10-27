@@ -40,7 +40,7 @@ QUALITY_THRESHOLDS = {
 MATCHING_ARM = {"info": "E", "reason": "K", "comm_parity": "M", "comm_ip": "M"}
 ALLOWED_CHANGES = {
     "E": {"tool_rounds", "extra_kind", "extra_amount"},
-    "K": {"depth"},
+    "K": {"depth", "reason_samples"},
     "M": {"message_budget", "relay"},
     "A1": {"n_agents", "samples", "answerers"},
     "A2": {"n_agents", "samples", "depth", "relay", "message_mode", "message_budget"},
@@ -184,7 +184,7 @@ def _rate_table(rates: dict) -> dict:
     return out
 
 
-def _expectations(records: list[dict], delta: str) -> dict:
+def _expectations(records: list[dict], delta: str, index: dict | None = None) -> dict:
     df = runs_frame(records)
     out = {"baseline_at_chance": [], "matching_arm_helps": []}
     if df.empty:
@@ -194,7 +194,10 @@ def _expectations(records: list[dict], delta: str) -> dict:
         base = g[g["arm"] == "baseline"]
         if base.empty:
             continue
-        chance = 1 / len(base["probabilities"].iloc[0])
+        from ceilings.tasks import chance as instance_chance
+
+        known = [instance_chance(index[i]) for i in base["instance_id"] if index and i in index]
+        chance = float(np.mean(known)) if known else 1 / len(base["probabilities"].iloc[0])
         acc = float(base["correct"].mean())
         se = float(np.sqrt(chance * (1 - chance) / len(base)))
         if 1.96 * se > 0.10:
@@ -237,7 +240,7 @@ def run_checks(root: Path | str, records: list[dict], delta: str = "medium") -> 
     integrity = {k: {"status": "PASS" if not v else "FAIL", "n_violations": len(v),
                      "examples": v[:5]} for k, v in problems.items()}
     quality = _rate_table(rates)
-    expectations = _expectations(records, delta)
+    expectations = _expectations(records, delta, index)
     passed = all(v["status"] == "PASS" for v in integrity.values())
     return {"passed": passed, "n_records": len(records), "n_transcripts": n_transcripts,
             "integrity": integrity, "quality": quality, "expectations": expectations}

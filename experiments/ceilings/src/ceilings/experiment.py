@@ -44,6 +44,7 @@ def prepare(
     levels: dict[str, float] | None = None,
     n_match: int | None = None,
     match: bool = True,
+    gate: str = "confirm",
 ) -> dict:
     """Generate instances, run the calibration gate and cost matching; save all three.
 
@@ -62,15 +63,16 @@ def prepare(
     cal_path = root / "calibration" / f"{tag}.json"
     previous = json.loads(cal_path.read_text()) if cal_path.exists() else None
     if previous and previous.get("n") == len(pilot) and previous.get("difficulty") == diff \
-            and previous.get("harness") == policy.options.non_default():
+            and previous.get("harness") == policy.options.non_default() \
+            and previous.get("gate", "screen") == gate:
         cal = CalibrationResult(**{k: v for k, v in previous.items()
-                                   if k not in ("difficulty", "harness")})
+                                   if k not in ("difficulty", "harness", "gate")})
     else:
         log = root / "calibration" / "runs" / f"{tag}.jsonl"
         if log.exists():
             log.unlink()  # a partial log from an interrupted gate
-        cal = calibration.calibrate(family, pilot, policy, concurrency, log_path=log)
-        calibration.save_json({**cal.model_dump(), "difficulty": diff,
+        cal = calibration.calibrate(family, pilot, policy, concurrency, log_path=log, rule=gate)
+        calibration.save_json({**cal.model_dump(), "difficulty": diff, "gate": gate,
                                "harness": policy.options.non_default()}, cal_path)
     if match and cal.passed:
         table = calibration.match_arms(family, pilot[: n_match or len(pilot)], policy, levels,
@@ -82,6 +84,10 @@ def prepare(
         table = calibration.unmatched_table(family, policy, diff, cal.baseline_mean_tokens or 0,
                                             levels)
         table["gate_failed"] = not cal.passed
+    # The harness options the arms were matched under: `run` refuses a mismatch, so every
+    # ablation is cost-matched under its own option (the pilot reused the default tables and
+    # probe=agent cost about 5.7x its target).
+    table["harness"] = policy.options.non_default()
     calibration.save_json(table, root / "arms" / family / f"{safe_model_dir(policy.model_id)}.json")
     return {"calibration": cal, "table": table, "main": main, "pilot": pilot, "difficulty": diff}
 
@@ -136,7 +142,7 @@ def info_sweep_cells(
             _save_sweep(insts, root)
         c = theory.bsc_capacity(p)
         for T in Ts:
-            floors[(T, p)] = theory.fano_floor(float(k), T * c, 2**k)
+            floors[(T, p)] = theory.fano_floor_strong(float(k), T * c, 2**k)
             cfg = replace(arms.build("E", "info", T), arm_id="E")
             for inst in insts:
                 cells.append(Cell(inst, cfg, None, 0, {"T": T, "flip_rate": p}))

@@ -113,6 +113,15 @@
     "correct": {
       "type": "boolean"
     },
+    "p_true": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1,
+      "description": "The team's aggregated probability on the true answer."
+    },
     "valid": {
       "type": "boolean",
       "description": "false when the adapter detected model substitution or another integrity failure"

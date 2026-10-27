@@ -4,6 +4,12 @@ Formal mapping: Theta is uniform on {0..2^k-1}. Host i has k two-valued attribut
 takes its second value exactly when bit q of i is 1. The probe reports one attribute of the failing
 host through a binary symmetric channel with flip rate p, so each call carries at most 1 - h(p) bits
 (Theorem 1). Agents only look values up in the host table; no binary arithmetic is needed.
+
+Version 4 (after the free-tier pilot): the host table is listed in a seeded random row order per
+instance, because uninformed models default to the first row (host-00 in 24-30 of 30 runs), which
+made floor accuracy track how often host-00 was the truth. `known` attributes of the failing host
+can be stated up front (the partial-information setting): the team then holds `known` bits, the
+answer keeps k - known bits of uncertainty, and chance accuracy is 2^known / 2^k.
 """
 
 from __future__ import annotations
@@ -14,7 +20,7 @@ from ceilings import theory
 from ceilings.records import TaskInstance, TheoryQuantities, ToolSpec, content_hash
 
 FAMILY_ID = "info"
-VERSION = "3"
+VERSION = "4"
 T_MAX = 16
 ATTRIBUTES = [
     ("rack", "A", "B"),
@@ -44,11 +50,15 @@ def probe_text(attributes: list, query: object, result: str) -> str:
     return f"Probe result: the failing host's {name} is {v1 if result == '1' else v0}."
 
 
-def generate(seed: int, k: int = 3, p: float = 0.1, split: str = "main") -> TaskInstance:
+def generate(seed: int, k: int = 3, p: float = 0.1, split: str = "main",
+             known: int = 0) -> TaskInstance:
     if not 1 <= k <= len(ATTRIBUTES):
         raise ValueError(f"k must be between 1 and {len(ATTRIBUTES)}")
+    if not 0 <= known < k:
+        raise ValueError("known must be between 0 and k - 1")
     rng = np.random.default_rng(seed)
     hidden = int(rng.integers(2**k))
+    order = [int(i) for i in rng.permutation(2**k)]
     hosts = [host_name(i) for i in range(2**k)]
     attrs = [list(a) for a in ATTRIBUTES[:k]]
     names = ", ".join(a[0] for a in attrs)
@@ -59,23 +69,27 @@ def generate(seed: int, k: int = 3, p: float = 0.1, split: str = "main") -> Task
     table = "\n".join(
         f"{host_name(i)}: " + ", ".join(f"{a[0]} {attribute_value(i, q)}" for q, a in
                                         enumerate(attrs))
-        for i in range(2**k)
+        for i in order
     )
+    known_text = "".join(
+        f"\nAlready known: the failing host's {attrs[q][0]} is {attribute_value(hidden, q)}."
+        for q in range(known))
     reliability = (
         "Probe reports are always correct." if p == 0 else
         f"Each probe report is wrong with probability {p}, independently of the others; a wrong "
         "report shows the attribute's other value."
     )
     shared = (
-        f"Host table (each host differs in at least one attribute):\n{table}\n\n"
+        f"Host table (each host differs in at least one attribute):\n{table}\n{known_text}\n"
         f"The team may receive probe reports. A probe report states one attribute ({names}) of "
-        f"the failing host. {reliability} Apart from probe reports, nothing you know says which "
-        "host is failing."
+        f"the failing host. {reliability} Apart from probe reports"
+        + (" and what is already known" if known else "")
+        + ", nothing you know says which host is failing."
     )
     c = theory.bsc_capacity(p)
-    m = 2**k
     budgets = [theory.budget(0.0, [c] * T) for T in range(T_MAX + 1)]
-    floors = [theory.fano_floor(float(k), b, m) if m >= 3 else 0.0 for b in budgets]
+    left = float(k - known)  # bits of uncertainty the probes must resolve
+    floors = [theory.fano_floor_strong(left, b, 2 ** (k - known)) for b in budgets]
     tool = ToolSpec(
         kind="bit_probe",
         answer_alphabet=["0", "1", "ERR"],
@@ -84,12 +98,14 @@ def generate(seed: int, k: int = 3, p: float = 0.1, split: str = "main") -> Task
         charge_tokens=len(probe_text(attrs, 0, "0")) // 4,
     )
     body = {"family": FAMILY_ID, "version": VERSION, "seed": seed, "k": k, "p": p, "split": split}
+    if known:
+        body["known"] = known
     return TaskInstance(
         instance_id=content_hash(body),
         family_id=FAMILY_ID,
         family_version=VERSION,
         seed=seed,
-        difficulty={"k": k, "p": p},
+        difficulty={"k": k, "p": p, **({"known": known} if known else {})},
         answer=host_name(hidden),
         answer_space=hosts,
         scenario=scenario,
@@ -98,14 +114,14 @@ def generate(seed: int, k: int = 3, p: float = 0.1, split: str = "main") -> Task
         tool=tool,
         theory=TheoryQuantities(
             H_theta=float(k),
-            I_held_by_agent={"A": 0.0, "B": 0.0},
-            I_held_team=0.0,
+            I_held_by_agent={"A": float(known), "B": float(known)},
+            I_held_team=float(known),
             budget_by_T=budgets,
             fano_floor_by_T=floors,
         ),
         split=split,
         payload={
-            "public": {"k": k, "p": p, "attributes": attrs},
+            "public": {"k": k, "p": p, "attributes": attrs, "known": known, "order": order},
             "private": {"A": {}, "B": {}},
             "hidden": {"value": hidden},
         },

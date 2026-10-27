@@ -92,6 +92,7 @@ def run_cell(
         probabilities=outcome.probabilities,
         sample_answers=outcome.sample_answers,
         correct=outcome.final_answer == inst.answer,
+        p_true=outcome.probabilities.get(inst.answer),
         valid=outcome.valid,
         refusal=Refusal(**outcome.refusal) if outcome.refusal else None,
         ledger=outcome.ledger.to_record(),

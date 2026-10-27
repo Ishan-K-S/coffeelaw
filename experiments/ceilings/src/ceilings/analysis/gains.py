@@ -26,7 +26,7 @@ def runs_frame(records: list[dict]) -> pd.DataFrame:
                 "refused": r.get("refusal") is not None,
                 "tokens": r["ledger"]["total_tokens"],
                 "dollars": r["ledger"].get("dollars") or 0.0,
-                "p_true": None,
+                "p_true": r.get("p_true"),
                 "probabilities": r["probabilities"],
                 "final": r["final_answer"],
                 "T": sweep.get("T"),
@@ -101,6 +101,11 @@ def gain_table(df: pd.DataFrame, n_boot: int = B_RESAMPLES) -> pd.DataFrame:
                     "ci_low": lo,
                     "ci_high": hi,
                     "added_tokens": pdiff["d_tokens"].mean(),
+                    # secondary outcome: mean probability on the true answer (not affected by
+                    # how an uninformed team breaks ties)
+                    "baseline_p_true": base["p_true"].astype(float).mean(),
+                    "arm_p_true": g[(g["arm"] == arm) & (g["delta"] == delta)]["p_true"]
+                    .astype(float).mean(),
                 }
             )
     return pd.DataFrame(rows)

@@ -58,6 +58,27 @@ def fano_floor(h_theta: float, bud: float, m: int) -> float:
     return max(0.0, (h_theta - min(h_theta, bud) - 1) / math.log2(m - 1))
 
 
+def fano_floor_strong(h_theta: float, bud: float, m: int) -> float:
+    """The full Fano bound: the smallest error Pe with h(Pe) + Pe log2(M - 1) >= H - min(H, B),
+    for Pe in [0, 1 - 1/M]. Tighter than `fano_floor` (which drops h(Pe) <= 1) and valid for
+    M >= 2; the pilot's H6 cells at T >= 2 could not reject at all under the weak form."""
+    need = h_theta - min(h_theta, bud)
+    if need <= 0 or m < 2:
+        return 0.0
+
+    def lhs(pe: float) -> float:
+        h = 0.0 if pe in (0.0, 1.0) else -pe * math.log2(pe) - (1 - pe) * math.log2(1 - pe)
+        return h + (pe * math.log2(m - 1) if m > 2 else 0.0)
+
+    lo, hi = 0.0, 1 - 1 / m
+    if lhs(hi) < need:
+        return hi
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if lhs(mid) < need else (lo, mid)
+    return hi
+
+
 def cor2_min_rounds(k: int, c: float, eps: float) -> float:
     """Corollary 2: tool rounds needed for error <= eps when Theta is uniform on 2^k values."""
     return ((1 - eps) * k - 1) / c

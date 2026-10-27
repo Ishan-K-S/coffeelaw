@@ -45,7 +45,7 @@ def main() -> int:
     p.log(f"comm families passing with {harness}: {fams}")
     if fams:
         p.ceilings(["prepare", "--model", m, "--family", ",".join(fams), "--n-main", "30",
-                    "--n-pilot", "30", "--n-match", "6", "--delta", "medium",
+                    "--n-pilot", "30", "--n-match", "6", "--delta", "medium", "--gate", "screen",
                     "--concurrency", "6", "--max-requests", "12000", "--harness", harness],
                    rpm=RPM)
         run_fams = [f for f in fams if p.gate_passed(m, f)]

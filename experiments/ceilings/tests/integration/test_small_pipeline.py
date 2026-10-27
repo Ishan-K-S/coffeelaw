@@ -34,7 +34,7 @@ def test_stub_dry_run(tmp_path):
 def test_sim_suite_recovers_the_diagonal(tmp_path):
     policy = SimPolicy()
     for fam in ["info", "reason", "comm_ip"]:
-        prep = experiment.prepare(fam, policy, tmp_path, n_main=150, n_pilot=200)
+        prep = experiment.prepare(fam, policy, tmp_path, n_main=150, n_pilot=200, gate="screen")
         assert prep["calibration"].passed, fam
         run_grid(
             experiment.main_cells(prep["main"], prep["table"], deltas=("medium",)),

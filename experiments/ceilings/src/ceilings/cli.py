@@ -89,7 +89,7 @@ def cmd_prepare(a) -> int:
         res = experiment.prepare(
             fam, policy, a.root, a.n_main, a.n_pilot, _difficulty(a.difficulty, fam),
             concurrency=a.concurrency, levels=_levels(a.delta), n_match=a.n_match,
-            match=not a.no_match,
+            match=not a.no_match, gate=a.gate,
         )
         cal = res["calibration"]
         unmatched = [f"{arm}/{lvl}" for arm, v in res["table"]["arms"].items()
@@ -108,6 +108,13 @@ def cmd_run(a) -> int:
     total = 0
     for fam in a.family.split(","):
         table = experiment.load_table(a.root, fam, policy.model_id)
+        matched_under = table.get("harness", {})
+        if json.loads(json.dumps(matched_under)) != json.loads(json.dumps(
+                policy.options.non_default(), default=list)):
+            print(f"error: {fam} arms were matched under harness {matched_under}, not "
+                  f"{policy.options.non_default()}; run prepare with the same --harness",
+                  file=sys.stderr)
+            return 2
         insts = experiment.load_main(a.root, fam, policy.model_id, a.split)[: a.limit]
         cells = experiment.main_cells(
             insts, table, deltas=tuple(a.delta.split(",")), arm_ids=tuple(a.arms.split(","))
@@ -301,6 +308,10 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--delta", default="small,medium,large", help="cost levels to match")
     pr.add_argument("--no-match", action="store_true",
                     help="skip cost matching (smoke tests only; cells are marked unmatched)")
+    pr.add_argument("--gate", choices=["confirm", "screen"], default="confirm",
+                    help="calibration gate on the fresh pilot instances: confirm (equivalence "
+                         "to chance and a 0.90 lower bound; needs n-pilot of about 250+) or "
+                         "screen (the loose search rule)")
     pr.set_defaults(fn=cmd_prepare)
 
     r = sub.add_parser("run", help="main grid")

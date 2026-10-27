@@ -17,7 +17,7 @@ from dataclasses import dataclass, field, replace
 import numpy as np
 
 from ceilings.agents import Policy, View
-from ceilings.arms import DEPTH_ORDER, ArmConfig, extra_text
+from ceilings.arms import DEPTH_ORDER, ArmConfig, base_depth, extra_text
 from ceilings.channel import Channel
 from ceilings.ledger import Ledger
 from ceilings.records import TaskInstance
@@ -154,9 +154,14 @@ def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) 
 
     # (4) Answers.
     results = []
+    other_depth = base_depth(instance.family_id)
+    if DEPTH_ORDER.index(other_depth) > DEPTH_ORDER.index(cfg.depth):
+        other_depth = cfg.depth
     for name in cfg.answerers:
-        for _ in range(cfg.samples):
-            res = policy.answer(views[name], cfg.depth, call_seed())
+        for j in range(cfg.samples):
+            depth = (cfg.depth if cfg.reason_samples is None or j < cfg.reason_samples
+                     else other_depth)
+            res = policy.answer(views[name], depth, call_seed())
             charge(name, res.usage)
             request_ids.append(res.request_id)
             results.append(res)
@@ -172,7 +177,11 @@ def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) 
     if votes:
         top = max(votes.values())
         tied = [a for a, c in votes.items() if c == top]
-        final = max(tied, key=lambda a: mean[a])
+        best = max(mean[a] for a in tied)
+        # A tie that the mean probability does not break is broken with the run's own seed, not
+        # by the order the answers came in.
+        tied = sorted(a for a in tied if mean[a] >= best - 1e-12)
+        final = tied[int(rng.integers(len(tied)))] if len(tied) > 1 else tied[0]
     else:
         final = None
     refusal = next((r.refusal for r in results if r.refusal), None)

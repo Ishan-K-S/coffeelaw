@@ -39,16 +39,25 @@ def test_a1_keeps_total_answer_calls():
     assert a1.message_budget == base.message_budget == 0
 
 
-def test_a2_single_ref_has_the_pooled_budget():
+def test_a2_single_ref_is_one_agent_reasoning_at_its_matched_depth():
     from ceilings.adapters.base import reasoning_tokens
 
-    for depth in ("low", "medium", "high"):
-        a2 = arms.build("A2", "reason", depth)
-        ref = arms.build("A2_single_ref", "reason", depth)
-        assert ref.n_agents == 1
-        assert reasoning_tokens(ref.depth) >= a2.n_agents * reasoning_tokens(a2.depth)
-    assert arms.build("A2_single_ref", "reason", "low").depth == "low"  # 4 x 0 tokens
-    assert arms.build("A2_single_ref", "reason", "medium").depth == "high"  # 4 x 256 <= 1024
+    ref = arms.build("A2_single_ref", "reason", "xhigh")
+    assert ref.n_agents == 1 and ref.samples == 1 and ref.depth == "xhigh"
+    # candidates are reasoning depths in cost order, matched on their own (not A2's strength)
+    assert arms.candidates("A2_single_ref", "reason") == ["low", "medium", "high", "xhigh", "max"]
+    assert arms.candidates("A2_single_ref", "comm_ip") == ["medium", "high", "xhigh", "max"]
+    # the unmatched default pools four medium agents' budgets
+    assert reasoning_tokens(arms.pooled_depth("medium", 4)) >= 4 * reasoning_tokens("medium")
+
+
+def test_k_can_reason_on_some_samples_and_comm_reasons_by_design():
+    k = arms.build("K", "reason", "medium:2")
+    assert (k.depth, k.reason_samples, k.samples) == ("medium", 2, 4)
+    assert arms.build("K", "reason", "high").reason_samples is None
+    assert arms.candidates("K", "reason")[0] == "medium:1"
+    assert arms.baseline("comm_parity").depth == "medium" and arms.baseline("info").depth == "low"
+    assert all(not c.startswith("medium") for c in arms.candidates("K", "comm_ip"))
 
 
 def test_irrelevant_text_has_no_answer_tokens():

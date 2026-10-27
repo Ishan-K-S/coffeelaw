@@ -124,7 +124,8 @@ def test_prepare_resumes_gate_and_matching(tmp_path, monkeypatch):
     from ceilings.analysis.report import load_gates
 
     policy = make_policy("sim-bounded")
-    kw = dict(n_main=4, n_pilot=4, difficulty={"n": 2}, levels={"medium": 1.0}, n_match=3)
+    kw = dict(n_main=4, n_pilot=4, difficulty={"n": 2}, levels={"medium": 1.0}, n_match=3,
+              gate="screen")
     first = experiment.prepare("comm_parity", policy, tmp_path, **kw)
     assert (tmp_path / "matching" / "comm_parity__sim-bounded.json").exists()
     assert not list((tmp_path / "arms").glob("*/*.measurements.json"))

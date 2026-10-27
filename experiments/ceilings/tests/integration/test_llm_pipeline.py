@@ -33,7 +33,7 @@ def test_prompts_carry_the_information_under_the_matching_arm():
 def test_scripted_suite_passes_checks_and_shows_diagonal(tmp_path):
     policy = _policy()
     for fam in ["info", "reason", "comm_ip"]:
-        prep = experiment.prepare(fam, policy, tmp_path, n_main=40, n_pilot=12,
+        prep = experiment.prepare(fam, policy, tmp_path, n_main=40, n_pilot=12, gate="screen",
                                   difficulty=DIFF[fam], levels={"medium": 1.0}, concurrency=4)
         run_grid(experiment.main_cells(prep["main"], prep["table"], deltas=("medium",)),
                  policy, tmp_path, concurrency=4)

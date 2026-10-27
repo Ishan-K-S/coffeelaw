@@ -116,7 +116,8 @@
     "per_cell": null,
     "power_target": 0.8,
     "equivalence_margin": 0.05,
-    "method": "ceilings power on pilot runs (see analysis.sample_size_method)"
+    "method": "ceilings power on pilot runs (see analysis.sample_size_method)",
+    "pilot_estimate": "about 1,200 paired instances per cell for the equivalence tests, from the October 2026 pilot after removing the floor-scoring artefact; to be recomputed with `ceilings power` on a pilot run under this design"
   },
   "exclusion_rules": [
     "info-family instance solved at baseline beyond chance (leakage)",
@@ -135,9 +136,26 @@
     "across_models": "a hypothesis is contradicted if at least 2 evaluable models are contradicted, otherwise supported if at least 2 evaluable models are supported, otherwise inconclusive; 'not evaluable' if no model is evaluable. The same rule applies to H6 and H7, each model judged on its own sweep cells",
     "bootstrap_resamples": 10000,
     "gains_reporting": "paired cluster bootstrap intervals over instances; gain versus realized cost is also reported",
-    "calibration_gate": "baseline within 5 points of chance, the tolerance applied to the 95% interval of the estimate; the family's own fix at full strength >= 90%; info leakage: baseline correct with p >= 0.9",
+    "calibration_gate": "difficulty search (calibrate): screening rule, baseline within 5 points of chance with the tolerance on the estimate's 95% interval and the full fix >= 90%; confirmation (prepare, on fresh instances, rule 'confirm'): baseline equivalent to chance within +/-0.05 by two one-sided exact binomial tests at alpha 0.05, and the full fix's one-sided 95% exact lower bound >= 0.90; chance is the instance's own (2^known / 2^k in the information family); info leakage: baseline correct with p >= 0.9",
     "difficulty_rule": "per model, the grid is searched from easy to hard; info and comm take the hardest passing setting, reason the easiest; the search stops when the full fix misses 90% (no harder setting can pass) or, for reason, at the first pass",
     "cost_matching": "each arm's mean added tokens within +/-5% of the target delta on the pilot instances, by choosing the arm's strength (largest that fits) and topping up with neutral filler",
-    "sample_size_method": "ceilings power: per comparison, n for TOST under a true difference of 0 and n for McNemar at the pilot gain, from pilot discordance, alpha planned as alpha/k within each Holm family; per_cell is the maximum over the equivalence tests of families whose gate passed"
+    "sample_size_method": "ceilings power: per comparison, n for TOST under a true difference of 0 and n for McNemar at the pilot gain, from pilot discordance, alpha planned as alpha/k within each Holm family; per_cell is the maximum over the equivalence tests of families whose gate passed",
+    "secondary_outcome": "the team's aggregated probability on the true answer (p_true), reported alongside accuracy",
+    "ties": "a majority-vote tie not broken by mean probability is broken with the run's own seed"
+  },
+  "design": {
+    "labels": "true answers balanced across instances (each option the truth equally often, in a seeded order)",
+    "information_family": "host table listed in a seeded random row order per instance; optional `known` attributes stated up front (partial-information setting); Fano floors use the full bound h(Pe) + Pe log2(M-1) >= H - B",
+    "communication_families": "every arm reasons at depth 'medium' (baseline included); K starts above that depth",
+    "reasoning_budgets_tokens": {
+      "low": 0,
+      "medium": 512,
+      "high": 1024,
+      "xhigh": 2048,
+      "max": 4096
+    },
+    "K": "strength is a depth plus how many of the 4 answer samples reason at it (e.g. 'medium:1'); the others answer at the family's baseline depth; candidates in cost order, matched to the target",
+    "A2_single_ref": "one agent whose reasoning depth is chosen by cost matching to A2's target (not A2's own strength topped up with filler)",
+    "ablations": "each harness option is cost-matched in its own run root; `ceilings run` refuses an arms table matched under different harness options"
   }
 }

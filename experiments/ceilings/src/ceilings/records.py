@@ -158,6 +158,7 @@ class RunRecord(_Frozen):
     probabilities: dict[str, float]
     sample_answers: list[str | None] = []
     correct: bool
+    p_true: float | None = None  # the team's probability on the true answer
     valid: bool = True
     refusal: Refusal | None
     ledger: ResourceLedger

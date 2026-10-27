@@ -169,6 +169,9 @@ All fixed with tests (156 tests pass); the runs affected are noted.
 
 ## Recommendations for the paid full run
 
+Items 1–6 are implemented in the harness (see the README's "Design changes after the October 2026
+pilot"); item 7 is a model-selection rule for the run itself.
+
 1. **Communication families:** give every call a reasoning stage (`comm_depth=medium` or deeper),
    so the comm gate and H3/H7 test communication.
 2. **Floor scoring:** uninformed answers default to the first option (host-00 in 24–30 of 30

@@ -62,11 +62,39 @@ def _log_runs(path: Path, instances, cfg, outcomes, policy) -> None:
                 "steps": o.transcript}, default=str) + "\n")
 
 
+GATE_RULES = ("screen", "confirm")
+
+
+def gate_passes(rule: str, base_correct: int, full_correct: int, n: int, chance: float) -> bool:
+    """The calibration gate (FR-007).
+
+    - "screen" (difficulty search): baseline within 5 points of chance, the tolerance applied to
+      the estimate's 95% interval; full fix >= 90%. Loose at small n: at n = 30 any baseline from
+      about 0.05 to 0.45 passes at chance 0.25, which is why it only screens.
+    - "confirm" (prepare, on fresh instances): baseline equivalent to chance within +-0.05 by two
+      one-sided exact binomial tests at alpha 0.05, and the full fix's one-sided 95% exact lower
+      bound >= 0.90. Needs roughly n >= 250 per family to pass at all.
+    """
+    from scipy import stats
+
+    if rule == "screen":
+        se = float(np.sqrt(chance * (1 - chance) / n))
+        return abs(base_correct / n - chance) <= 0.05 + 1.96 * se and full_correct / n >= GATE_FULL
+    if rule != "confirm":
+        raise ValueError(f"gate rule must be one of {GATE_RULES}")
+    lo_ok = stats.binomtest(base_correct, n, max(0.0, chance - 0.05), "greater").pvalue < 0.05
+    hi_ok = stats.binomtest(base_correct, n, min(1.0, chance + 0.05), "less").pvalue < 0.05
+    full_lower = (stats.beta.ppf(0.05, full_correct, n - full_correct + 1)
+                  if full_correct > 0 else 0.0)
+    return bool(lo_ok and hi_ok and full_lower >= GATE_FULL)
+
+
 def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
-              concurrency: int = 1, log_path: Path | None = None) -> CalibrationResult:
-    """Baseline must sit within 5 points of chance (allowing for sampling error); the family's own
-    full fix must reach 90%. With `log_path`, every run and its transcript is appended there."""
-    chance = 1 / len(instances[0].answer_space)
+              concurrency: int = 1, log_path: Path | None = None,
+              rule: str = "screen") -> CalibrationResult:
+    """Run baseline and the family's own fix at full strength and apply the gate (`rule`, see
+    `gate_passes`). With `log_path`, every run and its transcript is appended there."""
+    chance = float(np.mean([tasks.chance(i) for i in instances]))
     base_cfg = arms.build("baseline", family)
     base = _runs(instances, base_cfg, policy, concurrency)
     arm_id, strength = arms.full_strength(family, dict(instances[0].difficulty))
@@ -85,10 +113,6 @@ def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
         if family == "info" else []
     )
     refusals = [o.refusal is not None for o in base + full]
-    # FR-007's 5-point tolerance is applied to the estimate's 95% interval, not the point
-    # estimate: with n=200 and chance=0.25 a point-estimate rule fails ~11% of truly-at-chance
-    # families on sampling noise alone.
-    se = float(np.sqrt(chance * (1 - chance) / len(instances)))
     return CalibrationResult(
         family_id=family,
         model_id=policy.model_id,
@@ -98,7 +122,8 @@ def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
         matched_full_acc=full_acc,
         leak_rate=float(np.mean(leaks)) if leaks else 0.0,
         refusal_rate=float(np.mean(refusals)),
-        passed=abs(base_acc - chance) <= 0.05 + 1.96 * se and full_acc >= GATE_FULL,
+        passed=gate_passes(rule, round(base_acc * len(instances)),
+                           round(full_acc * len(instances)), len(instances), chance),
         baseline_mean_tokens=float(np.mean([o.ledger.total_tokens for o in base])),
     )
 
@@ -258,10 +283,7 @@ def match_arms(
     for arm_id in [a for a in arms.ARMS if a != "baseline"]:
         table["arms"][arm_id] = {}
         for lvl, target in table["targets"].items():
-            if arm_id == "A2_single_ref":
-                strengths = [table["arms"]["A2"][lvl]["strength"]]
-            else:
-                strengths = arms.candidates(arm_id, family, n_bits)
+            strengths = arms.candidates(arm_id, family, n_bits)
             chosen, natural = largest_fitting(
                 strengths, lambda s, arm_id=arm_id: cost_of(arms.build(arm_id, family, s)),
                 target * (1 + MATCH_TOLERANCE))
@@ -304,11 +326,13 @@ def default_strength(arm_id: str, family: str, difficulty: dict) -> object:
         return 8
     if arm_id == "K":
         return "high"
+    if arm_id == "A2_single_ref":
+        return arms.pooled_depth("medium", 4)
     if arm_id == "M":
         if family == "comm_parity":
             return 1
         return int(difficulty["n"]) if family.startswith("comm_") else 100
-    if arm_id in ("A2", "A2_single_ref"):
+    if arm_id == "A2":
         return "medium"
     return None
 

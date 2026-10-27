@@ -41,7 +41,8 @@ def test_info_theory_quantities():
     c = theory.bsc_capacity(0.1)
     assert inst.theory.H_theta == 3
     assert inst.theory.budget_by_T[4] == pytest.approx(4 * c)
-    assert inst.theory.fano_floor_by_T[0] == pytest.approx(theory.fano_floor(3, 0, 8))
+    assert inst.theory.fano_floor_by_T[0] == pytest.approx(theory.fano_floor_strong(3, 0, 8))
+    assert inst.theory.fano_floor_by_T[0] >= theory.fano_floor(3, 0, 8)
 
 
 def _walk(public):
