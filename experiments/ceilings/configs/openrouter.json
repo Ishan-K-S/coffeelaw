@@ -67,7 +67,7 @@
       "extra_body": {
         "provider": {
           "order": [
-            "DeepInfra"
+            "Parasail"
           ],
           "allow_fallbacks": false
         },
@@ -78,7 +78,7 @@
           "enabled": false
         }
       },
-      "notes": "pinned to DeepInfra (fp8), $0.09/$0.18 per M in/out on 2026-10-26"
+      "notes": "pinned to Parasail (fp8), $0.14/$0.28 per M in/out on 2026-10-26; DeepInfra's pool returned 429 engine_overloaded during the doctor check"
     },
     "nvidia/nemotron-3.5-super-vl": {
       "extra_body": {
