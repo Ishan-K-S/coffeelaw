@@ -37,9 +37,13 @@ def main() -> int:
     p.add_argument("--model", required=True)
     p.add_argument("--root", default="data")
     p.add_argument("--families", default="info,reason,comm_parity,comm_ip")
+    p.add_argument("--max-requests", type=int, default=100,
+                   help="stop after this many HTTP requests (paid providers)")
     a = p.parse_args()
     policy = make_policy(a.model)
     adapter = getattr(policy, "adapter", None)
+    if adapter is not None and hasattr(adapter, "max_requests"):
+        adapter.max_requests = a.max_requests
     out_dir = Path(a.root) / "doctor" / safe_model_dir(a.model)
     out_dir.mkdir(parents=True, exist_ok=True)
     summary = {"model": a.model, "families": {}}
@@ -70,6 +74,7 @@ def main() -> int:
                                  for c in cs),
                 "messages": [s["text"] for s in out.transcript if s["step"] == "message"],
                 "tokens": out.ledger.total_tokens,
+                "dollars": round(out.ledger.to_record().dollars or 0.0, 5),
                 "requests": (adapter.requests - before) if adapter is not None else None,
                 "secs": round(secs, 1),
             }
@@ -81,7 +86,10 @@ def main() -> int:
                   f"parse={row['parse']} not_argmax={row['answer_not_argmax']} "
                   f"hidden={row['hidden_reasoning']} "
                   f"trunc={row['truncated']} msgs={row['messages']} tok={row['tokens']} "
-                  f"req={row['requests']} {row['secs']}s", flush=True)
+                  f"req={row['requests']} ${row['dollars']:.4f} {row['secs']}s", flush=True)
+    summary["dollars"] = round(sum(r.get("dollars", 0) for f in summary["families"].values()
+                                   for r in f.values()), 5)
+    print(f"total ${summary['dollars']:.4f}", flush=True)
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=1))
     return 0
 

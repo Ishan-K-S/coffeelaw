@@ -296,6 +296,8 @@ class LLMPolicy(Policy):
                 "answer_not_argmax": res.extra.get("answer_not_argmax"),
                 "hidden_reasoning": res.extra.get("hidden_reasoning"),
                 "schema_mode": res.extra.get("schema_mode"),
+                "served_by": res.extra.get("served_by"),
+                "cost": res.extra.get("reported_cost"),
                 "usage": [res.usage.input_tokens, res.usage.output_tokens,
                           res.usage.reasoning_tokens]}
 

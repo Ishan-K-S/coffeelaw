@@ -1,0 +1,178 @@
+{
+  "provider": "OpenRouter (https://openrouter.ai/api/v1), paid key with a credit limit",
+  "checked": "2026-10-26",
+  "notes": [
+    "Each model is pinned to one hosting provider with fallbacks off, so every run of a model is served by the same build (quantization is noted per model).",
+    "usage.include returns the provider-reported cost of each call; the harness charges it to the ledger, so --max-cost stops a run in dollars.",
+    "reasoning.enabled=false switches built-in reasoning off where the model has it; the harness's own reasoning stage is the compute knob."
+  ],
+  "models": {
+    "qwen/qwen3-235b-a22b-2507": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "Parasail"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        }
+      },
+      "notes": "pinned to Parasail (fp8), $0.14/$0.8 per M in/out on 2026-10-26; instruct model, no reasoning"
+    },
+    "meta-llama/llama-3.3-70b-instruct": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        }
+      },
+      "notes": "pinned to DeepInfra (fp8), $0.1/$0.32 per M in/out on 2026-10-26"
+    },
+    "mistralai/mistral-small-3.2-24b-instruct": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        }
+      },
+      "notes": "pinned to DeepInfra (fp8), $0.075/$0.2 per M in/out on 2026-10-26"
+    },
+    "google/gemma-3-27b-it": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        }
+      },
+      "notes": "pinned to DeepInfra (fp8), $0.08/$0.16 per M in/out on 2026-10-26"
+    },
+    "deepseek/deepseek-v4-flash": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        },
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "notes": "pinned to DeepInfra (fp8), $0.09/$0.18 per M in/out on 2026-10-26"
+    },
+    "nvidia/nemotron-3.5-super-vl": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "Crusoe"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        },
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "notes": "pinned to Crusoe (bf16), $0.1/$0.4 per M in/out on 2026-10-26; passed info, reason and comm-with-reasoning gates in the NVIDIA pilot"
+    },
+    "openai/gpt-4o-mini": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "OpenAI"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        }
+      },
+      "notes": "pinned to OpenAI (native), $0.15/$0.6 per M in/out on 2026-10-26"
+    },
+    "z-ai/glm-4.7-flash": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "Cloudflare"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        },
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "notes": "pinned to Cloudflare (unknown), $0.061/$0.4 per M in/out on 2026-10-26"
+    },
+    "anthropic/claude-haiku-5.5": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "Anthropic"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        },
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "notes": "pinned to Anthropic (native), $0.1/$0.5 per M in/out on 2026-10-26; no provider accepts temperature or seed: runs at its default sampling, so the temp=0 ablation does not apply"
+    },
+    "xiaomi/mimo-v2.6-flash": {
+      "extra_body": {
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false
+        },
+        "usage": {
+          "include": true
+        },
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      "notes": "pinned to DeepInfra (fp8), $0.091/$0.182 per M in/out on 2026-10-26"
+    }
+  },
+  "run_models": [
+    "qwen/qwen3-235b-a22b-2507",
+    "meta-llama/llama-3.3-70b-instruct",
+    "mistralai/mistral-small-3.2-24b-instruct",
+    "google/gemma-3-27b-it",
+    "deepseek/deepseek-v4-flash",
+    "nvidia/nemotron-3.5-super-vl",
+    "openai/gpt-4o-mini",
+    "z-ai/glm-4.7-flash",
+    "anthropic/claude-haiku-5.5",
+    "xiaomi/mimo-v2.6-flash"
+  ]
+}

@@ -167,3 +167,15 @@ def test_refine_filler_survives_a_negative_slope():
     assert 0 < nxt <= 4 * 868 and nxt == int(155 + (868 - 617) / 1.0)
     assert calibration.refine_filler(100, 500.0, 100.0, 900.0, samples=4) == 200  # slope 4
     assert calibration.refine_filler(10, -1e5, 0.0, 100.0, samples=1) == 400  # capped
+
+
+def test_shipped_openrouter_profiles_parse():
+    from pathlib import Path
+
+    cfg = json.loads((Path(__file__).parents[2] / "configs" / "openrouter.json").read_text())
+    assert len(cfg["run_models"]) == 10
+    for name, prof in cfg["models"].items():
+        assert set(prof) <= {"extra_body", "answer_max_tokens", "text_max_tokens", "schema",
+                             "served_aliases", "notes"}, name
+        assert prof["extra_body"]["provider"]["allow_fallbacks"] is False
+        assert len(prof["extra_body"]["provider"]["order"]) == 1

@@ -264,6 +264,8 @@ class ChatReply:
     # The reasoning stage passes this on: a model that writes "<reasoning></think><result>" in
     # its reply would otherwise reach the answer turn with only <result> (seen on Nemotron Ultra).
     full_text: str = ""
+    cost: float | None = None  # dollars, when the provider reports it (OpenRouter usage.cost)
+    provider: str = ""  # who served the call, when a router reports it
 
 
 class RequestCapExceeded(RuntimeError):
@@ -289,6 +291,8 @@ class ChatAdapter(ModelAdapter):
         reasoning_stop = ""
         hidden: list[str] = []
         hidden_tokens: list[int] = []
+        costs: list[float | None] = []
+        providers: set[str] = set()
         ids = []
         served = set()
         sent: list[list[dict]] = []
@@ -304,6 +308,8 @@ class ChatAdapter(ModelAdapter):
             hidden.append(r.hidden_reasoning)
             if r.reasoning_tokens is not None:
                 hidden_tokens.append(r.reasoning_tokens)
+            costs.append(r.cost)
+            providers.add(r.provider)
             final = FINAL_ANSWER_PROMPT if answer_space else FINAL_TEXT_PROMPT
             if r.stop == "length":
                 final = TRUNCATED_NOTE + final
@@ -322,12 +328,17 @@ class ChatAdapter(ModelAdapter):
         hidden.append(reply.hidden_reasoning)
         if reply.reasoning_tokens is not None:
             hidden_tokens.append(reply.reasoning_tokens)
+        costs.append(reply.cost)
+        providers.add(reply.provider)
         valid = all(self.served_ok(s) for s in served if s)
         usage = Usage(in_tok, out_tok, reasoning_tokens=sum(hidden_tokens) if hidden_tokens
-                      else None)
+                      else None,
+                      dollars=sum(costs) if costs and all(c is not None for c in costs) else 0.0)
         extra = {"raw": reply.text, "reasoning": reasoning, "reasoning_stop": reasoning_stop,
                  "stop": reply.stop, "sent": sent,
-                 "hidden_reasoning": [h for h in hidden if h] or None}
+                 "hidden_reasoning": [h for h in hidden if h] or None,
+                 "reported_cost": usage.dollars if costs and None not in costs else None,
+                 "served_by": sorted(p for p in providers if p) or None}
         if answer_space is None:
             return AdapterResult(None, {}, None, usage, ";".join(ids), text=reply.text,
                                  valid=valid, extra=extra)

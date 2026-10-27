@@ -196,14 +196,17 @@ class OpenAICompatAdapter(ChatAdapter):
             model_served=d.get("model", ""),
             stop=choice.get("finish_reason") or "",
             hidden_reasoning="\n".join(p for p in (field_reasoning, hidden) if p),
+            cost=float(usage["cost"]) if usage.get("cost") is not None else None,
+            provider=str(d.get("provider") or ""),
             full_text=content.replace("<think>", "").replace("</think>", "").strip(),
             reasoning_tokens=details.get("reasoning_tokens"),
         )
 
     def complete(self, messages, depth, answer_space, seed, max_tokens=16000):
         res = super().complete(messages, depth, answer_space, seed, max_tokens)
-        res.usage.dollars = (res.usage.input_tokens * self.price_in
-                             + res.usage.output_tokens * self.price_out) / 1e6
+        if res.extra.get("reported_cost") is None:  # no provider-reported cost: use the prices
+            res.usage.dollars = (res.usage.input_tokens * self.price_in
+                                 + res.usage.output_tokens * self.price_out) / 1e6
         res.extra["schema_mode"] = self.schema_mode
         return res
 

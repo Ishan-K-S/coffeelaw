@@ -358,3 +358,15 @@ def test_timeout_comes_from_the_environment(monkeypatch, openai_env):
     assert OpenAICompatAdapter("m").timeout == 120.0
     monkeypatch.delenv("CEILINGS_OPENAI_TIMEOUT")
     assert OpenAICompatAdapter("m").timeout == 600.0
+
+
+def test_reported_cost_and_provider_are_used(monkeypatch, openai_env):
+    monkeypatch.setenv("CEILINGS_OPENAI_PRICE_IN", "100")  # ignored when the provider reports cost
+    good = json.dumps({"probabilities": {"even": 0.6, "odd": 0.4}, "answer": "even"})
+    reply = _openai_reply(good)
+    reply["usage"]["cost"] = 0.00042
+    reply["provider"] = "DeepInfra"
+    monkeypatch.setattr("urllib.request.urlopen", _fake_urlopen([reply], []))
+    res = OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+    assert res.usage.dollars == pytest.approx(0.00042)
+    assert res.extra["served_by"] == ["DeepInfra"] and res.extra["reported_cost"] == 0.00042
