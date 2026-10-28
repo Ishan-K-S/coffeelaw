@@ -141,3 +141,25 @@ def test_two_stage_gate_stage_two_pools_gate_and_main_baselines(tmp_path):
     for r in rows[:850]:
         r["correct"] = True
     assert load_gates(tmp_path, pd.DataFrame(rows)) == {("m", "comm_ip"): False}
+
+
+def test_stage_two_pools_only_the_gated_difficulty(tmp_path):
+    from ceilings.analysis.report import load_gates
+
+    # a re-gate at d=3 appends to the log that already holds the failed d=2 gate's runs
+    (tmp_path / "calibration" / "runs").mkdir(parents=True)
+    (tmp_path / "calibration" / "reason__m.json").write_text(json.dumps({
+        "family_id": "reason", "model_id": "m", "n": 300, "baseline_acc": 0.25,
+        "chance_acc": 0.25, "matched_full_acc": 1.0, "passed": True, "gate": "two_stage",
+        "difficulty": {"d": 3}}))
+    with open(tmp_path / "calibration" / "runs" / "reason__m.jsonl", "w") as f:
+        for d, n_correct in ((2, 111), (3, 75)):
+            for i in range(300):
+                f.write(json.dumps({"instance_id": f"d{d}-{i}",
+                                    "difficulty": {"d": d, "variant": "x"},
+                                    "config": {"arm_id": "baseline"},
+                                    "correct": i < n_correct}) + "\n")
+    detail: dict = {}
+    load_gates(tmp_path, None, detail)
+    assert (detail[("m", "reason")]["pooled_n"], detail[("m", "reason")]["pooled_correct"]) \
+        == (300, 75)

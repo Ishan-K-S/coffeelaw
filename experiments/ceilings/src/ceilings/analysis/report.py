@@ -352,7 +352,7 @@ def load_gates(root: Path | str, df: pd.DataFrame | None = None,
                 "baseline_acc": d["baseline_acc"], "chance": d["chance_acc"],
                 "full_acc": d["matched_full_acc"]}
         if d.get("gate") == "two_stage":
-            correct, n = _pooled_baseline(root, path.stem, df, key)
+            correct, n = _pooled_baseline(root, path.stem, df, key, d.get("difficulty"))
             stage2 = n > 0 and baseline_equivalent(correct, n, d["chance_acc"])
             info.update(pooled_correct=correct, pooled_n=n, stage2_passed=bool(stage2))
             passed = passed and bool(stage2)
@@ -362,14 +362,20 @@ def load_gates(root: Path | str, df: pd.DataFrame | None = None,
     return gates
 
 
-def _pooled_baseline(root, stem: str, df: pd.DataFrame | None, key) -> tuple[int, int]:
-    """Correct count and n over the gate's baseline runs and the main grid's (one per instance)."""
+def _pooled_baseline(root, stem: str, df: pd.DataFrame | None, key,
+                     difficulty: dict | None = None) -> tuple[int, int]:
+    """Correct count and n over the gate's baseline runs and the main grid's (one per instance).
+    A re-gate at another difficulty appends to the same log, so only rows at the gate's
+    `difficulty` count (a row may carry more keys, such as comm's variant)."""
     runs = Path(root) / "calibration" / "runs" / f"{stem}.jsonl"
     seen: dict[str, bool] = {}
     if runs.exists():
         for line in runs.read_text().splitlines():
             r = json.loads(line)
-            if r["config"]["arm_id"] == "baseline":
+            if r["config"]["arm_id"] != "baseline":
+                continue
+            row_d = r.get("difficulty") or {}
+            if difficulty is None or all(row_d.get(k) == v for k, v in difficulty.items()):
                 seen.setdefault("gate:" + r["instance_id"], bool(r["correct"]))
     if df is not None and not df.empty:
         main = df[(df.model == key[0]) & (df.family == key[1]) & (df.arm == "baseline")
