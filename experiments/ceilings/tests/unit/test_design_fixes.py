@@ -97,3 +97,47 @@ def test_run_records_p_true_and_refuses_a_mismatched_table(tmp_path, capsys):
     assert code == 2 and "run prepare with the same --harness" in capsys.readouterr().err
     table = json.loads(next((tmp_path / "arms" / "comm_parity").glob("*.json")).read_text())
     assert table["harness"] == {}
+
+
+def test_two_stage_gate_stage_one():
+    # Nemotron's paid info gate: baseline 29/300 at chance 0.125 fails confirm, passes stage 1.
+    assert not calibration.gate_passes("confirm", 29, 300, 300, 0.125)
+    assert calibration.gate_passes("two_stage", 29, 300, 300, 0.125)
+    assert not calibration.gate_passes("two_stage", 274, 274, 300, 0.25)  # fix too weak
+    assert not calibration.gate_passes("two_stage", 120, 300, 300, 0.5)  # 0.40: too far
+
+
+def _gate_files(root, base_correct, n_gate, chance):
+    (root / "calibration" / "runs").mkdir(parents=True)
+    (root / "calibration" / "comm_ip__m.json").write_text(json.dumps({
+        "family_id": "comm_ip", "model_id": "m", "n": n_gate, "baseline_acc": 0.5,
+        "chance_acc": chance, "matched_full_acc": 1.0, "passed": True, "gate": "two_stage"}))
+    with open(root / "calibration" / "runs" / "comm_ip__m.jsonl", "w") as f:
+        for i in range(n_gate):
+            for arm in ("baseline", "M"):
+                f.write(json.dumps({"instance_id": f"p{i}", "config": {"arm_id": arm},
+                                    "correct": arm == "M" or i < base_correct}) + "\n")
+
+
+def test_two_stage_gate_stage_two_pools_gate_and_main_baselines(tmp_path):
+    import pandas as pd
+
+    from ceilings.analysis.report import load_gates
+
+    _gate_files(tmp_path, 147, 300, 0.5)
+    # gate runs alone (n = 300, 0.49 at chance 0.5) cannot show equivalence
+    detail: dict = {}
+    assert load_gates(tmp_path, None, detail) == {("m", "comm_ip"): False}
+    assert detail[("m", "comm_ip")]["pooled_n"] == 300
+    # pooled with 850 main-grid baseline runs at chance it can; other arms and sweeps ignored
+    rows = [{"model": "m", "family": "comm_ip", "arm": "baseline", "is_sweep": False,
+             "instance_id": f"x{i}", "correct": i % 2 == 0} for i in range(850)]
+    rows += [{"model": "m", "family": "comm_ip", "arm": "K", "is_sweep": False,
+              "instance_id": f"x{i}", "correct": True} for i in range(850)]
+    detail = {}
+    assert load_gates(tmp_path, pd.DataFrame(rows), detail) == {("m", "comm_ip"): True}
+    assert detail[("m", "comm_ip")]["pooled_n"] == 1150
+    # a baseline well above chance in the main grid fails stage 2
+    for r in rows[:850]:
+        r["correct"] = True
+    assert load_gates(tmp_path, pd.DataFrame(rows)) == {("m", "comm_ip"): False}

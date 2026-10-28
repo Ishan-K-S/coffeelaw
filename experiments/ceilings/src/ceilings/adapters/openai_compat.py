@@ -95,8 +95,11 @@ class OpenAICompatAdapter(ChatAdapter):
         self.price_in = float(os.environ.get("CEILINGS_OPENAI_PRICE_IN", "0") or 0)
         self.price_out = float(os.environ.get("CEILINGS_OPENAI_PRICE_OUT", "0") or 0)
         self.profile = load_profile(model_name)
-        self.schema_mode = (os.environ.get("CEILINGS_OPENAI_SCHEMA") or self.profile.get("schema")
-                            or "json_schema")
+        pinned = os.environ.get("CEILINGS_OPENAI_SCHEMA") or self.profile.get("schema")
+        self.schema_mode = pinned or "json_schema"
+        # A pinned mode never falls back: one rejected request must not switch a model to plain
+        # text partway through a run (a 400 from Anthropic did that to Claude Haiku in prepare).
+        self.schema_pinned = bool(pinned)
         if self.schema_mode not in SCHEMA_MODES:
             raise ValueError(f"CEILINGS_OPENAI_SCHEMA must be one of {SCHEMA_MODES}")
         self.extra_body = {**self.profile.get("extra_body", {}),
@@ -139,8 +142,14 @@ class OpenAICompatAdapter(ChatAdapter):
                 with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                     return json.loads(resp.read())
             except urllib.error.HTTPError as e:
-                if e.code in (400, 422) and structured:
+                if e.code in (400, 422) and structured and not self.schema_pinned:
                     raise _SchemaUnsupported() from e
+                if e.code in (400, 422):
+                    # Pinned schema, or no schema: retried a few times (OpenRouter has returned a
+                    # one-off 400), with the provider's reason kept for the final error.
+                    last, attempt = _with_body(e), attempt + 1
+                    time.sleep(_backoff(attempt, None))
+                    continue
                 # 404 is retried too: NVIDIA's gateway briefly returns it for a model that is
                 # being redeployed (seen on muse-glimmer-30b, served again minutes later).
                 if e.code == 429:
@@ -175,12 +184,16 @@ class OpenAICompatAdapter(ChatAdapter):
 
     def _chat(self, messages, schema, max_tokens, seed):
         while True:
+            mode = self.schema_mode
             try:
-                d = self._post(self._body(messages, schema, max_tokens, seed, self.schema_mode))
+                d = self._post(self._body(messages, schema, max_tokens, seed, mode))
                 break
             except _SchemaUnsupported:
-                # Fall back one step at a time: json_schema -> nvext -> plain text.
-                self.schema_mode = SCHEMA_MODES[SCHEMA_MODES.index(self.schema_mode) + 1]
+                # Fall back one step at a time: json_schema -> nvext -> plain text. Concurrent
+                # calls can fail on the same mode, so only the first one moves it on.
+                with self._count_lock:
+                    if self.schema_mode == mode:
+                        self.schema_mode = SCHEMA_MODES[SCHEMA_MODES.index(mode) + 1]
         choice = (d.get("choices") or [{}])[0]
         message = choice.get("message") or {}
         usage = d.get("usage") or {}
@@ -231,3 +244,11 @@ def _backoff(attempt: int, retry_after: str | None) -> float:
 
 class _SchemaUnsupported(Exception):
     pass
+
+
+def _with_body(e: urllib.error.HTTPError) -> Exception:
+    try:
+        body = e.read().decode(errors="replace")[:500]
+    except Exception:  # noqa: BLE001
+        body = ""
+    return RuntimeError(f"HTTP {e.code}: {body}")

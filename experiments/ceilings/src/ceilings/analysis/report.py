@@ -323,10 +323,18 @@ def assign_verdicts(
     return preds, all_rows
 
 
-def load_gates(root: Path | str) -> dict:
+def load_gates(root: Path | str, df: pd.DataFrame | None = None,
+               detail: dict | None = None) -> dict:
     """(model, family) -> calibration gate result, from `<root>/calibration/*.json`; a family
     whose difficulty search (`<root>/difficulty/*.json`) found no passing setting, and was
-    therefore never prepared, counts as a failed gate."""
+    therefore never prepared, counts as a failed gate.
+
+    A "two_stage" gate passes only if stage 2 does too: the baseline equivalent to chance
+    (`calibration.baseline_equivalent`) on the gate's baseline runs pooled with the main grid's
+    baseline runs in `df`. Without `df` it is not yet decided and counts as failed. `detail`, if
+    given, is filled with each gate's numbers."""
+    from ceilings.calibration import baseline_equivalent
+
     gates = {}
     for path in Path(root).glob("difficulty/*.json"):
         if path.name.endswith(".settings.json"):
@@ -334,10 +342,41 @@ def load_gates(root: Path | str) -> dict:
         d = json.loads(path.read_text())
         if d.get("chosen") is None:
             gates[(d["model_id"], d["family"])] = False
+            if detail is not None:
+                detail[(d["model_id"], d["family"])] = {"gate": "search", "passed": False}
     for path in Path(root).glob("calibration/*.json"):
         d = json.loads(path.read_text())
-        gates[(d["model_id"], d["family_id"])] = bool(d["passed"])
+        key = (d["model_id"], d["family_id"])
+        passed = bool(d["passed"])
+        info = {"gate": d.get("gate", "screen"), "stage1_passed": passed, "n_gate": d["n"],
+                "baseline_acc": d["baseline_acc"], "chance": d["chance_acc"],
+                "full_acc": d["matched_full_acc"]}
+        if d.get("gate") == "two_stage":
+            correct, n = _pooled_baseline(root, path.stem, df, key)
+            stage2 = n > 0 and baseline_equivalent(correct, n, d["chance_acc"])
+            info.update(pooled_correct=correct, pooled_n=n, stage2_passed=bool(stage2))
+            passed = passed and bool(stage2)
+        gates[key] = passed
+        if detail is not None:
+            detail[key] = {**info, "passed": passed}
     return gates
+
+
+def _pooled_baseline(root, stem: str, df: pd.DataFrame | None, key) -> tuple[int, int]:
+    """Correct count and n over the gate's baseline runs and the main grid's (one per instance)."""
+    runs = Path(root) / "calibration" / "runs" / f"{stem}.jsonl"
+    seen: dict[str, bool] = {}
+    if runs.exists():
+        for line in runs.read_text().splitlines():
+            r = json.loads(line)
+            if r["config"]["arm_id"] == "baseline":
+                seen.setdefault("gate:" + r["instance_id"], bool(r["correct"]))
+    if df is not None and not df.empty:
+        main = df[(df.model == key[0]) & (df.family == key[1]) & (df.arm == "baseline")
+                  & ~df.is_sweep]
+        for iid, c in main.groupby("instance_id").correct.first().items():
+            seen.setdefault("main:" + iid, bool(c))
+    return sum(seen.values()), len(seen)
 
 
 def write_reports(

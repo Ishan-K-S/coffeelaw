@@ -166,8 +166,12 @@ def cmd_analyze(a) -> int:
         per_cell = json.loads(Path("prereg/config.json").read_text()).get(
             "sample_sizes", {}).get("per_cell") if Path("prereg/config.json").exists() else None
         min_n = int(per_cell or 0)
+    gate_detail: dict = {}
     res = write_reports(df, a.out, delta=a.delta, floors=_floors(Path(a.root)), n_boot=a.n_boot,
-                        gates=load_gates(a.root), min_n=min_n, min_models=a.min_models)
+                        gates=load_gates(a.root, df, gate_detail), min_n=min_n,
+                        min_models=a.min_models)
+    (Path(a.out) / "gates.json").write_text(json.dumps(
+        [{"model": m, "family": f, **v} for (m, f), v in sorted(gate_detail.items())], indent=2))
     for p in res["predictions"]:
         why = p.detail.get("reasons", {})
         note = "; ".join(f"{m}: {', '.join(r)}" for m, r in why.items() if r) if why else ""
@@ -185,7 +189,7 @@ def cmd_power(a) -> int:
         print("no runs")
         return 2
     res = sample_sizes(df, delta=a.delta, margin=a.margin, alpha=a.alpha, power=a.power,
-                       gates=load_gates(a.root))
+                       gates=load_gates(a.root, df))
     Path(a.out).mkdir(parents=True, exist_ok=True)
     (Path(a.out) / "power.json").write_text(json.dumps(res, indent=2, default=str))
     for model, m in res["models"].items():
@@ -308,10 +312,12 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--delta", default="small,medium,large", help="cost levels to match")
     pr.add_argument("--no-match", action="store_true",
                     help="skip cost matching (smoke tests only; cells are marked unmatched)")
-    pr.add_argument("--gate", choices=["confirm", "screen"], default="confirm",
-                    help="calibration gate on the fresh pilot instances: confirm (equivalence "
-                         "to chance and a 0.90 lower bound; needs n-pilot of about 250+) or "
-                         "screen (the loose search rule)")
+    pr.add_argument("--gate", choices=["two_stage", "confirm", "screen"], default="two_stage",
+                    help="calibration gate on the fresh pilot instances: two_stage (the full "
+                         "fix's lower bound >= 0.90 and the baseline within 0.05 of chance here; "
+                         "equivalence to chance on the pooled gate and main-grid baselines in "
+                         "`analyze`), confirm (equivalence on the gate runs alone; needs n-pilot "
+                         "of about 1,000+) or screen (the loose search rule)")
     pr.set_defaults(fn=cmd_prepare)
 
     r = sub.add_parser("run", help="main grid")

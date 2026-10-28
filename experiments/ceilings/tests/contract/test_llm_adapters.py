@@ -370,3 +370,46 @@ def test_reported_cost_and_provider_are_used(monkeypatch, openai_env):
     res = OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
     assert res.usage.dollars == pytest.approx(0.00042)
     assert res.extra["served_by"] == ["DeepInfra"] and res.extra["reported_cost"] == 0.00042
+
+
+def test_pinned_schema_retries_a_400_and_never_falls_back(monkeypatch, openai_env):
+    monkeypatch.setenv("CEILINGS_OPENAI_SCHEMA", "json_schema")
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    bad = urllib.error.HTTPError("https://h/v1/chat/completions", 400, "bad", {},
+                                 io.BytesIO(b'{"error": "provider said no"}'))
+    good = json.dumps({"probabilities": {"even": 0.6, "odd": 0.4}, "answer": "even"})
+    seen = []
+    monkeypatch.setattr("urllib.request.urlopen",
+                        _fake_urlopen([bad, _openai_reply(good)], seen))
+    adapter = OpenAICompatAdapter("m")
+    res = adapter.complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+    assert res.final_answer == "even" and adapter.schema_mode == "json_schema"
+    assert all(s[1]["response_format"]["type"] == "json_schema" for s in seen)
+    # a 400 that keeps coming ends the call with the provider's reason
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: (_ for _ in ()).throw(
+        urllib.error.HTTPError("u", 400, "bad", {}, io.BytesIO(b"provider said no"))))
+    with pytest.raises(RuntimeError, match="provider said no"):
+        adapter.complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+    assert adapter.schema_mode == "json_schema"
+
+
+def test_concurrent_schema_fallbacks_move_one_step(monkeypatch, openai_env):
+    from ceilings.adapters import openai_compat
+
+    adapter = OpenAICompatAdapter("m")
+    good = _openai_reply(json.dumps({"probabilities": {"even": 0.6, "odd": 0.4},
+                                     "answer": "even"}))
+    # Three calls all fail on json_schema before any of them handles the failure (the race
+    # that crashed Claude Haiku's prepare with an IndexError).
+    failed_on = []
+
+    def post(body):
+        if "response_format" in body and len(failed_on) < 3:
+            failed_on.append(1)
+            raise openai_compat._SchemaUnsupported()
+        return good
+
+    monkeypatch.setattr(adapter, "_post", post)
+    for _ in range(3):
+        adapter._chat([{"role": "user", "content": "q"}], {"type": "object"}, 10, 0)
+    assert adapter.schema_mode == "nvext"

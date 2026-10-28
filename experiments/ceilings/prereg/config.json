@@ -136,7 +136,7 @@
     "across_models": "a hypothesis is contradicted if at least 2 evaluable models are contradicted, otherwise supported if at least 2 evaluable models are supported, otherwise inconclusive; 'not evaluable' if no model is evaluable. The same rule applies to H6 and H7, each model judged on its own sweep cells",
     "bootstrap_resamples": 10000,
     "gains_reporting": "paired cluster bootstrap intervals over instances; gain versus realized cost is also reported",
-    "calibration_gate": "difficulty search (calibrate): screening rule, baseline within 5 points of chance with the tolerance on the estimate's 95% interval and the full fix >= 90%; confirmation (prepare, on fresh instances, rule 'confirm'): baseline equivalent to chance within +/-0.05 by two one-sided exact binomial tests at alpha 0.05, and the full fix's one-sided 95% exact lower bound >= 0.90; chance is the instance's own (2^known / 2^k in the information family); info leakage: baseline correct with p >= 0.9",
+    "calibration_gate": "difficulty search (calibrate): screening rule, baseline within 5 points of chance with the tolerance on the estimate's 95% interval and the full fix >= 90%; then a two-stage gate on fresh instances. Stage 1 (prepare, rule 'two_stage', on the gate's own instances): the full fix's one-sided 95% exact lower bound >= 0.90 and the baseline's estimate within 0.05 of chance; only families passing stage 1 are cost-matched and run in the main grid. Stage 2 (analysis): the baseline equivalent to chance within +/-0.05 by two one-sided exact binomial tests at alpha 0.05, on the gate's baseline runs pooled with the main grid's baseline runs (about 300 + 850 instances); a family failing stage 2 is not evaluable. Chance is the instance's own (2^known / 2^k in the information family); info leakage: baseline correct with p >= 0.9",
     "difficulty_rule": "per model, the grid is searched from easy to hard; info and comm take the hardest passing setting, reason the easiest; the search stops when the full fix misses 90% (no harder setting can pass) or, for reason, at the first pass",
     "cost_matching": "each arm's mean added tokens within +/-5% of the target delta on the pilot instances, by choosing the arm's strength (largest that fits) and topping up with neutral filler",
     "sample_size_method": "ceilings power: per comparison, n for TOST under a true difference of 0 and n for McNemar at the pilot gain, from pilot discordance, alpha planned as alpha/k within each Holm family; per_cell is the maximum over the equivalence tests of families whose gate passed",
@@ -163,7 +163,10 @@
     "models": "the 10 in configs/openrouter.json (10 developers), each pinned to one hosting provider",
     "main_grid": "all 9 arms at the medium delta, n = 850 paired instances per cell, for every (model, family) whose confirmation gate passes",
     "delta_curves": "all three delta levels (small, medium, large) on 3 models, chosen after calibration as the models with the most passing families, at most one per developer; a documented deviation from FR-009 for the other 7",
-    "gate": "prepare --gate confirm on about 300 fresh instances per family",
-    "estimate": "about $260-500 including calibration and prepare"
+    "gate": "prepare --gate two_stage on about 300 fresh instances per family (stage 2 on the pooled baselines in the analysis)",
+    "estimate": "about $260-500 including calibration and prepare",
+    "deviations": [
+      "2026-10-28: the one-stage confirmation gate (equivalence on the 300 gate instances alone) was replaced by the two-stage gate before any main-grid run. At n = 300 the one-stage gate passes a baseline exactly at chance only 5% of the time at chance 0.5, 21% at 0.25 and 65% at 0.125, so it would have excluded families at random; the first three paid gates (info on Nemotron, MiMo, gpt-4o-mini) were re-scored from their logged runs under the new rule, no runs repeated. Equivalence by the same test and margin is kept, on about 1,150 instances (pass rate at chance about 0.92, 0.97 and 1.00)."
+    ]
   }
 }

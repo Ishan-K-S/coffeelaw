@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from dataclasses import replace
 from pathlib import Path
 
@@ -46,23 +47,77 @@ def _runs(instances, cfg, policy, concurrency):
     return pmap(lambda i: _run(i, cfg, policy), instances, concurrency)
 
 
-def _log_runs(path: Path, instances, cfg, outcomes, policy) -> None:
-    """Append each gate run's answer and full transcript, so a gate result can be audited."""
+def _log_row(inst, cfg, o, policy) -> dict:
+    return {
+        "instance_id": inst.instance_id, "family": inst.family_id,
+        "difficulty": dict(inst.difficulty), "answer": inst.answer,
+        "model_id": policy.model_id, "harness": policy.harness_record(),
+        "config": effective_config(cfg, policy, inst.family_id).to_dict(),
+        "final_answer": o.final_answer,
+        "correct": o.final_answer == inst.answer, "valid": o.valid,
+        "probabilities": o.probabilities, "refusal": o.refusal,
+        "tokens": o.ledger.total_tokens, "steps": o.transcript}
+
+
+class _Logged:
+    """A gate run read back from the log: the fields the gate uses."""
+
+    def __init__(self, row: dict):
+        self.final_answer = row["final_answer"]
+        self.probabilities = row.get("probabilities") or {}
+        self.refusal = row.get("refusal")
+        self.tokens = row["tokens"]
+
+
+def _logged_runs(path: Path, instances, cfg, policy, concurrency) -> list:
+    """Every gate run and its transcript, appended to `path` as each one finishes, so a gate
+    result can be audited and an interrupted gate resumes with only the missing runs."""
+    def key(inst):
+        conf = effective_config(cfg, policy, inst.family_id).to_dict()
+        return inst.instance_id, json.dumps(json.loads(json.dumps(conf, default=str)),
+                                            sort_keys=True)
+
+    done: dict = {}
+    if path.exists():
+        text = path.read_text()
+        if text and not text.endswith("\n"):
+            with open(path, "a") as f:
+                f.write("\n")  # end the line cut off by the interruption before appending
+        for line in text.splitlines():
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue  # a line cut off by the interruption
+            done[(row["instance_id"], json.dumps(row["config"], sort_keys=True))] = row
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "a") as f:
-        for inst, o in zip(instances, outcomes, strict=True):
-            f.write(json.dumps({
-                "instance_id": inst.instance_id, "family": inst.family_id,
-                "difficulty": dict(inst.difficulty), "answer": inst.answer,
-                "model_id": policy.model_id, "harness": policy.harness_record(),
-                "config": effective_config(cfg, policy, inst.family_id).to_dict(),
-                "final_answer": o.final_answer,
-                "correct": o.final_answer == inst.answer, "valid": o.valid,
-                "probabilities": o.probabilities, "tokens": o.ledger.total_tokens,
-                "steps": o.transcript}, default=str) + "\n")
+    lock = threading.Lock()
+
+    def run_and_log(inst):
+        o = _run(inst, cfg, policy)
+        row = json.loads(json.dumps(_log_row(inst, cfg, o, policy), default=str))
+        with lock:
+            with open(path, "a") as f:
+                f.write(json.dumps(row) + "\n")
+            done[key(inst)] = row
+
+    pmap(run_and_log, [i for i in instances if key(i) not in done], concurrency)
+    return [_Logged(done[key(i)]) for i in instances]
 
 
-GATE_RULES = ("screen", "confirm")
+def _tokens(o) -> int:
+    return o.tokens if isinstance(o, _Logged) else o.ledger.total_tokens
+
+
+GATE_RULES = ("screen", "confirm", "two_stage")
+
+
+def baseline_equivalent(base_correct: int, n: int, chance: float) -> bool:
+    """Baseline equivalent to chance within +-0.05: two one-sided exact binomial tests at 0.05."""
+    from scipy import stats
+
+    lo_ok = stats.binomtest(base_correct, n, max(0.0, chance - 0.05), "greater").pvalue < 0.05
+    hi_ok = stats.binomtest(base_correct, n, min(1.0, chance + 0.05), "less").pvalue < 0.05
+    return bool(lo_ok and hi_ok)
 
 
 def gate_passes(rule: str, base_correct: int, full_correct: int, n: int, chance: float) -> bool:
@@ -71,22 +126,27 @@ def gate_passes(rule: str, base_correct: int, full_correct: int, n: int, chance:
     - "screen" (difficulty search): baseline within 5 points of chance, the tolerance applied to
       the estimate's 95% interval; full fix >= 90%. Loose at small n: at n = 30 any baseline from
       about 0.05 to 0.45 passes at chance 0.25, which is why it only screens.
-    - "confirm" (prepare, on fresh instances): baseline equivalent to chance within +-0.05 by two
-      one-sided exact binomial tests at alpha 0.05, and the full fix's one-sided 95% exact lower
-      bound >= 0.90. Needs roughly n >= 250 per family to pass at all.
+    - "confirm": baseline equivalent to chance within +-0.05 (`baseline_equivalent`), and the
+      full fix's one-sided 95% exact lower bound >= 0.90. Underpowered at gate sizes: with the
+      baseline exactly at chance and n = 300 it passes 5% of the time at chance 0.5, 21% at 0.25
+      and 65% at 0.125.
+    - "two_stage" (prepare, on fresh instances): stage 1 here, the full fix's lower bound >= 0.90
+      and the baseline's estimate within 0.05 of chance; stage 2, `baseline_equivalent` on the
+      gate's baseline runs pooled with the main grid's, is applied in the analysis
+      (`analysis.report.load_gates`).
     """
     from scipy import stats
 
     if rule == "screen":
         se = float(np.sqrt(chance * (1 - chance) / n))
         return abs(base_correct / n - chance) <= 0.05 + 1.96 * se and full_correct / n >= GATE_FULL
-    if rule != "confirm":
+    if rule not in GATE_RULES:
         raise ValueError(f"gate rule must be one of {GATE_RULES}")
-    lo_ok = stats.binomtest(base_correct, n, max(0.0, chance - 0.05), "greater").pvalue < 0.05
-    hi_ok = stats.binomtest(base_correct, n, min(1.0, chance + 0.05), "less").pvalue < 0.05
     full_lower = (stats.beta.ppf(0.05, full_correct, n - full_correct + 1)
                   if full_correct > 0 else 0.0)
-    return bool(lo_ok and hi_ok and full_lower >= GATE_FULL)
+    if rule == "two_stage":
+        return bool(abs(base_correct / n - chance) <= 0.05 + 1e-9 and full_lower >= GATE_FULL)
+    return bool(baseline_equivalent(base_correct, n, chance) and full_lower >= GATE_FULL)
 
 
 def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
@@ -96,13 +156,14 @@ def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
     `gate_passes`). With `log_path`, every run and its transcript is appended there."""
     chance = float(np.mean([tasks.chance(i) for i in instances]))
     base_cfg = arms.build("baseline", family)
-    base = _runs(instances, base_cfg, policy, concurrency)
     arm_id, strength = arms.full_strength(family, dict(instances[0].difficulty))
     full_cfg = arms.build(arm_id, family, strength)
-    full = _runs(instances, full_cfg, policy, concurrency)
     if log_path is not None:
-        _log_runs(log_path, instances, base_cfg, base, policy)
-        _log_runs(log_path, instances, full_cfg, full, policy)
+        base = _logged_runs(log_path, instances, base_cfg, policy, concurrency)
+        full = _logged_runs(log_path, instances, full_cfg, policy, concurrency)
+    else:
+        base = _runs(instances, base_cfg, policy, concurrency)
+        full = _runs(instances, full_cfg, policy, concurrency)
     base_acc = float(np.mean([o.final_answer == i.answer for o, i in zip(base, instances,
                                                                        strict=True)]))
     full_acc = float(np.mean([o.final_answer == i.answer for o, i in zip(full, instances,
@@ -124,7 +185,7 @@ def calibrate(family: str, instances: list[TaskInstance], policy: Policy,
         refusal_rate=float(np.mean(refusals)),
         passed=gate_passes(rule, round(base_acc * len(instances)),
                            round(full_acc * len(instances)), len(instances), chance),
-        baseline_mean_tokens=float(np.mean([o.ledger.total_tokens for o in base])),
+        baseline_mean_tokens=float(np.mean([_tokens(o) for o in base])),
     )
 
 

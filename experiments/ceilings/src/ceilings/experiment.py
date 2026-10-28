@@ -68,9 +68,8 @@ def prepare(
         cal = CalibrationResult(**{k: v for k, v in previous.items()
                                    if k not in ("difficulty", "harness", "gate")})
     else:
+        # An interrupted gate resumes from its log (runs are keyed by instance and config).
         log = root / "calibration" / "runs" / f"{tag}.jsonl"
-        if log.exists():
-            log.unlink()  # a partial log from an interrupted gate
         cal = calibration.calibrate(family, pilot, policy, concurrency, log_path=log, rule=gate)
         calibration.save_json({**cal.model_dump(), "difficulty": diff, "gate": gate,
                                "harness": policy.options.non_default()}, cal_path)

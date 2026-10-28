@@ -179,3 +179,25 @@ def test_shipped_openrouter_profiles_parse():
                              "served_aliases", "notes"}, name
         assert prof["extra_body"]["provider"]["allow_fallbacks"] is False
         assert len(prof["extra_body"]["provider"]["order"]) == 1
+
+
+def test_interrupted_gate_resumes_from_its_log(tmp_path, monkeypatch):
+    from ceilings import tasks
+    from ceilings.agents import make_policy
+
+    insts = tasks.generate_many("comm_parity", 4, "calibration", 0, n=2)
+    policy = make_policy("sim-bounded")
+    log = tmp_path / "gate.jsonl"
+    first = calibration.calibrate("comm_parity", insts, policy, log_path=log, rule="screen")
+    lines = log.read_text().splitlines()
+    log.write_text("\n".join(lines[:5]) + "\n" + lines[5][:40])  # cut off mid-line
+    ran = []
+    real = calibration._run
+    monkeypatch.setattr(calibration, "_run", lambda *a: ran.append(1) or real(*a))
+    again = calibration.calibrate("comm_parity", insts, policy, log_path=log, rule="confirm")
+    assert len(ran) == 3  # only the 3 runs missing from the log
+    assert (again.baseline_acc, again.matched_full_acc, again.baseline_mean_tokens) == \
+        (first.baseline_acc, first.matched_full_acc, first.baseline_mean_tokens)
+    ran.clear()
+    calibration.calibrate("comm_parity", insts, policy, log_path=log, rule="screen")
+    assert ran == []  # a complete log is re-scored without new runs
