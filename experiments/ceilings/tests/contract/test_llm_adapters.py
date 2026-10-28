@@ -413,3 +413,17 @@ def test_concurrent_schema_fallbacks_move_one_step(monkeypatch, openai_env):
     for _ in range(3):
         adapter._chat([{"role": "user", "content": "q"}], {"type": "object"}, 10, 0)
     assert adapter.schema_mode == "nvext"
+
+
+def test_a_400_reporting_a_rate_limit_is_waited_out(monkeypatch, openai_env):
+    monkeypatch.setenv("CEILINGS_OPENAI_SCHEMA", "json_schema")
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    raw = (b'{"error":{"code":400,"metadata":{"raw":"Grammar compilation rate limit exceeded. '
+           b'50 compilations per minute."}}}')
+    replies = [urllib.error.HTTPError("u", 400, "bad", {}, io.BytesIO(raw)) for _ in range(15)]
+    good = json.dumps({"probabilities": {"even": 0.6, "odd": 0.4}, "answer": "even"})
+    monkeypatch.setattr("urllib.request.urlopen",
+                        _fake_urlopen(replies + [_openai_reply(good)], []))
+    adapter = OpenAICompatAdapter("m")  # retries = 8 < 15 rate-limited replies
+    res = adapter.complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+    assert res.final_answer == "even" and adapter.requests == 1  # limited replies not capped

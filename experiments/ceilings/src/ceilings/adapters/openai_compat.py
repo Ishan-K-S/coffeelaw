@@ -144,21 +144,28 @@ class OpenAICompatAdapter(ChatAdapter):
             except urllib.error.HTTPError as e:
                 if e.code in (400, 422) and structured and not self.schema_pinned:
                     raise _SchemaUnsupported() from e
+                rate_limited = e.code == 429
                 if e.code in (400, 422):
                     # Pinned schema, or no schema: retried a few times (OpenRouter has returned a
-                    # one-off 400), with the provider's reason kept for the final error.
-                    last, attempt = _with_body(e), attempt + 1
-                    time.sleep(_backoff(attempt, None))
-                    continue
-                # 404 is retried too: NVIDIA's gateway briefly returns it for a model that is
-                # being redeployed (seen on muse-glimmer-30b, served again minutes later).
-                if e.code == 429:
-                    last, limited = e, limited + 1
+                    # one-off 400), with the provider's reason kept for the final error. A 400
+                    # that reports a rate limit counts as one: Anthropic allows 50
+                    # structured-output grammar compilations a minute (Claude Haiku in prepare).
+                    last = _with_body(e)
+                    rate_limited = "rate limit" in str(last).lower()
+                    if not rate_limited:
+                        attempt += 1
+                        time.sleep(_backoff(attempt, None))
+                        continue
+                if rate_limited:
+                    last = e if e.code == 429 else last
+                    limited += 1
                     with self._count_lock:
                         self.requests -= 1  # a rate-limited reply did no work; not capped
                     time.sleep(_backoff(min(limited, 6), e.headers.get("Retry-After")
                                         if e.headers else None))
                     continue
+                # 404 is retried too: NVIDIA's gateway briefly returns it for a model that is
+                # being redeployed (seen on muse-glimmer-30b, served again minutes later).
                 if e.code in (404, 408, 409) or e.code >= 500:
                     last, attempt = e, attempt + 1
                     time.sleep(_backoff(attempt, e.headers.get("Retry-After") if e.headers
