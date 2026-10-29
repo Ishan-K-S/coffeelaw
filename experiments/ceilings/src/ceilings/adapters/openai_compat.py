@@ -33,6 +33,7 @@ its tokens are already part of `completion_tokens`, so the ledger charges for it
 
 from __future__ import annotations
 
+import http.client
 import json
 import os
 import random
@@ -172,7 +173,10 @@ class OpenAICompatAdapter(ChatAdapter):
                                         else None))
                     continue
                 raise
-            except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            except (urllib.error.URLError, TimeoutError, ConnectionError,
+                    http.client.HTTPException, json.JSONDecodeError) as e:
+                # A reply cut off mid-body (IncompleteRead, or JSON that ends early) is retried:
+                # one network blip crashed all 18 main-grid processes at once.
                 last, attempt = e, attempt + 1
                 time.sleep(_backoff(attempt, None))
         raise RuntimeError(f"request to {self.base_url} failed after {attempt} errors and "

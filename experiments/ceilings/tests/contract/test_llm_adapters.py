@@ -427,3 +427,26 @@ def test_a_400_reporting_a_rate_limit_is_waited_out(monkeypatch, openai_env):
     adapter = OpenAICompatAdapter("m")  # retries = 8 < 15 rate-limited replies
     res = adapter.complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
     assert res.final_answer == "even" and adapter.requests == 1  # limited replies not capped
+
+
+def test_a_reply_cut_off_mid_body_is_retried(monkeypatch, openai_env):
+    import http.client
+
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    good = json.dumps({"probabilities": {"even": 0.6, "odd": 0.4}, "answer": "even"})
+    seen = []
+    replies = [http.client.IncompleteRead(b""), _openai_reply(good)]
+    monkeypatch.setattr("urllib.request.urlopen", _fake_urlopen(replies, seen))
+    res = OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+    assert res.final_answer == "even" and len(seen) == 2
+    # a body that ends early (unparseable JSON) is retried the same way
+    calls = []
+
+    def truncated_then_good(req, timeout=None):
+        calls.append(1)
+        return _Resp(b'{"id": "r1", "choi') if len(calls) == 1 else \
+            _Resp(json.dumps(_openai_reply(good)).encode())
+
+    monkeypatch.setattr("urllib.request.urlopen", truncated_then_good)
+    res = OpenAICompatAdapter("m").complete([{"role": "user", "content": "q"}], "low", SPACE, 0)
+    assert res.final_answer == "even" and len(calls) == 2
