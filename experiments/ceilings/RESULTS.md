@@ -40,6 +40,8 @@ real effects, not power, are listed below.
 Every baseline is at chance (info 2^known/2^k, reason 0.25, comm 0.5). Full table: `tests.csv`,
 `gain_table.csv`.
 
+![Mean gain over baseline by arm and family](results/paid-2026-10/figures/1_gain_fingerprint.png)
+
 Findings that bear on the verdicts:
 
 - **M on reason is a design flaw, not a refutation.** Agent B writes the worked chain into its
@@ -54,6 +56,8 @@ Findings that bear on the verdicts:
   message, while no agent sees both halves, so A1 shifts accuracy below baseline by up to 0.04
   (Qwen parity 0.425 vs 0.465). This works against H4's equivalence.
 - **MiMo K on comm_parity is a small harm** (−0.05, 95% CI −0.09 to −0.02).
+
+![A2 against the single-agent reference on reasoning](results/paid-2026-10/figures/4_a2_split_vs_single.png)
 
 ## Calibration gates
 
@@ -91,6 +95,8 @@ of four samples adds nothing past medium. What the curves do show is that filler
 the wrong kind of resource add nothing at any level (Mistral comm_parity M even drops from 0.987 to
 0.962, about 3 standard errors).
 
+![Matching arm's gain at small, medium and large delta](results/paid-2026-10/figures/5_delta_curves.png)
+
 At small delta, 24 cells miss the ±5% cost target because the arm's cheapest setting already costs
 more than half the baseline; the worst are Mistral reason A2_single_ref (+275%) and K (+97%). The
 Gemma reason curve was stopped at 887 runs because its gate failed; those rows appear in
@@ -106,12 +112,16 @@ it. Answer truncation weakens this sweep: on 16 options models spend the 400-tok
 long probabilities, and Nemotron loses 11.9% of samples (up to 46% in one cell), which only adds
 error.
 
+![H6: error against probes with the Fano floor](results/paid-2026-10/figures/3_h6_probes_vs_fano.png)
+
 **H7** (comm, 16 bits, message budget L ∈ {0…16}): parity jumps from 0.47–0.55 at L = 0 to
 0.97–1.00 at L = 1 on all four models. The inner product stays at 0.40 to 0.58 through L = 12 to 14
 and rises only at L = 16 (Qwen 0.61, MiMo 0.81, DeepSeek 0.82, Nemotron 0.88). Every message
 carried at most L bits. The location of the rise is set by the protocol (B sends the first L bits
 of its list, so the best possible accuracy below L = 16 is 0.5 + 0.5·2^−(16−L)), so it says nothing
 about an optimal protocol. 78 of Qwen's 900 non-empty-budget messages were empty after retries.
+
+![H7: accuracy against message bits](results/paid-2026-10/figures/2_h7_message_bits.png)
 
 ## Integrity and quality
 
