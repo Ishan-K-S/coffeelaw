@@ -344,6 +344,11 @@ def match_arms(
     for arm_id in [a for a in arms.ARMS if a != "baseline"]:
         table["arms"][arm_id] = {}
         for lvl, target in table["targets"].items():
+            if arm_id == "A2_single_ref":
+                # H5 compares A2 with the same compute in one agent, so the reference is matched
+                # to what A2 actually costs: four reasoning agents can cost more than the level's
+                # target, and design 1 then compared them with a cheaper agent.
+                target = round(table["arms"]["A2"][lvl]["added"])
             strengths = arms.candidates(arm_id, family, n_bits)
             chosen, natural = largest_fitting(
                 strengths, lambda s, arm_id=arm_id: cost_of(arms.build(arm_id, family, s)),

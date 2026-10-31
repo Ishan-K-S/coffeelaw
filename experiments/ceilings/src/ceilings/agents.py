@@ -146,6 +146,8 @@ class SimPolicy(Policy):
             if bits is not None and budget > 0:
                 text = (str(sum(bits) % 2) if fam == "comm_parity"
                         else "".join(str(b) for b in bits[:budget]))
+        elif mode == "quote":
+            text = view.shared_text  # facts only; the channel drops anything else
         elif fam == "reason":
             progress = self._latest_progress(view)
             _, (person, shift, done) = _reason_solve(view.public, steps, progress)
@@ -323,6 +325,13 @@ class LLMPolicy(Policy):
                 f"Send agent {receiver} your message now, in the message format described above. "
                 f"{length} Your entire reply must be the message characters themselves, with no "
                 "other words."
+            )
+        elif mode == "quote":
+            rule = (
+                f"Write a message for agent {receiver} made only of facts copied word for word "
+                "from the task, one fact per line. Any line that is not an exact copy of a line of "
+                f"the task is removed before delivery. Use at most {budget} tokens. Reply with "
+                "only the message."
             )
         else:
             rule = (

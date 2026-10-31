@@ -17,7 +17,6 @@ from __future__ import annotations
 import json
 import re
 from collections import defaultdict
-from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
@@ -40,10 +39,12 @@ QUALITY_THRESHOLDS = {
 MATCHING_ARM = {"info": "E", "reason": "K", "comm_parity": "M", "comm_ip": "M"}
 ALLOWED_CHANGES = {
     "E": {"tool_rounds", "extra_kind", "extra_amount"},
-    "K": {"depth", "reason_samples"},
-    "M": {"message_budget", "relay"},
+    # Design 1 put K's reasoning on some of the 4 samples; design 2 runs only the reasoning ones.
+    "K": {"depth", "reason_samples", "samples"},
+    "M": {"message_budget", "relay", "message_mode"},
     "A1": {"n_agents", "samples", "answerers"},
-    "A2": {"n_agents", "samples", "depth", "relay", "message_mode", "message_budget"},
+    "A2": {"n_agents", "samples", "depth", "relay", "message_mode", "message_budget",
+           "relay_skip"},
     "A2_single_ref": {"n_agents", "samples", "depth"},
     "P1": {"extra_kind"},
     "P2": {"extra_kind"},
@@ -65,9 +66,7 @@ def _baseline_for(t: dict, fam: str) -> dict:
     if "reasoning_tokens" in given and given["reasoning_tokens"] is not None:
         given["reasoning_tokens"] = tuple(given["reasoning_tokens"])
     policy = SimpleNamespace(options=HarnessOptions(**given))
-    base = asdict(effective_config(arms.baseline(fam), policy, fam))
-    base["answerers"] = list(base["answerers"])
-    return base
+    return effective_config(arms.baseline(fam), policy, fam).to_dict()
 
 
 def load_instances_index(root: Path | str) -> dict[str, TaskInstance]:
@@ -98,7 +97,8 @@ def _check_transcript(t: dict, inst: TaskInstance | None, problems: dict, rates:
 
     # Each arm changes exactly one resource relative to baseline.
     base = _baseline_for(t, fam)
-    changed = {k for k in base if base[k] != cfg.get(k)} - IGNORED_FIELDS
+    # A field missing from an older transcript had its default value.
+    changed = {k for k in base if base[k] != cfg.get(k, base[k])} - IGNORED_FIELDS
     if t.get("sweep") is None and not changed <= ALLOWED_CHANGES.get(cfg["arm_id"], set()):
         problems["arm_changes_one_resource"].append(f"{rid[:12]} {cfg['arm_id']}: {sorted(changed)}")
 

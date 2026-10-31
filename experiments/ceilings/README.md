@@ -83,6 +83,36 @@ an equivalence test (`--gate confirm`, the default; about 250+ pilot instances p
 are broken with the run's seed; run records carry `p_true`; H6 uses the full Fano bound; and each
 ablation must be cost-matched under its own `--harness` options.
 
+### Design changes after the October 2026 paid run (arm design 2)
+
+The paid run ([RESULTS.md](RESULTS.md)) was made with arm design 1. Checking every test against
+its run records found arms that did not test what they were meant to; design 2 fixes them.
+
+- **K** (H2): `medium:1` meant one of the four samples reasoned, and the three that did not
+  out-voted it (reasoning sample right 90-100%, team vote 40-57%). The team now answers with its
+  reasoning samples only: `high:2` is two samples, both reasoning.
+- **M on reason** (H2): both agents hold every fact, so a free-text message let B work the chain
+  and send the result, which is compute, not communication. M's channel there now delivers only
+  lines copied word for word from the task, in the task's order (`message_mode="quote"`).
+- **A2** (H5): cost matching chose depth `low` for A2 on 8 of 9 reason models (four agents with no
+  reasoning, relaying the first agent's guess), and on comm its 0-bit channel meant B, C and D
+  never made a call. A2's agents now always reason, relay through a 200-token channel on every
+  family (on comm without B, whose notes would carry M's information), and the single-agent
+  reference is matched to A2's realized cost rather than the level's target.
+- **Instances**: a setting with too few distinct prompts now fails instead of repeating them
+  (Gemma info at k=2 had 96 distinct prompts behind 850 instances).
+- **Answer cap**: the answer turn allows 60 tokens per option (16 hosts: 960), up from a flat 400
+  that truncated up to 46% of a cell's H6 answers.
+
+`ceilings.arms.ARM_DESIGN` is part of every new run ID and run record, and `ceilings run`
+refuses to add design-2 runs to a root that holds design-1 runs. Use a new `--root` and a new
+pre-registration for a design-2 run.
+
+Not changed, because no harness change can fix them: H6 and H7 test information-theoretic bounds
+that no honest team can beat, and under the fixed message format (B sends the first L bits) H7's
+flat-then-rising shape is set by the format. They can only fail through a leak or a bug, so they
+are consistency checks rather than tests that could have gone either way.
+
 For models without a native effort setting, depth is a reasoning stage capped at
 `low 0 / medium 512 / high 1024 / xhigh 2048 / max 4096` tokens (override with
 `CEILINGS_REASONING_TOKENS`). Keep at least about 20 tokens per reasoning step the task needs.

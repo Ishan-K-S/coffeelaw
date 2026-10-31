@@ -126,8 +126,10 @@ def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) 
     # A bit budget of 0 means nothing can cross, so no message calls are made (and none charged).
     can_send = cfg.message_budget > 0 or (cfg.relay and cfg.message_mode == "tokens")
     if can_send and len(names) > 1:
-        channel = Channel(cfg.message_mode, cfg.message_budget, ledger, policy.count_tokens)
-        chain = list(reversed(names))  # D -> C -> B -> A when relaying; B -> A with two agents
+        channel = Channel(cfg.message_mode, cfg.message_budget, ledger, policy.count_tokens,
+                          quotable=instance.shared_evidence.splitlines())
+        # D -> C -> B -> A when relaying (D -> C -> A without B on comm); B -> A with two agents
+        chain = [n for n in reversed(names) if n not in cfg.relay_skip]
         senders = chain[:-1] if cfg.relay else [n for n in names if n not in cfg.answerers]
         for i, sender in enumerate(senders):
             receiver = chain[i + 1] if cfg.relay else cfg.answerers[0]

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import numpy as np
 
-from ceilings.records import TaskInstance
+from ceilings.records import TaskInstance, content_hash
 from ceilings.tasks import comm, info, reason
 
 BINDING = {
@@ -46,7 +46,12 @@ def generate_many(
     """`count` instances with deterministic seeds. With `balance`, true answers cycle through
     every option in a seeded order, so each label is the truth equally often (the pilot's 30
     instances had host-00 as the truth twice, and floor accuracy tracked that); instance i takes
-    the first seed in its own block whose answer is its target label."""
+    the first seed in its own block whose answer is its target label.
+
+    With `balance`, no two instances show the same prompt: a seed whose prompt is already taken is
+    skipped, and a setting with too few distinct prompts raises instead of repeating them (the
+    paid run's Gemma info cell, k=2, had only 96 distinct prompts behind 850 instances, so its
+    tests counted repeats as independent evidence)."""
     offset = {"calibration": 1_000_000, "main": 0, "heldout_blind": 2_000_000}[split]
     gen = GENERATORS[family]
     if not balance:
@@ -55,16 +60,25 @@ def generate_many(
     targets = [space[int(j)] for j in
                np.random.default_rng([seed0, offset, len(space)]).permutation(len(space))]
     out = []
+    seen: set[str] = set()
     for i in range(count):
         start = seed0 + offset + i * TRIES
         for seed in range(start, start + TRIES):
             inst = gen(seed, split=split, **difficulty)
-            if inst.answer == targets[i % len(targets)]:
+            if inst.answer == targets[i % len(targets)] and prompt_key(inst) not in seen:
+                seen.add(prompt_key(inst))
                 out.append(inst)
                 break
         else:
-            raise RuntimeError(f"no {family} instance with answer {targets[i % len(targets)]}")
+            raise RuntimeError(f"no new {family} instance with answer "
+                               f"{targets[i % len(targets)]} after {len(out)} instances: "
+                               f"{difficulty} has too few distinct prompts for {count}")
     return out
+
+
+def prompt_key(inst: TaskInstance) -> str:
+    """What every agent is shown, and the truth: two instances with the same key are one item."""
+    return content_hash([inst.scenario, inst.shared_evidence, inst.private_evidence, inst.answer])
 
 
 def chance(instance: TaskInstance) -> float:

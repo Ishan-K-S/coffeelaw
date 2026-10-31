@@ -9,7 +9,7 @@ from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from pathlib import Path
 
-from ceilings import prereg
+from ceilings import arms, prereg
 from ceilings.adapters import safe_model_dir
 from ceilings.agents import Policy
 from ceilings.arms import ArmConfig
@@ -38,11 +38,28 @@ def run_id_for(
     replicate: int,
     sweep: dict | None = None,
     harness: dict | None = None,
+    design: int = 1,
 ) -> str:
-    """Content hash of the run's identity. Non-default harness options are part of it (default
-    runs keep the IDs they had before options existed)."""
+    """Content hash of the run's identity. Non-default harness options and an arm design after
+    the first are part of it (design-1 default runs keep the IDs they had before either existed)."""
     parts = [instance_id, arm_id, delta_level, model_id, replicate, sweep]
-    return content_hash(parts + [harness] if harness else parts)
+    if harness:
+        parts.append(harness)
+    if design != 1:
+        parts.append({"arm_design": design})
+    return content_hash(parts)
+
+
+def check_design(path: Path) -> None:
+    """Refuse to add runs of this arm design to a file holding runs of another: analysis averages
+    an instance's runs within a cell, so mixing designs would silently blend two experiments."""
+    if not path.exists():
+        return
+    found = {json.loads(line).get("arm_design", 1) for line in path.read_text().splitlines()
+             if line}
+    if found - {arms.ARM_DESIGN}:
+        raise RuntimeError(f"{path} holds runs of arm design {sorted(found)}, not "
+                           f"{arms.ARM_DESIGN}; use a new --root for this design")
 
 
 def runs_path(root: Path, model_id: str, family: str) -> Path:
@@ -61,7 +78,7 @@ def run_cell(
     inst, cfg = cell.instance, cell.cfg
     rid = run_id_for(
         inst.instance_id, cfg.arm_id, cell.delta_level, policy.model_id, cell.replicate, cell.sweep,
-        policy.options.non_default(),
+        policy.options.non_default(), arms.ARM_DESIGN,
     )
     started = now()
     outcome = run_team(inst, cfg, policy, seed=int(rid[:8], 16))
@@ -87,6 +104,7 @@ def run_cell(
         replicate=cell.replicate,
         sweep=Sweep(**cell.sweep) if cell.sweep else None,
         harness=policy.harness_record(),
+        arm_design=arms.ARM_DESIGN,
         prereg_hash=prereg_hash,
         final_answer=outcome.final_answer,
         probabilities=outcome.probabilities,
@@ -126,8 +144,10 @@ def run_grid(
         path = runs_path(root, policy.model_id, cell.instance.family_id)
         if path not in done:
             done[path] = existing_run_ids(path)
+            check_design(path)
         rid = run_id_for(cell.instance.instance_id, cell.cfg.arm_id, cell.delta_level,
-                         policy.model_id, cell.replicate, cell.sweep, policy.options.non_default())
+                         policy.model_id, cell.replicate, cell.sweep, policy.options.non_default(),
+                         arms.ARM_DESIGN)
         if rid not in done[path]:
             done[path].add(rid)
             todo.append((cell, path))

@@ -66,11 +66,13 @@ def test_confirm_gate_is_strict_and_screen_is_not():
         calibration.gate_passes("lenient", 1, 1, 2, 0.5)
 
 
-def test_k_reasons_on_only_some_samples():
+def test_k_answers_with_its_reasoning_samples_only():
     inst = tasks.generate_many("reason", 1, "main", d=3)[0]
     out = run_team(inst, arms.build("K", "reason", "medium:1"), LLMPolicy(ScriptedChat()), 2)
     turns = [len(s["call"]["sent"]) for s in out.transcript if s["step"] == "answer"]
-    assert turns == [2, 1, 1, 1]  # one sample reasons, three answer directly
+    assert turns == [2]  # one sample, and it reasons; no non-reasoning samples to out-vote it
+    out = run_team(inst, arms.build("K", "reason", "medium"), LLMPolicy(ScriptedChat()), 2)
+    assert [len(s["call"]["sent"]) for s in out.transcript if s["step"] == "answer"] == [2] * 4
 
 
 def test_ties_are_broken_by_the_run_seed():

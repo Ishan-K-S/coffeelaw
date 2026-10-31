@@ -94,6 +94,11 @@
       ],
       "description": "Harness options in effect (ceilings.options): the non-default options plus a 'resolved' block."
     },
+    "arm_design": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "ceilings.arms.ARM_DESIGN when the run was made; records without it are design 1"
+    },
     "prereg_hash": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"

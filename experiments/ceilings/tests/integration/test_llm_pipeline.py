@@ -3,6 +3,7 @@ the checks pass, the diagonal appears, concurrency changes nothing, and the chec
 deliberate violations."""
 
 import json
+from dataclasses import replace
 
 from ceilings import arms, checks, experiment, tasks
 from ceilings.agents import LLMPolicy
@@ -118,7 +119,8 @@ def test_unmatched_prepare_marks_every_cell(tmp_path):
 
 def test_no_message_calls_when_nothing_can_cross():
     inst = tasks.generate_many("comm_ip", 1, "main", n=4)[0]
-    out = run_team(inst, arms.build("A2", "comm_ip", "medium"), _policy(), 2)
+    zero = replace(arms.build("M", "comm_ip", 4), message_budget=0)  # a 0-bit channel
+    out = run_team(inst, zero, _policy(), 2)
     assert not [s for s in out.transcript if s["step"] == "message"]
 
 

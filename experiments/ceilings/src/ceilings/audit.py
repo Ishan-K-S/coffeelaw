@@ -54,7 +54,9 @@ def audit(
             table = (match_tables or {}).get(f"{model}/{family}")
             if arm == "baseline" or table is None:
                 continue
-            target = table["targets"][delta]
+            # An arm's own target (A2_single_ref is matched to A2's realized cost), else the level's.
+            target = table["arms"].get(arm, {}).get(delta, {}).get("target",
+                                                                    table["targets"][delta])
             added = paired_diffs(df, model, family, arm, delta)["d_tokens"].mean()
             if abs(added - target) > MATCH_TOLERANCE * target:
                 checks["delta_matching"].append(

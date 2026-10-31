@@ -153,6 +153,7 @@ class RunRecord(_Frozen):
     replicate: int = Field(ge=0)
     sweep: Sweep | None = None
     harness: dict | None = None  # harness options in effect (ceilings.options), resolved
+    arm_design: int = 1  # ceilings.arms.ARM_DESIGN when the run was made (records without it: 1)
     prereg_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     final_answer: str | None
     probabilities: dict[str, float]

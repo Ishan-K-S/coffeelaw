@@ -1,4 +1,7 @@
-"""The only path between agents (research R8). Budgets are enforced in tokens or in bits."""
+"""The only path between agents (research R8). Budgets are enforced in tokens or in bits.
+
+`quote` mode is a tokens channel that carries only lines copied word for word from the task (M on
+the reason family): the sender can pass facts on but not the result of working them through."""
 
 from __future__ import annotations
 
@@ -28,12 +31,13 @@ class Channel:
     budget: int
     ledger: Ledger
     count_tokens: Callable[[str], int]
+    quotable: list[str] = field(default_factory=list)  # the task's lines, for `quote` mode
     deliveries: list[Delivery] = field(default_factory=list)
     _used: dict[tuple[str, str], int] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        if self.mode not in ("tokens", "bits"):
-            raise ValueError("mode must be 'tokens' or 'bits'")
+        if self.mode not in ("tokens", "bits", "quote"):
+            raise ValueError("mode must be 'tokens', 'bits' or 'quote'")
         if self.budget < 0:
             raise ValueError("budget must be non-negative")
         self._pattern = re.compile(rf"^[01]{{0,{self.budget}}}$") if self.mode == "bits" else None
@@ -46,6 +50,8 @@ class Channel:
 
         Bit mode: a string of 0s and 1s longer than the budget is cut to its first L bits (only L
         bits cross the channel); anything else malformed gets one retry, then '' is delivered.
+        Quote mode: only lines that match a task line exactly cross, once each and in the task's
+        own order (so the order cannot carry worked-out structure either).
 
         `compose` receives the rejection reason on retry so an agent can correct itself.
         """
@@ -74,15 +80,19 @@ class Channel:
             )
             self.ledger.add_message(delivery.tokens, bits=len(text))
         else:
+            if self.mode == "quote":
+                text = self.quoted(text)
             key = (sender, receiver)
             left = self.budget - self._used.get(key, 0)
             tokens = self.count_tokens(text)
             truncated = False
             if tokens > left:
-                words = text.split()
-                while words and self.count_tokens(" ".join(words)) > left:
-                    words.pop()
-                text = " ".join(words)
+                # Quote mode cuts whole lines, so part of a fact is never delivered.
+                sep = "\n" if self.mode == "quote" else " "
+                parts = text.splitlines() if self.mode == "quote" else text.split()
+                while parts and self.count_tokens(sep.join(parts)) > left:
+                    parts.pop()
+                text = sep.join(parts)
                 tokens = self.count_tokens(text) if text else 0
                 truncated = True
             self._used[key] = self._used.get(key, 0) + tokens
@@ -90,3 +100,11 @@ class Channel:
             self.ledger.add_message(tokens)
         self.deliveries.append(delivery)
         return delivery
+
+    def quoted(self, text: str) -> str:
+        """The task lines that `text` quotes exactly (whitespace-normalised), in task order."""
+        def norm(line: str) -> str:
+            return " ".join(line.split())
+
+        sent = {norm(line) for line in (text or "").splitlines()}
+        return "\n".join(line for line in self.quotable if norm(line) and norm(line) in sent)

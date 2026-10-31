@@ -9,6 +9,9 @@ from dataclasses import dataclass, field
 
 DEPTHS = ("low", "medium", "high", "xhigh", "max")
 PROB_FLOOR = 1e-6
+# The answer turn writes a probability for every option; with 16 hosts a 400-token cap cut off
+# up to 46% of a cell's answers in the paid run's H6 sweep (Nemotron).
+ANSWER_TOKENS_PER_OPTION = 60
 
 # Models without a native reasoning-effort setting get depth as an explicit reasoning stage:
 # the model first writes free-form reasoning capped at this many tokens, then answers. `low`
@@ -275,7 +278,7 @@ class RequestCapExceeded(RuntimeError):
 class ChatAdapter(ModelAdapter):
     """Base for chat APIs without native reasoning effort: depth becomes a reasoning stage."""
 
-    answer_max_tokens = 400
+    answer_max_tokens = 400  # raised to ANSWER_TOKENS_PER_OPTION per option for long answers
     text_max_tokens = 300
 
     @abc.abstractmethod
@@ -319,7 +322,8 @@ class ChatAdapter(ModelAdapter):
         if schema is not None:
             convo[-1] = {**convo[-1],
                          "content": f"{convo[-1]['content']} {json_format_note(schema)}"}
-        cap = self.answer_max_tokens if answer_space else self.text_max_tokens
+        cap = (max(self.answer_max_tokens, ANSWER_TOKENS_PER_OPTION * len(answer_space))
+               if answer_space else self.text_max_tokens)
         sent.append([dict(m) for m in convo])
         reply = self._chat(convo, schema, cap, seed + 1)
         in_tok, out_tok = in_tok + reply.input_tokens, out_tok + reply.output_tokens

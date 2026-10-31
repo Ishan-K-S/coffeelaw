@@ -10,6 +10,10 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, replace
 
 DEPTH_ORDER = ["low", "medium", "high", "xhigh", "max"]
+# Arm design version, part of every new run ID and run record. Version 2 (after the October 2026
+# paid run) fixes K, M on reason and A2; see README "Design changes after the paid run". Runs of
+# different versions never share a run root.
+ARM_DESIGN = 2
 ARMS = ["baseline", "E", "K", "M", "A1", "A2", "A2_single_ref", "P1", "P2"]
 DELTA_MULTIPLIERS = {"small": 0.5, "medium": 1.0, "large": 2.0}
 FILLER_LINE = "-- (no content) --"
@@ -32,20 +36,23 @@ class ArmConfig:
     tool_rounds: int = 0
     probe_policy: str = "rotation"  # "rotation": attribute t mod k; "agent": the model chooses
     comm_sender: str = "ready"  # "ready": B's notes include its message; "encode": B writes it
-    message_mode: str = "tokens"
+    message_mode: str = "tokens"  # "tokens", "bits", or "quote" (only verbatim task lines cross)
     message_budget: int = 0
     relay: bool = False
+    # Agents left out of the relay chain (A2 on comm: B, whose notes would carry M's information).
+    relay_skip: tuple[str, ...] = ()
     extra_kind: str | None = None
     extra_amount: int = 0
     filler_tokens: int = 0
     strength: object = None
     # How many answer samples reason at `depth`; the rest answer at the family's baseline depth.
-    # None: all of them. Lets K add compute in steps smaller than "every sample reasons".
+    # None: all of them. Design 1 used it for K; design 2 leaves it None (see `build`).
     reason_samples: int | None = None
 
     def to_dict(self) -> dict:
         d = asdict(self)
         d["answerers"] = list(self.answerers)
+        d["relay_skip"] = list(self.relay_skip)
         return d
 
 
@@ -65,7 +72,10 @@ def baseline(family: str) -> ArmConfig:
 
 
 def parse_compute(strength: object) -> tuple[str, int | None]:
-    """K's strength: "high" (every sample reasons) or "high:2" (two of the samples do)."""
+    """K's strength: "high" (all 4 samples reason) or "high:2" (the team answers with 2 samples,
+    both reasoning). Design 1 kept 4 samples and reasoned on 2 of them; the 2 or 3 samples that
+    did not reason out-voted the one that did (reason family, paid run: the reasoning sample was
+    right 90-100% of the time, the team's vote 40-57%)."""
     depth, _, n = str(strength).partition(":")
     return depth, (int(n) if n else None)
 
@@ -99,22 +109,30 @@ def build(arm_id: str, family: str, strength: object = None, filler_tokens: int 
             cfg = replace(base, extra_kind=kind, extra_amount=int(strength))
     elif arm_id == "K":
         depth, n = parse_compute(strength)
-        cfg = replace(base, depth=depth, reason_samples=n)
+        cfg = replace(base, depth=depth, samples=n or base.samples)
     elif arm_id == "M":
-        cfg = replace(base, message_budget=int(strength), relay=family == "reason")
+        # On reason both agents hold every fact, so a free-text message lets B work the chain and
+        # send the result: compute, not communication (design 1: B stated the answer in 407-782
+        # of 850 messages and M beat K on every model). Only verbatim task lines cross instead.
+        cfg = replace(base, message_budget=int(strength), relay=family == "reason",
+                      message_mode="quote" if family == "reason" else base.message_mode)
     elif arm_id == "A1":
         # Same totals: the baseline's 4 answer calls spread over 4 agents; nothing else changes.
         cfg = replace(base, n_agents=4, samples=1, answerers=("A", "B", "C", "D"))
     elif arm_id == "A2":
-        # More agents plus compute; agents relay partial work (tokens channel, generous budget).
+        # More agents plus compute; every agent reasons and relays partial work down the chain
+        # (tokens channel, generous budget). On comm, B is left out of the chain: its notes hold
+        # the role's list, so any message from B would be M's resource. Design 1 used a 0-bit
+        # channel there, so B, C and D never made a call.
         cfg = replace(
             base,
             n_agents=4,
             samples=1,
             depth=str(strength),
             relay=True,
-            message_mode="tokens" if not family.startswith("comm_") else "bits",
-            message_budget=200 if not family.startswith("comm_") else 0,
+            message_mode="tokens",
+            message_budget=200,
+            relay_skip=("B",) if family.startswith("comm_") else (),
         )
     elif arm_id == "A2_single_ref":
         # One agent given A2's added budget as its own reasoning, chosen by cost matching (the
@@ -135,8 +153,8 @@ def candidates(arm_id: str, family: str, n_bits: int | None = None) -> list[obje
     if arm_id == "E":
         return list(range(1, 17)) if family == "info" else [2, 4, 8, 16, 32, 64]
     if arm_id == "K":
-        # Reasoning on 1, 2 or all 4 samples, then deeper: K could not reach a medium delta in
-        # the pilot because a reasoning stage on every sample cost 1.8-2x the target.
+        # 1, 2 or all 4 reasoning samples, then deeper: K could not reach a medium delta in the
+        # pilot because a reasoning stage on every sample cost 1.8-2x the target.
         return _above(family, ["medium:1", "medium:2", "high:1", "medium", "high:2", "xhigh:1",
                                "high", "xhigh:2", "xhigh", "max"])
     if arm_id == "M":
@@ -144,7 +162,10 @@ def candidates(arm_id: str, family: str, n_bits: int | None = None) -> list[obje
             return [1]
         return [n_bits] if family.startswith("comm_") else [50, 100, 200]
     if arm_id == "A2":
-        return [base_depth(family)] + _above(family, ["medium", "high"])
+        # Agents always reason. Design 1 started at "low", which cost matching chose on 8 of 9
+        # reason models: four agents with no reasoning stage, the budget spent on filler.
+        return [d for d in ["medium", "high"]
+                if DEPTH_ORDER.index(d) >= DEPTH_ORDER.index(base_depth(family))]
     if arm_id == "A2_single_ref":
         return [base_depth(family)] + _above(family, ["medium", "high", "xhigh", "max"])
     return [None]
