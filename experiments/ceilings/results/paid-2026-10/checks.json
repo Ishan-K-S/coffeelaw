@@ -1,0 +1,3078 @@
+{
+  "passed": true,
+  "n_records": 356287,
+  "n_transcripts": 356287,
+  "integrity": {
+    "no_answer_leak": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "private_isolation": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "message_budget": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "arm_changes_one_resource": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "step_counts": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "ledger_totals": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    },
+    "instance_available": {
+      "status": "PASS",
+      "n_violations": 0,
+      "examples": []
+    }
+  },
+  "quality": {
+    "answer_parse_failed": {
+      "status": "WARN",
+      "threshold": 0.05,
+      "worst": 0.09056338028169014,
+      "rows": [
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 7400,
+          "rate": 0.00013513513513513514
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "E",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "E",
+          "n": 14200,
+          "rate": 0.09056338028169014
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "info",
+          "arm": "E",
+          "n": 14200,
+          "rate": 0.019014084507042252
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 14200,
+          "rate": 7.042253521126761e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "E",
+          "n": 21000,
+          "rate": 0.008619047619047618
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "K",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "M",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "M",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        }
+      ]
+    },
+    "answer_not_argmax": {
+      "status": "PASS",
+      "threshold": 0.1,
+      "worst": 0.01088235294117647,
+      "rows": [
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0017647058823529412
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "info",
+          "arm": "E",
+          "n": 14200,
+          "rate": 7.042253521126761e-05
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "info",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.0027450980392156863
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3848,
+          "rate": 0.0002598752598752599
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "E",
+          "n": 3844,
+          "rate": 0.0013007284079084287
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "K",
+          "n": 3840,
+          "rate": 0.0018229166666666667
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "P1",
+          "n": 3844,
+          "rate": 0.0005202913631633715
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "P2",
+          "n": 3844,
+          "rate": 0.0007804370447450572
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.006274509803921568
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.000980392156862745
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "M",
+          "n": 10200,
+          "rate": 0.01088235294117647
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.004607843137254902
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.00196078431372549
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.0035294117647058825
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.002058823529411765
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.0016666666666666668
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "M",
+          "n": 10200,
+          "rate": 0.000784313725490196
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.0013725490196078432
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.0027450980392156863
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "E",
+          "n": 14200,
+          "rate": 0.00014084507042253522
+        },
+        {
+          "model": "openai/openai/gpt-4o-mini",
+          "family": "reason",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/openai/gpt-4o-mini",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "info",
+          "arm": "E",
+          "n": 14200,
+          "rate": 0.0004929577464788732
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "E",
+          "n": 21000,
+          "rate": 0.0005238095238095238
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "K",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.0002941176470588235
+        }
+      ]
+    },
+    "probabilities_not_summing_to_1": {
+      "status": "WARN",
+      "threshold": 0.2,
+      "worst": 0.36838028169014086,
+      "rows": [
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "info",
+          "arm": "E",
+          "n": 14200,
+          "rate": 0.18345070422535212
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "info",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.0035294117647058825
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "info",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.0006862745098039216
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "info",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.01803921568627451
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "info",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.0058823529411764705
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "info",
+          "arm": "M",
+          "n": 10200,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "info",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3848,
+          "rate": 0.0002598752598752599
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "A2",
+          "n": 960,
+          "rate": 0.0010416666666666667
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "A2_single_ref",
+          "n": 960,
+          "rate": 0.0375
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "E",
+          "n": 3844,
+          "rate": 0.00026014568158168577
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "K",
+          "n": 3840,
+          "rate": 0.00625
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "P1",
+          "n": 3844,
+          "rate": 0.00026014568158168577
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "P2",
+          "n": 3844,
+          "rate": 0.00026014568158168577
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.02088235294117647
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.0058823529411764705
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.0058823529411764705
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0029411764705882353
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.002058823529411765
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.0035294117647058825
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.003235294117647059
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.01735294117647059
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "info",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.002352941176470588
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "info",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.01588235294117647
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "info",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.005
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.009019607843137255
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.01843137254901961
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.014901960784313726
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.0016666666666666668
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.009313725490196078
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.0028431372549019606
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.008823529411764706
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.00411764705882353
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.001568627450980392
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.056862745098039215
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.002352941176470588
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.006470588235294118
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "M",
+          "n": 10200,
+          "rate": 0.0753921568627451
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.0496078431372549
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.000784313725490196
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.002352941176470588
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "M",
+          "n": 10200,
+          "rate": 0.0006862745098039216
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.001568627450980392
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.0013725490196078432
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0014705882352941176
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.02176470588235294
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.01411764705882353
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 7400,
+          "rate": 0.0013513513513513514
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.01911764705882353
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.0017647058823529412
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.03676470588235294
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.0058823529411764705
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.0058823529411764705
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.002352941176470588
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.057352941176470586
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 7400,
+          "rate": 0.0009459459459459459
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.007941176470588234
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.004411764705882353
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.03058823529411765
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.0035294117647058825
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "E",
+          "n": 14200,
+          "rate": 0.16661971830985917
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.0029411764705882353
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0035294117647058825
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.0029411764705882353
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.0014705882352941176
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/openai/gpt-4o-mini",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/openai/gpt-4o-mini",
+          "family": "reason",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.0058823529411764705
+        },
+        {
+          "model": "openai/openai/gpt-4o-mini",
+          "family": "reason",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/openai/gpt-4o-mini",
+          "family": "reason",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.0008823529411764706
+        },
+        {
+          "model": "openai/openai/gpt-4o-mini",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.0017647058823529412
+        },
+        {
+          "model": "openai/openai/gpt-4o-mini",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.002352941176470588
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "info",
+          "arm": "E",
+          "n": 14200,
+          "rate": 0.36838028169014086
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 14200,
+          "rate": 0.00014084507042253522
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 14200,
+          "rate": 7.042253521126761e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "E",
+          "n": 21000,
+          "rate": 0.13757142857142857
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.000196078431372549
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "M",
+          "n": 10200,
+          "rate": 0.0012745098039215687
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.000784313725490196
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.0004901960784313725
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.007352941176470588
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.010588235294117647
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.004411764705882353
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.006764705882352941
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "M",
+          "n": 3400,
+          "rate": 0.006176470588235294
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.05529411764705883
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.006764705882352941
+        },
+        {
+          "model": "openai/z-ai/glm-4.7-flash",
+          "family": "reason",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.006764705882352941
+        }
+      ]
+    },
+    "answer_parse_text_fallback": {
+      "status": "PASS",
+      "threshold": 0.2,
+      "worst": 0.0002941176470588235,
+      "rows": [
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "M",
+          "n": 10200,
+          "rate": 9.80392156862745e-05
+        }
+      ]
+    },
+    "probe_invalid": {
+      "status": "PASS",
+      "threshold": 0.1,
+      "worst": 0.0,
+      "rows": []
+    },
+    "message_rejected": {
+      "status": "WARN",
+      "threshold": 0.2,
+      "worst": 0.5023529411764706,
+      "rows": [
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 850,
+          "rate": 0.5023529411764706
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 1750,
+          "rate": 0.0034285714285714284
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 1750,
+          "rate": 0.4622857142857143
+        }
+      ]
+    },
+    "reasoning_truncated": {
+      "status": "WARN",
+      "threshold": 0.25,
+      "worst": 0.9879411764705882,
+      "rows": [
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 4677,
+          "rate": 0.00021381227282446012
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.000588235294117647
+        },
+        {
+          "model": "openai/anthropic/claude-haiku-5.5",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.0002941176470588235
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.335
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.6729411764705883
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 9150,
+          "rate": 0.38491803278688524
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.7408823529411764
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.48294117647058826
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_ip",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.8026470588235294
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.12411764705882353
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.17058823529411765
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 9150,
+          "rate": 0.07256830601092897
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.2620588235294118
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.07176470588235294
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.12676470588235295
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "family": "info",
+          "arm": "A2",
+          "n": 3399,
+          "rate": 0.00088261253309797
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.06
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.03343137254901961
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 12750,
+          "rate": 0.0051764705882352945
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.03901960784313725
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.03411764705882353
+        },
+        {
+          "model": "openai/google/gemma-3-27b-it",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.057352941176470586
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.8547058823529412
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.09529411764705882
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.0058823529411764705
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.7111764705882353
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.003235294117647059
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 4250,
+          "rate": 0.4108235294117647
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.6776470588235294
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.7211764705882353
+        },
+        {
+          "model": "openai/meta-llama/llama-3.3-70b-instruct",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.7126470588235294
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.44029411764705884
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.010980392156862745
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.005098039215686275
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.09411764705882353
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.0013725490196078432
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 12750,
+          "rate": 0.021333333333333333
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.10794117647058823
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.043823529411764706
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.21588235294117647
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "A2",
+          "n": 3400,
+          "rate": 0.005294117647058823
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.000784313725490196
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "info",
+          "arm": "K",
+          "n": 2550,
+          "rate": 0.07529411764705882
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "A2",
+          "n": 3400,
+          "rate": 0.023823529411764705
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.001176470588235294
+        },
+        {
+          "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+          "family": "reason",
+          "arm": "K",
+          "n": 2550,
+          "rate": 0.12431372549019608
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.7444117647058823
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "A2",
+          "n": 849,
+          "rate": 0.7773851590106007
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "A2_single_ref",
+          "n": 849,
+          "rate": 0.043580683156654886
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 3399,
+          "rate": 0.7057958223006767
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.021176470588235293
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 9156,
+          "rate": 0.36456968108344256
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.7335294117647059
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.8235294117647058
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_ip",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.6214705882352941
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 3399,
+          "rate": 0.8170050014710208
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 849,
+          "rate": 0.8680800942285041
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.06470588235294118
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.9452941176470588
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.020294117647058824
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 9150,
+          "rate": 0.10360655737704919
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.895
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.9252941176470588
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.8188235294117647
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "A2_single_ref",
+          "n": 849,
+          "rate": 0.001177856301531213
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "family": "info",
+          "arm": "K",
+          "n": 850,
+          "rate": 0.2411764705882353
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.8864705882352941
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.3164705882352941
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.018823529411764704
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.9808823529411764
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.6005882352941176
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 9959,
+          "rate": 0.5251531278240787
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.9820588235294118
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.9014705882352941
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_ip",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.9788235294117648
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 3400,
+          "rate": 0.9382352941176471
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 850,
+          "rate": 0.5635294117647058
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.012941176470588235
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 3400,
+          "rate": 0.9879411764705882
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 3400,
+          "rate": 0.5888235294117647
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 9150,
+          "rate": 0.09573770491803278
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 3400,
+          "rate": 0.9741176470588235
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 3400,
+          "rate": 0.9552941176470588
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.9764705882352941
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "reason",
+          "arm": "A2_single_ref",
+          "n": 850,
+          "rate": 0.0058823529411764705
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "family": "reason",
+          "arm": "K",
+          "n": 850,
+          "rate": 0.10705882352941176
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "A1",
+          "n": 10200,
+          "rate": 0.4080392156862745
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.05372549019607843
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.001568627450980392
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "E",
+          "n": 10199,
+          "rate": 0.5315226983037553
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.000392156862745098
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "M",
+          "n": 17650,
+          "rate": 0.18742209631728046
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.6049019607843137
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "P2",
+          "n": 10200,
+          "rate": 0.6669607843137255
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_ip",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.6514705882352941
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "A1",
+          "n": 10199,
+          "rate": 0.2773801353073831
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "A2",
+          "n": 2550,
+          "rate": 0.04156862745098039
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "A2_single_ref",
+          "n": 2550,
+          "rate": 0.0027450980392156863
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "E",
+          "n": 10200,
+          "rate": 0.2211764705882353
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "K",
+          "n": 10200,
+          "rate": 0.0016666666666666668
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "M",
+          "n": 17649,
+          "rate": 0.00940563204714148
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "P1",
+          "n": 10200,
+          "rate": 0.3218627450980392
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "P2",
+          "n": 10199,
+          "rate": 0.24639670555936857
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "comm_parity",
+          "arm": "baseline",
+          "n": 3400,
+          "rate": 0.2661764705882353
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "A2_single_ref",
+          "n": 2549,
+          "rate": 0.00039231071008238524
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "info",
+          "arm": "K",
+          "n": 2550,
+          "rate": 0.08784313725490196
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "family": "reason",
+          "arm": "K",
+          "n": 2550,
+          "rate": 0.000784313725490196
+        }
+      ]
+    },
+    "refused": {
+      "status": "PASS",
+      "threshold": 0.05,
+      "worst": 0.0,
+      "rows": []
+    },
+    "invalid_model": {
+      "status": "PASS",
+      "threshold": 0.0,
+      "worst": 0.0,
+      "rows": []
+    }
+  },
+  "expectations": {
+    "baseline_at_chance": [
+      {
+        "model": "openai/anthropic/claude-haiku-5.5",
+        "family": "comm_parity",
+        "n": 850,
+        "baseline_acc": 0.5047058823529412,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/anthropic/claude-haiku-5.5",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.2858823529411765,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/deepseek/deepseek-v4-flash",
+        "family": "comm_ip",
+        "n": 850,
+        "baseline_acc": 0.4976470588235294,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/deepseek/deepseek-v4-flash",
+        "family": "comm_parity",
+        "n": 850,
+        "baseline_acc": 0.4811764705882353,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/deepseek/deepseek-v4-flash",
+        "family": "info",
+        "n": 850,
+        "baseline_acc": 0.11294117647058824,
+        "chance": 0.125,
+        "status": "met"
+      },
+      {
+        "model": "openai/deepseek/deepseek-v4-flash",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.24705882352941178,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/google/gemma-3-27b-it",
+        "family": "comm_parity",
+        "n": 850,
+        "baseline_acc": 0.49176470588235294,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/google/gemma-3-27b-it",
+        "family": "info",
+        "n": 850,
+        "baseline_acc": 0.2376470588235294,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/google/gemma-3-27b-it",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.32235294117647056,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/meta-llama/llama-3.3-70b-instruct",
+        "family": "comm_parity",
+        "n": 850,
+        "baseline_acc": 0.49176470588235294,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/meta-llama/llama-3.3-70b-instruct",
+        "family": "info",
+        "n": 850,
+        "baseline_acc": 0.1188235294117647,
+        "chance": 0.125,
+        "status": "met"
+      },
+      {
+        "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+        "family": "comm_parity",
+        "n": 850,
+        "baseline_acc": 0.5,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+        "family": "info",
+        "n": 850,
+        "baseline_acc": 0.1188235294117647,
+        "chance": 0.125,
+        "status": "met"
+      },
+      {
+        "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.2635294117647059,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl",
+        "family": "comm_ip",
+        "n": 850,
+        "baseline_acc": 0.5047058823529412,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl",
+        "family": "comm_parity",
+        "n": 850,
+        "baseline_acc": 0.5023529411764706,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl",
+        "family": "info",
+        "n": 850,
+        "baseline_acc": 0.12470588235294118,
+        "chance": 0.125,
+        "status": "met"
+      },
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.2847058823529412,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/openai/gpt-4o-mini",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.27058823529411763,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/qwen/qwen3-235b-a22b-2507",
+        "family": "comm_ip",
+        "n": 850,
+        "baseline_acc": 0.4988235294117647,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/qwen/qwen3-235b-a22b-2507",
+        "family": "comm_parity",
+        "n": 850,
+        "baseline_acc": 0.4647058823529412,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/qwen/qwen3-235b-a22b-2507",
+        "family": "info",
+        "n": 850,
+        "baseline_acc": 0.11647058823529412,
+        "chance": 0.125,
+        "status": "met"
+      },
+      {
+        "model": "openai/qwen/qwen3-235b-a22b-2507",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.28,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/xiaomi/mimo-v2.6-flash",
+        "family": "comm_ip",
+        "n": 850,
+        "baseline_acc": 0.49529411764705883,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/xiaomi/mimo-v2.6-flash",
+        "family": "comm_parity",
+        "n": 850,
+        "baseline_acc": 0.5152941176470588,
+        "chance": 0.5,
+        "status": "met"
+      },
+      {
+        "model": "openai/xiaomi/mimo-v2.6-flash",
+        "family": "info",
+        "n": 850,
+        "baseline_acc": 0.12705882352941175,
+        "chance": 0.125,
+        "status": "met"
+      },
+      {
+        "model": "openai/xiaomi/mimo-v2.6-flash",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.2611764705882353,
+        "chance": 0.25,
+        "status": "met"
+      },
+      {
+        "model": "openai/z-ai/glm-4.7-flash",
+        "family": "reason",
+        "n": 850,
+        "baseline_acc": 0.2752941176470588,
+        "chance": 0.25,
+        "status": "met"
+      }
+    ],
+    "matching_arm_helps": [
+      {
+        "model": "openai/anthropic/claude-haiku-5.5",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.4411764705882353,
+        "ci": [
+          0.4047058823529412,
+          0.47532352941176453
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/anthropic/claude-haiku-5.5",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.11647058823529412,
+        "ci": [
+          0.07764705882352942,
+          0.1564705882352941
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/deepseek/deepseek-v4-flash",
+        "family": "comm_ip",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.5,
+        "ci": [
+          0.46588235294117647,
+          0.532970588235294
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/deepseek/deepseek-v4-flash",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.5152941176470588,
+        "ci": [
+          0.48,
+          0.5505882352941176
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/deepseek/deepseek-v4-flash",
+        "family": "info",
+        "arm": "E",
+        "n": 850,
+        "gain": 0.8729411764705882,
+        "ci": [
+          0.8505882352941176,
+          0.8964705882352941
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/deepseek/deepseek-v4-flash",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.24941176470588236,
+        "ci": [
+          0.20705882352941177,
+          0.29179411764705865
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/google/gemma-3-27b-it",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.4988235294117647,
+        "ci": [
+          0.4647058823529412,
+          0.5317941176470586
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/google/gemma-3-27b-it",
+        "family": "info",
+        "arm": "E",
+        "n": 850,
+        "gain": 0.7576470588235295,
+        "ci": [
+          0.7305882352941176,
+          0.7870588235294118
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/google/gemma-3-27b-it",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.24588235294117647,
+        "ci": [
+          0.20941176470588235,
+          0.28352941176470586
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/meta-llama/llama-3.3-70b-instruct",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.5058823529411764,
+        "ci": [
+          0.4717647058823529,
+          0.5388235294117647
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/meta-llama/llama-3.3-70b-instruct",
+        "family": "info",
+        "arm": "E",
+        "n": 850,
+        "gain": 0.8717647058823529,
+        "ci": [
+          0.8482352941176471,
+          0.8929411764705882
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.4764705882352941,
+        "ci": [
+          0.44,
+          0.5106176470588234
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+        "family": "info",
+        "arm": "E",
+        "n": 850,
+        "gain": 0.7705882352941177,
+        "ci": [
+          0.7423529411764705,
+          0.8000294117647058
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.21764705882352942,
+        "ci": [
+          0.17882352941176471,
+          0.25649999999999984
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl",
+        "family": "comm_ip",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.49176470588235294,
+        "ci": [
+          0.4576470588235294,
+          0.5258823529411765
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.4823529411764706,
+        "ci": [
+          0.4447058823529412,
+          0.5176764705882352
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl",
+        "family": "info",
+        "arm": "E",
+        "n": 850,
+        "gain": 0.8717647058823529,
+        "ci": [
+          0.8494117647058823,
+          0.8941176470588236
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/nvidia/nemotron-3.5-super-vl",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.20352941176470588,
+        "ci": [
+          0.16705882352941176,
+          0.24235294117647058
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/openai/gpt-4o-mini",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.29764705882352943,
+        "ci": [
+          0.2576470588235294,
+          0.34
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/qwen/qwen3-235b-a22b-2507",
+        "family": "comm_ip",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.45176470588235296,
+        "ci": [
+          0.4164705882352941,
+          0.4894117647058824
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/qwen/qwen3-235b-a22b-2507",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.5341176470588235,
+        "ci": [
+          0.5011764705882353,
+          0.5670588235294117
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/qwen/qwen3-235b-a22b-2507",
+        "family": "info",
+        "arm": "E",
+        "n": 850,
+        "gain": 0.8682352941176471,
+        "ci": [
+          0.8458823529411764,
+          0.8894117647058823
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/qwen/qwen3-235b-a22b-2507",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.12352941176470589,
+        "ci": [
+          0.09058823529411765,
+          0.15529411764705883
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/xiaomi/mimo-v2.6-flash",
+        "family": "comm_ip",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.4964705882352941,
+        "ci": [
+          0.4623529411764706,
+          0.528235294117647
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/xiaomi/mimo-v2.6-flash",
+        "family": "comm_parity",
+        "arm": "M",
+        "n": 850,
+        "gain": 0.47411764705882353,
+        "ci": [
+          0.4411764705882353,
+          0.5094117647058823
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/xiaomi/mimo-v2.6-flash",
+        "family": "info",
+        "arm": "E",
+        "n": 850,
+        "gain": 0.7576470588235295,
+        "ci": [
+          0.7293823529411765,
+          0.7870882352941175
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/xiaomi/mimo-v2.6-flash",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.1811764705882353,
+        "ci": [
+          0.1423529411764706,
+          0.2188235294117647
+        ],
+        "status": "met"
+      },
+      {
+        "model": "openai/z-ai/glm-4.7-flash",
+        "family": "reason",
+        "arm": "K",
+        "n": 850,
+        "gain": 0.2235294117647059,
+        "ci": [
+          0.18235294117647058,
+          0.26705882352941174
+        ],
+        "status": "met"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1942 @@
+[
+  {
+    "prediction_id": "H1",
+    "statement": "On information-bound tasks, E helps; K, M, A1, P1 and P2 do not",
+    "paper_source": "Thm 1, Cor 1",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "supported",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/anthropic/claude-haiku-5.5": "not evaluable",
+        "openai/deepseek/deepseek-v4-flash": "inconclusive",
+        "openai/google/gemma-3-27b-it": "inconclusive",
+        "openai/meta-llama/llama-3.3-70b-instruct": "supported",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "supported",
+        "openai/nvidia/nemotron-3.5-super-vl": "inconclusive",
+        "openai/openai/gpt-4o-mini": "not evaluable",
+        "openai/qwen/qwen3-235b-a22b-2507": "inconclusive",
+        "openai/xiaomi/mimo-v2.6-flash": "inconclusive",
+        "openai/z-ai/glm-4.7-flash": "not evaluable"
+      },
+      "reasons": {
+        "openai/anthropic/claude-haiku-5.5": [
+          "calibration gate failed for info",
+          "missing arm A1 vs baseline on info",
+          "missing arm E vs baseline on info",
+          "missing arm K vs baseline on info",
+          "missing arm M vs baseline on info",
+          "missing arm P1 vs baseline on info",
+          "missing arm P2 vs baseline on info"
+        ],
+        "openai/deepseek/deepseek-v4-flash": [
+          "K on info (p_equiv)",
+          "A1 on info (p_equiv)",
+          "P1 on info (p_equiv)"
+        ],
+        "openai/google/gemma-3-27b-it": [
+          "K on info (p_equiv)",
+          "M on info (p_equiv)",
+          "A1 on info (p_equiv)",
+          "P1 on info (p_equiv)",
+          "P2 on info (p_equiv)"
+        ],
+        "openai/meta-llama/llama-3.3-70b-instruct": [],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [],
+        "openai/nvidia/nemotron-3.5-super-vl": [
+          "A1 on info (p_equiv)"
+        ],
+        "openai/openai/gpt-4o-mini": [
+          "calibration gate failed for info",
+          "missing arm A1 vs baseline on info",
+          "missing arm E vs baseline on info",
+          "missing arm K vs baseline on info",
+          "missing arm M vs baseline on info",
+          "missing arm P1 vs baseline on info",
+          "missing arm P2 vs baseline on info"
+        ],
+        "openai/qwen/qwen3-235b-a22b-2507": [
+          "M on info (p_equiv)",
+          "P2 on info (p_equiv)"
+        ],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "K on info (p_equiv)",
+          "M on info (p_equiv)",
+          "P1 on info (p_equiv)",
+          "P2 on info (p_equiv)"
+        ],
+        "openai/z-ai/glm-4.7-flash": [
+          "calibration gate failed for info",
+          "missing arm A1 vs baseline on info",
+          "missing arm E vs baseline on info",
+          "missing arm K vs baseline on info",
+          "missing arm M vs baseline on info",
+          "missing arm P1 vs baseline on info",
+          "missing arm P2 vs baseline on info"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H2",
+    "statement": "On reasoning-bound tasks, K helps; E (restated evidence), M, A1, P1, P2 do not",
+    "paper_source": "Thm 2, Cor 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/anthropic/claude-haiku-5.5": "not evaluable",
+        "openai/deepseek/deepseek-v4-flash": "inconclusive",
+        "openai/google/gemma-3-27b-it": "not evaluable",
+        "openai/meta-llama/llama-3.3-70b-instruct": "not evaluable",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "inconclusive",
+        "openai/nvidia/nemotron-3.5-super-vl": "not evaluable",
+        "openai/openai/gpt-4o-mini": "inconclusive",
+        "openai/qwen/qwen3-235b-a22b-2507": "not evaluable",
+        "openai/xiaomi/mimo-v2.6-flash": "inconclusive",
+        "openai/z-ai/glm-4.7-flash": "inconclusive"
+      },
+      "reasons": {
+        "openai/anthropic/claude-haiku-5.5": [
+          "calibration gate failed for reason"
+        ],
+        "openai/deepseek/deepseek-v4-flash": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ],
+        "openai/google/gemma-3-27b-it": [
+          "calibration gate failed for reason"
+        ],
+        "openai/meta-llama/llama-3.3-70b-instruct": [
+          "calibration gate failed for reason",
+          "missing arm A1 vs baseline on reason",
+          "missing arm E vs baseline on reason",
+          "missing arm K vs baseline on reason",
+          "missing arm M vs baseline on reason",
+          "missing arm P1 vs baseline on reason",
+          "missing arm P2 vs baseline on reason"
+        ],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ],
+        "openai/nvidia/nemotron-3.5-super-vl": [
+          "calibration gate failed for reason"
+        ],
+        "openai/openai/gpt-4o-mini": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ],
+        "openai/qwen/qwen3-235b-a22b-2507": [
+          "calibration gate failed for reason"
+        ],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ],
+        "openai/z-ai/glm-4.7-flash": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H3",
+    "statement": "On communication-bound tasks, M helps; K, same-kind E, A1, P1, P2 do not",
+    "paper_source": "Thm 5",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/anthropic/claude-haiku-5.5": "not evaluable",
+        "openai/deepseek/deepseek-v4-flash": "inconclusive",
+        "openai/google/gemma-3-27b-it": "not evaluable",
+        "openai/meta-llama/llama-3.3-70b-instruct": "not evaluable",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "not evaluable",
+        "openai/nvidia/nemotron-3.5-super-vl": "supported",
+        "openai/openai/gpt-4o-mini": "not evaluable",
+        "openai/qwen/qwen3-235b-a22b-2507": "inconclusive",
+        "openai/xiaomi/mimo-v2.6-flash": "inconclusive",
+        "openai/z-ai/glm-4.7-flash": "not evaluable"
+      },
+      "reasons": {
+        "openai/anthropic/claude-haiku-5.5": [
+          "calibration gate failed for comm_ip",
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_ip"
+        ],
+        "openai/deepseek/deepseek-v4-flash": [
+          "K on comm_parity (p_equiv)",
+          "E on comm_parity (p_equiv)",
+          "A1 on comm_parity (p_equiv)",
+          "P1 on comm_parity (p_equiv)",
+          "P2 on comm_parity (p_equiv)",
+          "K on comm_ip (p_equiv)",
+          "E on comm_ip (p_equiv)",
+          "A1 on comm_ip (p_equiv)",
+          "P1 on comm_ip (p_equiv)",
+          "P2 on comm_ip (p_equiv)"
+        ],
+        "openai/google/gemma-3-27b-it": [
+          "calibration gate failed for comm_ip",
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_ip"
+        ],
+        "openai/meta-llama/llama-3.3-70b-instruct": [
+          "calibration gate failed for comm_ip",
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_ip"
+        ],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "calibration gate failed for comm_ip",
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_ip"
+        ],
+        "openai/nvidia/nemotron-3.5-super-vl": [],
+        "openai/openai/gpt-4o-mini": [
+          "calibration gate failed for comm_ip",
+          "calibration gate failed for comm_parity",
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ],
+        "openai/qwen/qwen3-235b-a22b-2507": [
+          "E on comm_parity (p_equiv)",
+          "A1 on comm_parity (p_equiv)",
+          "A1 on comm_ip (p_equiv)",
+          "P2 on comm_ip (p_equiv)"
+        ],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "K on comm_parity (p_equiv)",
+          "E on comm_parity (p_equiv)",
+          "A1 on comm_parity (p_equiv)",
+          "P1 on comm_parity (p_equiv)",
+          "P2 on comm_parity (p_equiv)",
+          "K on comm_ip (p_equiv)",
+          "E on comm_ip (p_equiv)",
+          "A1 on comm_ip (p_equiv)",
+          "P1 on comm_ip (p_equiv)",
+          "P2 on comm_ip (p_equiv)"
+        ],
+        "openai/z-ai/glm-4.7-flash": [
+          "calibration gate failed for comm_ip",
+          "calibration gate failed for comm_parity",
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H4",
+    "statement": "A1 (more agents, same totals) gives no gain on any family",
+    "paper_source": "Cor 1, Thm 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/anthropic/claude-haiku-5.5": "not evaluable",
+        "openai/deepseek/deepseek-v4-flash": "inconclusive",
+        "openai/google/gemma-3-27b-it": "not evaluable",
+        "openai/meta-llama/llama-3.3-70b-instruct": "supported",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "inconclusive",
+        "openai/nvidia/nemotron-3.5-super-vl": "not evaluable",
+        "openai/openai/gpt-4o-mini": "inconclusive",
+        "openai/qwen/qwen3-235b-a22b-2507": "not evaluable",
+        "openai/xiaomi/mimo-v2.6-flash": "inconclusive",
+        "openai/z-ai/glm-4.7-flash": "inconclusive"
+      },
+      "reasons": {
+        "openai/anthropic/claude-haiku-5.5": [
+          "calibration gate failed for reason"
+        ],
+        "openai/deepseek/deepseek-v4-flash": [
+          "A1 on comm_ip (p_equiv)",
+          "A1 on comm_parity (p_equiv)",
+          "A1 on info (p_equiv)",
+          "A1 on reason (p_equiv)"
+        ],
+        "openai/google/gemma-3-27b-it": [
+          "calibration gate failed for reason"
+        ],
+        "openai/meta-llama/llama-3.3-70b-instruct": [],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "A1 on comm_parity (p_equiv)",
+          "A1 on reason (p_equiv)"
+        ],
+        "openai/nvidia/nemotron-3.5-super-vl": [
+          "calibration gate failed for reason"
+        ],
+        "openai/openai/gpt-4o-mini": [
+          "A1 on reason (p_equiv)"
+        ],
+        "openai/qwen/qwen3-235b-a22b-2507": [
+          "calibration gate failed for reason"
+        ],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "A1 on comm_ip (p_equiv)",
+          "A1 on comm_parity (p_equiv)",
+          "A1 on reason (p_equiv)"
+        ],
+        "openai/z-ai/glm-4.7-flash": [
+          "A1 on reason (p_equiv)"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H5",
+    "statement": "A2 gain equals the gain from the same compute given to one agent",
+    "paper_source": "Thm 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/anthropic/claude-haiku-5.5": "not evaluable",
+        "openai/deepseek/deepseek-v4-flash": "inconclusive",
+        "openai/google/gemma-3-27b-it": "not evaluable",
+        "openai/meta-llama/llama-3.3-70b-instruct": "supported",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "inconclusive",
+        "openai/nvidia/nemotron-3.5-super-vl": "not evaluable",
+        "openai/openai/gpt-4o-mini": "inconclusive",
+        "openai/qwen/qwen3-235b-a22b-2507": "not evaluable",
+        "openai/xiaomi/mimo-v2.6-flash": "inconclusive",
+        "openai/z-ai/glm-4.7-flash": "inconclusive"
+      },
+      "reasons": {
+        "openai/anthropic/claude-haiku-5.5": [
+          "calibration gate failed for reason"
+        ],
+        "openai/deepseek/deepseek-v4-flash": [
+          "A2 on comm_ip (p_equiv)",
+          "A2 on comm_parity (p_equiv)",
+          "A2 on reason (p_equiv)"
+        ],
+        "openai/google/gemma-3-27b-it": [
+          "calibration gate failed for reason"
+        ],
+        "openai/meta-llama/llama-3.3-70b-instruct": [],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "A2 on comm_parity (p_equiv)",
+          "A2 on reason (p_equiv)"
+        ],
+        "openai/nvidia/nemotron-3.5-super-vl": [
+          "calibration gate failed for reason"
+        ],
+        "openai/openai/gpt-4o-mini": [
+          "A2 on reason (p_equiv)"
+        ],
+        "openai/qwen/qwen3-235b-a22b-2507": [
+          "calibration gate failed for reason"
+        ],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "A2 on comm_ip (p_equiv)",
+          "A2 on comm_parity (p_equiv)",
+          "A2 on info (p_equiv)",
+          "A2 on reason (p_equiv)"
+        ],
+        "openai/z-ai/glm-4.7-flash": [
+          "A2 on reason (p_equiv)"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H6",
+    "statement": "Information-bound error never falls significantly below the Fano floor",
+    "paper_source": "Cor 2",
+    "test": "binomial floor check on powered cells, Holm",
+    "verdict": "supported",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "cells": [
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 0,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.98,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.9879292571882601,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 0,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.9,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.09530991021312808,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 0,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.95,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.7559073655768263,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 1,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.87,
+          "floor": 0.5120228142543385,
+          "powered": true,
+          "p_below": 0.9999999999999942,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 1,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.89,
+          "floor": 0.648492223578671,
+          "powered": true,
+          "p_below": 0.9999999926782881,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 1,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.92,
+          "floor": 0.7417071869509881,
+          "powered": true,
+          "p_below": 0.9999986792558598,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 2,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.76,
+          "floor": 0.289669311524155,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 2,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.72,
+          "floor": 0.49605588522746874,
+          "powered": true,
+          "p_below": 0.9999983862714454,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 2,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.86,
+          "floor": 0.6402480525616244,
+          "powered": true,
+          "p_below": 0.9999997707530918,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 3,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.46,
+          "floor": 0.12026731380134885,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 3,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.6,
+          "floor": 0.3723063673010203,
+          "powered": true,
+          "p_below": 0.9999987724562925,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 3,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.75,
+          "floor": 0.5567319956249787,
+          "powered": true,
+          "p_below": 0.9999801342930816,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 4,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.03,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 4,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.47,
+          "floor": 0.2662017184324834,
+          "powered": true,
+          "p_below": 0.9999960674759625,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 4,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.69,
+          "floor": 0.4833791919292644,
+          "powered": true,
+          "p_below": 0.9999905815175916,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 6,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.05,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 6,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.48,
+          "floor": 0.09358820155243333,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 6,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.64,
+          "floor": 0.3562946356241392,
+          "powered": true,
+          "p_below": 0.9999999977146117,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 8,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.05,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 8,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.64,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 8,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.72,
+          "floor": 0.24771372912243467,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 12,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.04,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 12,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.42,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 12,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.67,
+          "floor": 0.07312063833311296,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 16,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.03,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 16,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.54,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/deepseek/deepseek-v4-flash",
+          "T": 16,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.61,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 0,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.94,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.5998104635071162,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 0,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.92,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.28753402420958973,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 0,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.87,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.009520645555064131,
+          "p_adj": 0.17137161999115436,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 1,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.91,
+          "floor": 0.5120228142543385,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 1,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.91,
+          "floor": 0.648492223578671,
+          "powered": true,
+          "p_below": 0.99999999974559,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 1,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.89,
+          "floor": 0.7417071869509881,
+          "powered": true,
+          "p_below": 0.9999314154143258,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 2,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.71,
+          "floor": 0.289669311524155,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 2,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.79,
+          "floor": 0.49605588522746874,
+          "powered": true,
+          "p_below": 0.9999999996551913,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 2,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.88,
+          "floor": 0.6402480525616244,
+          "powered": true,
+          "p_below": 0.9999999863363429,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 3,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.58,
+          "floor": 0.12026731380134885,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 3,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.64,
+          "floor": 0.3723063673010203,
+          "powered": true,
+          "p_below": 0.9999999830377685,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 3,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.68,
+          "floor": 0.5567319956249787,
+          "powered": true,
+          "p_below": 0.9955720489732691,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 4,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.03,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 4,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.55,
+          "floor": 0.2662017184324834,
+          "powered": true,
+          "p_below": 0.9999999994617997,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 4,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.6,
+          "floor": 0.4833791919292644,
+          "powered": true,
+          "p_below": 0.9926227538276726,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 6,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.03,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 6,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.49,
+          "floor": 0.09358820155243333,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 6,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.73,
+          "floor": 0.3562946356241392,
+          "powered": true,
+          "p_below": 0.9999999999999938,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 8,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.01,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 8,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.46,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 8,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.7,
+          "floor": 0.24771372912243467,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 12,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.04,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 12,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.35,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 12,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.66,
+          "floor": 0.07312063833311296,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 16,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.05,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 16,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.42,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/nvidia/nemotron-3.5-super-vl",
+          "T": 16,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.63,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 0,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.97,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.9532914697030949,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 0,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.92,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.28753402420958973,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 0,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.97,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.9532914697030949,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 1,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.9,
+          "floor": 0.5120228142543385,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 1,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.89,
+          "floor": 0.648492223578671,
+          "powered": true,
+          "p_below": 0.9999999926782881,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 1,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.91,
+          "floor": 0.7417071869509881,
+          "powered": true,
+          "p_below": 0.9999944330062059,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 2,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.69,
+          "floor": 0.289669311524155,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 2,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.8,
+          "floor": 0.49605588522746874,
+          "powered": true,
+          "p_below": 0.9999999999177626,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 2,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.8,
+          "floor": 0.6402480525616244,
+          "powered": true,
+          "p_below": 0.9998343824362543,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 3,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.49,
+          "floor": 0.12026731380134885,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 3,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.73,
+          "floor": 0.3723063673010203,
+          "powered": true,
+          "p_below": 0.9999999999999146,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 3,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.74,
+          "floor": 0.5567319956249787,
+          "powered": true,
+          "p_below": 0.9999502894397864,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 4,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.02,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 4,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.6,
+          "floor": 0.2662017184324834,
+          "powered": true,
+          "p_below": 0.9999999999994229,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 4,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.7,
+          "floor": 0.4833791919292644,
+          "powered": true,
+          "p_below": 0.999996379167282,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 6,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.02,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 6,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.61,
+          "floor": 0.09358820155243333,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 6,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.69,
+          "floor": 0.3562946356241392,
+          "powered": true,
+          "p_below": 0.9999999999970549,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 8,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.03,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 8,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.55,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 8,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.8,
+          "floor": 0.24771372912243467,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 12,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.05,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 12,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.45,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 12,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.76,
+          "floor": 0.07312063833311296,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 16,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.03,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 16,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.53,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/qwen/qwen3-235b-a22b-2507",
+          "T": 16,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.71,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 0,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.92,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.28753402420958973,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 0,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.92,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.28753402420958973,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 0,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.91,
+          "floor": 0.9374999943666681,
+          "powered": true,
+          "p_below": 0.17321572298330112,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 1,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.89,
+          "floor": 0.5120228142543385,
+          "powered": true,
+          "p_below": 0.9999999999999999,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 1,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.9,
+          "floor": 0.648492223578671,
+          "powered": true,
+          "p_below": 0.9999999985543145,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 1,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.95,
+          "floor": 0.7417071869509881,
+          "powered": true,
+          "p_below": 0.9999999931284406,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 2,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.8,
+          "floor": 0.289669311524155,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 2,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.84,
+          "floor": 0.49605588522746874,
+          "powered": true,
+          "p_below": 0.999999999999862,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 2,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.88,
+          "floor": 0.6402480525616244,
+          "powered": true,
+          "p_below": 0.9999999863363429,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 3,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.52,
+          "floor": 0.12026731380134885,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 3,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.57,
+          "floor": 0.3723063673010203,
+          "powered": true,
+          "p_below": 0.9999801043497937,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 3,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.79,
+          "floor": 0.5567319956249787,
+          "powered": true,
+          "p_below": 0.9999997045778541,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 4,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.06,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 4,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.43,
+          "floor": 0.2662017184324834,
+          "powered": true,
+          "p_below": 0.9998663873519638,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 4,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.66,
+          "floor": 0.4833791919292644,
+          "powered": true,
+          "p_below": 0.9998733328784317,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 6,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.12,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 6,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.56,
+          "floor": 0.09358820155243333,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 6,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.64,
+          "floor": 0.3562946356241392,
+          "powered": true,
+          "p_below": 0.9999999977146117,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 8,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.0,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 8,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.45,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 8,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.66,
+          "floor": 0.24771372912243467,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 12,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.25,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 12,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.44,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 12,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.73,
+          "floor": 0.07312063833311296,
+          "powered": true,
+          "p_below": 1.0,
+          "p_adj": 1.0,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 16,
+          "p": 0.0,
+          "n": 100,
+          "error": 0.16,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 16,
+          "p": 0.1,
+          "n": 100,
+          "error": 0.43,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        },
+        {
+          "model": "openai/xiaomi/mimo-v2.6-flash",
+          "T": 16,
+          "p": 0.2,
+          "n": 100,
+          "error": 0.54,
+          "floor": 0.0,
+          "powered": false,
+          "p_below": null,
+          "model_verdict": "supported"
+        }
+      ],
+      "per_model": {
+        "openai/deepseek/deepseek-v4-flash": "supported",
+        "openai/nvidia/nemotron-3.5-super-vl": "supported",
+        "openai/qwen/qwen3-235b-a22b-2507": "supported",
+        "openai/xiaomi/mimo-v2.6-flash": "supported"
+      },
+      "reasons": {
+        "all": []
+      },
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H7",
+    "statement": "Inner-product splits stay flat then rise; parity splits jump at 1 bit",
+    "paper_source": "Thm 5",
+    "test": "change-point vs linear (instance-grouped CV) + slope test",
+    "verdict": "supported",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "openai/deepseek/deepseek-v4-flash/comm_ip": {
+        "heldout_ll_threshold": -671.1188528329309,
+        "heldout_ll_linear": -676.1670809310478,
+        "threshold_wins": true,
+        "L_star": 10.0,
+        "slope_p": 8.17956643136772e-08,
+        "accuracy_by_L": {
+          "0.0": 0.45,
+          "1.0": 0.52,
+          "2.0": 0.48,
+          "4.0": 0.5,
+          "6.0": 0.54,
+          "8.0": 0.48,
+          "10.0": 0.58,
+          "12.0": 0.55,
+          "14.0": 0.64,
+          "16.0": 0.82
+        },
+        "n_by_L": {
+          "0.0": 100,
+          "1.0": 100,
+          "2.0": 100,
+          "4.0": 100,
+          "6.0": 100,
+          "8.0": 100,
+          "10.0": 100,
+          "12.0": 100,
+          "14.0": 100,
+          "16.0": 100
+        },
+        "verdict": "supported"
+      },
+      "openai/deepseek/deepseek-v4-flash/comm_parity": {
+        "accuracy_by_L": {
+          "0.0": 0.47,
+          "1.0": 0.99,
+          "2.0": 0.99,
+          "4.0": 1.0,
+          "6.0": 0.99,
+          "8.0": 0.97,
+          "10.0": 1.0,
+          "12.0": 0.99,
+          "14.0": 1.0,
+          "16.0": 0.98
+        },
+        "acc_L1": 0.99,
+        "ceiling": 0.98,
+        "verdict": "supported"
+      },
+      "openai/nvidia/nemotron-3.5-super-vl/comm_ip": {
+        "heldout_ll_threshold": -663.5233754401055,
+        "heldout_ll_linear": -677.1593242987886,
+        "threshold_wins": true,
+        "L_star": 10.0,
+        "slope_p": 5.958447081225772e-07,
+        "accuracy_by_L": {
+          "0.0": 0.51,
+          "1.0": 0.49,
+          "2.0": 0.46,
+          "4.0": 0.48,
+          "6.0": 0.55,
+          "8.0": 0.48,
+          "10.0": 0.51,
+          "12.0": 0.58,
+          "14.0": 0.55,
+          "16.0": 0.88
+        },
+        "n_by_L": {
+          "0.0": 100,
+          "1.0": 100,
+          "2.0": 100,
+          "4.0": 100,
+          "6.0": 100,
+          "8.0": 100,
+          "10.0": 100,
+          "12.0": 100,
+          "14.0": 100,
+          "16.0": 100
+        },
+        "verdict": "supported"
+      },
+      "openai/nvidia/nemotron-3.5-super-vl/comm_parity": {
+        "accuracy_by_L": {
+          "0.0": 0.48,
+          "1.0": 0.97,
+          "2.0": 0.99,
+          "4.0": 0.97,
+          "6.0": 0.96,
+          "8.0": 0.98,
+          "10.0": 1.0,
+          "12.0": 0.98,
+          "14.0": 0.99,
+          "16.0": 0.94
+        },
+        "acc_L1": 0.97,
+        "ceiling": 0.94,
+        "verdict": "supported"
+      },
+      "openai/qwen/qwen3-235b-a22b-2507/comm_ip": {
+        "heldout_ll_threshold": -694.6382446016601,
+        "heldout_ll_linear": -702.5042104112658,
+        "threshold_wins": true,
+        "L_star": 14.0,
+        "slope_p": 0.059094693931044655,
+        "accuracy_by_L": {
+          "0.0": 0.49,
+          "1.0": 0.52,
+          "2.0": 0.4,
+          "4.0": 0.5,
+          "6.0": 0.52,
+          "8.0": 0.52,
+          "10.0": 0.47,
+          "12.0": 0.5,
+          "14.0": 0.51,
+          "16.0": 0.61
+        },
+        "n_by_L": {
+          "0.0": 100,
+          "1.0": 100,
+          "2.0": 100,
+          "4.0": 100,
+          "6.0": 100,
+          "8.0": 100,
+          "10.0": 100,
+          "12.0": 100,
+          "14.0": 100,
+          "16.0": 100
+        },
+        "verdict": "supported"
+      },
+      "openai/qwen/qwen3-235b-a22b-2507/comm_parity": {
+        "accuracy_by_L": {
+          "0.0": 0.55,
+          "1.0": 1.0,
+          "2.0": 1.0,
+          "4.0": 0.99,
+          "6.0": 0.99,
+          "8.0": 1.0,
+          "10.0": 1.0,
+          "12.0": 1.0,
+          "14.0": 1.0,
+          "16.0": 1.0
+        },
+        "acc_L1": 1.0,
+        "ceiling": 1.0,
+        "verdict": "supported"
+      },
+      "openai/xiaomi/mimo-v2.6-flash/comm_ip": {
+        "heldout_ll_threshold": -674.4680790546439,
+        "heldout_ll_linear": -690.0310000230394,
+        "threshold_wins": true,
+        "L_star": 14.0,
+        "slope_p": 0.008030077872614505,
+        "accuracy_by_L": {
+          "0.0": 0.52,
+          "1.0": 0.53,
+          "2.0": 0.51,
+          "4.0": 0.54,
+          "6.0": 0.52,
+          "8.0": 0.49,
+          "10.0": 0.44,
+          "12.0": 0.49,
+          "14.0": 0.53,
+          "16.0": 0.81
+        },
+        "n_by_L": {
+          "0.0": 100,
+          "1.0": 100,
+          "2.0": 100,
+          "4.0": 100,
+          "6.0": 100,
+          "8.0": 100,
+          "10.0": 100,
+          "12.0": 100,
+          "14.0": 100,
+          "16.0": 100
+        },
+        "verdict": "supported"
+      },
+      "openai/xiaomi/mimo-v2.6-flash/comm_parity": {
+        "accuracy_by_L": {
+          "0.0": 0.49,
+          "1.0": 1.0,
+          "2.0": 1.0,
+          "4.0": 1.0,
+          "6.0": 1.0,
+          "8.0": 1.0,
+          "10.0": 1.0,
+          "12.0": 1.0,
+          "14.0": 0.99,
+          "16.0": 0.99
+        },
+        "acc_L1": 1.0,
+        "ceiling": 0.99,
+        "verdict": "supported"
+      },
+      "per_model": {
+        "openai/qwen/qwen3-235b-a22b-2507": "supported",
+        "openai/xiaomi/mimo-v2.6-flash": "supported",
+        "openai/deepseek/deepseek-v4-flash": "supported",
+        "openai/nvidia/nemotron-3.5-super-vl": "supported"
+      },
+      "reasons": {
+        "openai/openai/gpt-4o-mini/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/openai/gpt-4o-mini/comm_parity": [
+          "calibration gate failed"
+        ],
+        "openai/z-ai/glm-4.7-flash/comm_parity": [
+          "calibration gate failed"
+        ],
+        "openai/z-ai/glm-4.7-flash/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/mistralai/mistral-small-3.2-24b-instruct/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/google/gemma-3-27b-it/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/meta-llama/llama-3.3-70b-instruct/comm_ip": [
+          "calibration gate failed"
+        ],
+        "openai/anthropic/claude-haiku-5.5/comm_ip": [
+          "calibration gate failed"
+        ]
+      }
+    }
+  }
+]

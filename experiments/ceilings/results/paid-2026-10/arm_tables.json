@@ -1,0 +1,5019 @@
+{
+ "openai/anthropic/claude-haiku-5.5/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/anthropic/claude-haiku-5.5",
+  "difficulty": {
+   "n": 8
+  },
+  "n_instances": 0,
+  "baseline_mean_tokens": 7583.876666666667,
+  "targets": {
+   "medium": 7584
+  },
+  "unmatched_defaults": true,
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 7584,
+     "matched": false
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 7584,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 7584,
+     "matched": false
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 7584,
+     "matched": false
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 7584,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 7584,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1896,
+     "natural_added": null,
+     "added": null,
+     "target": 7584,
+     "matched": false
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1896,
+     "natural_added": null,
+     "added": null,
+     "target": 7584,
+     "matched": false
+    }
+   }
+  },
+  "gate_failed": true,
+  "harness": {}
+ },
+ "openai/deepseek/deepseek-v4-flash/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/deepseek/deepseek-v4-flash",
+  "difficulty": {
+   "n": 8,
+   "variant": "ip"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 6518.7,
+  "targets": {
+   "medium": 6519
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 64,
+     "filler_tokens": 1,
+     "natural_added": 6513.0,
+     "added": 6530.7,
+     "target": 6519,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 678,
+     "natural_added": 1184.5,
+     "added": 6433.1,
+     "target": 6519,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 718,
+     "natural_added": -404.3,
+     "added": 6658.5,
+     "target": 6519,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 3098,
+     "natural_added": -819.4,
+     "added": 6441.3,
+     "target": 6519,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 4647,
+     "natural_added": -4455.1,
+     "added": 6325.9,
+     "target": 6519,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 4683,
+     "natural_added": -4556.5,
+     "added": 6397.5,
+     "target": 6519,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 771,
+     "natural_added": 58.4,
+     "added": 6555.9,
+     "target": 6519,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 685,
+     "natural_added": -91.2,
+     "added": 6288.7,
+     "target": 6519,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/google/gemma-3-27b-it/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/google/gemma-3-27b-it",
+  "difficulty": {
+   "n": 4
+  },
+  "n_instances": 0,
+  "baseline_mean_tokens": 4804.22,
+  "targets": {
+   "small": 2402,
+   "medium": 4804,
+   "large": 9608
+  },
+  "unmatched_defaults": true,
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 2402,
+     "matched": false
+    },
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4804,
+     "matched": false
+    },
+    "large": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 9608,
+     "matched": false
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 2402,
+     "matched": false
+    },
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4804,
+     "matched": false
+    },
+    "large": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 9608,
+     "matched": false
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 4,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 2402,
+     "matched": false
+    },
+    "medium": {
+     "strength": 4,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4804,
+     "matched": false
+    },
+    "large": {
+     "strength": 4,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 9608,
+     "matched": false
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 2402,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4804,
+     "matched": false
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 9608,
+     "matched": false
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 2402,
+     "matched": false
+    },
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4804,
+     "matched": false
+    },
+    "large": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 9608,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 2402,
+     "matched": false
+    },
+    "medium": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4804,
+     "matched": false
+    },
+    "large": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 9608,
+     "matched": false
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 600,
+     "natural_added": null,
+     "added": null,
+     "target": 2402,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1201,
+     "natural_added": null,
+     "added": null,
+     "target": 4804,
+     "matched": false
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 2402,
+     "natural_added": null,
+     "added": null,
+     "target": 9608,
+     "matched": false
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 600,
+     "natural_added": null,
+     "added": null,
+     "target": 2402,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1201,
+     "natural_added": null,
+     "added": null,
+     "target": 4804,
+     "matched": false
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 2402,
+     "natural_added": null,
+     "added": null,
+     "target": 9608,
+     "matched": false
+    }
+   }
+  },
+  "gate_failed": true,
+  "harness": {}
+ },
+ "openai/meta-llama/llama-3.3-70b-instruct/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/meta-llama/llama-3.3-70b-instruct",
+  "difficulty": {
+   "n": 8
+  },
+  "n_instances": 0,
+  "baseline_mean_tokens": 6377.956666666667,
+  "targets": {
+   "medium": 6378
+  },
+  "unmatched_defaults": true,
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6378,
+     "matched": false
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6378,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6378,
+     "matched": false
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6378,
+     "matched": false
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6378,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6378,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1594,
+     "natural_added": null,
+     "added": null,
+     "target": 6378,
+     "matched": false
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1594,
+     "natural_added": null,
+     "added": null,
+     "target": 6378,
+     "matched": false
+    }
+   }
+  },
+  "gate_failed": true,
+  "harness": {}
+ },
+ "openai/mistralai/mistral-small-3.2-24b-instruct/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/mistralai/mistral-small-3.2-24b-instruct",
+  "difficulty": {
+   "n": 8
+  },
+  "n_instances": 0,
+  "baseline_mean_tokens": 6341.9766666666665,
+  "targets": {
+   "small": 3171,
+   "medium": 6342,
+   "large": 12684
+  },
+  "unmatched_defaults": true,
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 3171,
+     "matched": false
+    },
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6342,
+     "matched": false
+    },
+    "large": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 12684,
+     "matched": false
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 3171,
+     "matched": false
+    },
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6342,
+     "matched": false
+    },
+    "large": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 12684,
+     "matched": false
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 3171,
+     "matched": false
+    },
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6342,
+     "matched": false
+    },
+    "large": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 12684,
+     "matched": false
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 3171,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6342,
+     "matched": false
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 12684,
+     "matched": false
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 3171,
+     "matched": false
+    },
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6342,
+     "matched": false
+    },
+    "large": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 12684,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 3171,
+     "matched": false
+    },
+    "medium": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6342,
+     "matched": false
+    },
+    "large": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 12684,
+     "matched": false
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 792,
+     "natural_added": null,
+     "added": null,
+     "target": 3171,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1585,
+     "natural_added": null,
+     "added": null,
+     "target": 6342,
+     "matched": false
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 3171,
+     "natural_added": null,
+     "added": null,
+     "target": 12684,
+     "matched": false
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 792,
+     "natural_added": null,
+     "added": null,
+     "target": 3171,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1585,
+     "natural_added": null,
+     "added": null,
+     "target": 6342,
+     "matched": false
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 3171,
+     "natural_added": null,
+     "added": null,
+     "target": 12684,
+     "matched": false
+    }
+   }
+  },
+  "gate_failed": true,
+  "harness": {}
+ },
+ "openai/nvidia/nemotron-3.5-super-vl/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/nvidia/nemotron-3.5-super-vl",
+  "difficulty": {
+   "n": 8,
+   "variant": "ip"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 5936.3,
+  "targets": {
+   "medium": 5936
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 32,
+     "filler_tokens": 210,
+     "natural_added": 3574.8,
+     "added": 5857.0,
+     "target": 5936,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 2,
+     "natural_added": 4947.4,
+     "added": 7424.1,
+     "target": 5936,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 504,
+     "natural_added": 223.7,
+     "added": 5916.5,
+     "target": 5936,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1997,
+     "natural_added": 391.2,
+     "added": 5973.4,
+     "target": 5936,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 3467,
+     "natural_added": -4007.8,
+     "added": 6186.5,
+     "target": 5936,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 2878,
+     "natural_added": -2405.6,
+     "added": 6024.4,
+     "target": 5936,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 616,
+     "natural_added": 368.1,
+     "added": 6002.7,
+     "target": 5936,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 479,
+     "natural_added": 538.0,
+     "added": 5774.8,
+     "target": 5936,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/qwen/qwen3-235b-a22b-2507/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/qwen/qwen3-235b-a22b-2507",
+  "difficulty": {
+   "n": 8,
+   "variant": "ip"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 6712.7,
+  "targets": {
+   "medium": 6713
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 64,
+     "filler_tokens": 24,
+     "natural_added": 6474.4,
+     "added": 6671.8,
+     "target": 6713,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:2",
+     "filler_tokens": 213,
+     "natural_added": 5477.5,
+     "added": 10783.9,
+     "target": 6713,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 613,
+     "natural_added": 828.5,
+     "added": 6754.2,
+     "target": 6713,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2946,
+     "natural_added": -280.6,
+     "added": 6780.4,
+     "target": 6713,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 4676,
+     "natural_added": -4005.7,
+     "added": 6546.1,
+     "target": 6713,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 4588,
+     "natural_added": -1473.1,
+     "added": 6610.7,
+     "target": 6713,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 827,
+     "natural_added": 91.5,
+     "added": 6715.0,
+     "target": 6713,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 714,
+     "natural_added": 67.4,
+     "added": 6804.6,
+     "target": 6713,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/xiaomi/mimo-v2.6-flash/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/xiaomi/mimo-v2.6-flash",
+  "difficulty": {
+   "n": 8,
+   "variant": "ip"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 6402.6,
+  "targets": {
+   "small": 3201,
+   "medium": 6403,
+   "large": 12805
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 32,
+     "filler_tokens": 79,
+     "natural_added": 3179.0,
+     "added": 2895.7,
+     "target": 3201,
+     "matched": false
+    },
+    "medium": {
+     "strength": 64,
+     "filler_tokens": 19,
+     "natural_added": 5984.9,
+     "added": 6217.3,
+     "target": 6403,
+     "matched": true
+    },
+    "large": {
+     "strength": 64,
+     "filler_tokens": 696,
+     "natural_added": 5984.9,
+     "added": 12919.8,
+     "target": 12805,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 213,
+     "natural_added": 1180.2,
+     "added": 3512.2,
+     "target": 3201,
+     "matched": false
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 480,
+     "natural_added": 1180.2,
+     "added": 6114.5,
+     "target": 6403,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 1202,
+     "natural_added": 1180.2,
+     "added": 13296.4,
+     "target": 12805,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 8,
+     "filler_tokens": 388,
+     "natural_added": -199.8,
+     "added": 3256.0,
+     "target": 3201,
+     "matched": true
+    },
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 705,
+     "natural_added": -199.8,
+     "added": 6242.8,
+     "target": 6403,
+     "matched": true
+    },
+    "large": {
+     "strength": 8,
+     "filler_tokens": 1372,
+     "natural_added": -199.8,
+     "added": 12841.6,
+     "target": 12805,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 1539,
+     "natural_added": -364.1,
+     "added": 3565.5,
+     "target": 3201,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2869,
+     "natural_added": -364.1,
+     "added": 6381.4,
+     "target": 6403,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 5520,
+     "natural_added": -364.1,
+     "added": 12726.3,
+     "target": 12805,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "high",
+     "filler_tokens": 3127,
+     "natural_added": -4435.1,
+     "added": 3067.6,
+     "target": 3201,
+     "matched": true
+    },
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 4540,
+     "natural_added": -4435.1,
+     "added": 6424.5,
+     "target": 6403,
+     "matched": true
+    },
+    "large": {
+     "strength": "high",
+     "filler_tokens": 7203,
+     "natural_added": -4435.1,
+     "added": 12839.8,
+     "target": 12805,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 3235,
+     "natural_added": -4552.6,
+     "added": 3356.8,
+     "target": 3201,
+     "matched": true
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 4541,
+     "natural_added": -4552.6,
+     "added": 5800.0,
+     "target": 6403,
+     "matched": false
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 7104,
+     "natural_added": -4552.6,
+     "added": 12790.8,
+     "target": 12805,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 395,
+     "natural_added": -114.6,
+     "added": 3121.2,
+     "target": 3201,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 809,
+     "natural_added": -114.6,
+     "added": 6492.6,
+     "target": 6403,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1576,
+     "natural_added": -114.6,
+     "added": 12669.1,
+     "target": 12805,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 331,
+     "natural_added": -160.2,
+     "added": 3253.5,
+     "target": 3201,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 665,
+     "natural_added": -160.2,
+     "added": 6483.9,
+     "target": 6403,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1325,
+     "natural_added": -160.2,
+     "added": 12673.8,
+     "target": 12805,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/z-ai/glm-4.7-flash/comm_ip": {
+  "family": "comm_ip",
+  "model_id": "openai/z-ai/glm-4.7-flash",
+  "difficulty": {
+   "n": 6
+  },
+  "n_instances": 0,
+  "baseline_mean_tokens": 6261.233333333334,
+  "targets": {
+   "medium": 6261
+  },
+  "unmatched_defaults": true,
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6261,
+     "matched": false
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6261,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 6,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6261,
+     "matched": false
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6261,
+     "matched": false
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6261,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 6261,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1565,
+     "natural_added": null,
+     "added": null,
+     "target": 6261,
+     "matched": false
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1565,
+     "natural_added": null,
+     "added": null,
+     "target": 6261,
+     "matched": false
+    }
+   }
+  },
+  "gate_failed": true,
+  "harness": {}
+ },
+ "openai/anthropic/claude-haiku-5.5/comm_parity": {
+  "family": "comm_parity",
+  "model_id": "openai/anthropic/claude-haiku-5.5",
+  "difficulty": {
+   "n": 8,
+   "variant": "parity"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 6812.0,
+  "targets": {
+   "medium": 6812
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 32,
+     "filler_tokens": 138,
+     "natural_added": 4974.9,
+     "added": 6972.4,
+     "target": 6812,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 530,
+     "natural_added": 2.2,
+     "added": 6918.6,
+     "target": 6812,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 1,
+     "filler_tokens": 458,
+     "natural_added": 687.9,
+     "added": 7066.0,
+     "target": 6812,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2182,
+     "natural_added": -248.9,
+     "added": 6821.3,
+     "target": 6812,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 3714,
+     "natural_added": -5111.9,
+     "added": 6838.0,
+     "target": 6812,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 3725,
+     "natural_added": -5118.6,
+     "added": 6966.9,
+     "target": 6812,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 440,
+     "natural_added": 154.9,
+     "added": 7023.8,
+     "target": 6812,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 528,
+     "natural_added": -175.0,
+     "added": 6660.7,
+     "target": 6812,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/deepseek/deepseek-v4-flash/comm_parity": {
+  "family": "comm_parity",
+  "model_id": "openai/deepseek/deepseek-v4-flash",
+  "difficulty": {
+   "n": 8,
+   "variant": "parity"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 5532.4,
+  "targets": {
+   "medium": 5532
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 32,
+     "filler_tokens": 222,
+     "natural_added": 3440.2,
+     "added": 5490.4,
+     "target": 5532,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 610,
+     "natural_added": 42.6,
+     "added": 5567.8,
+     "target": 5532,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 1,
+     "filler_tokens": 631,
+     "natural_added": -501.8,
+     "added": 5406.8,
+     "target": 5532,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2511,
+     "natural_added": -470.0,
+     "added": 5385.6,
+     "target": 5532,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 4025,
+     "natural_added": -4145.6,
+     "added": 5578.2,
+     "target": 5532,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 3996,
+     "natural_added": -3972.4,
+     "added": 5461.6,
+     "target": 5532,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 602,
+     "natural_added": 178.4,
+     "added": 5280.6,
+     "target": 5532,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 573,
+     "natural_added": 326.5,
+     "added": 5287.6,
+     "target": 5532,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/google/gemma-3-27b-it/comm_parity": {
+  "family": "comm_parity",
+  "model_id": "openai/google/gemma-3-27b-it",
+  "difficulty": {
+   "n": 6,
+   "variant": "parity"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 5148.6,
+  "targets": {
+   "small": 2574,
+   "medium": 5149,
+   "large": 10297
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 16,
+     "filler_tokens": 103,
+     "natural_added": 1550.1,
+     "added": 2622.5,
+     "target": 2574,
+     "matched": true
+    },
+    "medium": {
+     "strength": 32,
+     "filler_tokens": 180,
+     "natural_added": 3191.9,
+     "added": 4960.9,
+     "target": 5149,
+     "matched": true
+    },
+    "large": {
+     "strength": 64,
+     "filler_tokens": 357,
+     "natural_added": 6379.3,
+     "added": 10228.4,
+     "target": 10297,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 225,
+     "natural_added": 87.2,
+     "added": 2604.0,
+     "target": 2574,
+     "matched": true
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 462,
+     "natural_added": 87.2,
+     "added": 5018.8,
+     "target": 5149,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 932,
+     "natural_added": 87.2,
+     "added": 10045.6,
+     "target": 10297,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 1,
+     "filler_tokens": 214,
+     "natural_added": 154.0,
+     "added": 2571.4,
+     "target": 2574,
+     "matched": true
+    },
+    "medium": {
+     "strength": 1,
+     "filler_tokens": 446,
+     "natural_added": 154.0,
+     "added": 5006.3,
+     "target": 5149,
+     "matched": true
+    },
+    "large": {
+     "strength": 1,
+     "filler_tokens": 900,
+     "natural_added": 154.0,
+     "added": 10308.2,
+     "target": 10297,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 997,
+     "natural_added": 65.8,
+     "added": 2603.6,
+     "target": 2574,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1828,
+     "natural_added": 65.8,
+     "added": 5015.5,
+     "target": 5149,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 3671,
+     "natural_added": 65.8,
+     "added": 10300.8,
+     "target": 10297,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "high",
+     "filler_tokens": 2316,
+     "natural_added": -3865.8,
+     "added": 2480.6,
+     "target": 2574,
+     "matched": true
+    },
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 3242,
+     "natural_added": -3865.8,
+     "added": 5063.5,
+     "target": 5149,
+     "matched": true
+    },
+    "large": {
+     "strength": "high",
+     "filler_tokens": 5061,
+     "natural_added": -3865.8,
+     "added": 10234.4,
+     "target": 10297,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 2359,
+     "natural_added": -3845.8,
+     "added": 2613.7,
+     "target": 2574,
+     "matched": true
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 3240,
+     "natural_added": -3845.8,
+     "added": 5168.7,
+     "target": 5149,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 5059,
+     "natural_added": -3845.8,
+     "added": 10231.4,
+     "target": 10297,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 297,
+     "natural_added": 389.1,
+     "added": 2546.3,
+     "target": 2574,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 599,
+     "natural_added": 389.1,
+     "added": 4967.8,
+     "target": 5149,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1186,
+     "natural_added": 389.1,
+     "added": 10206.0,
+     "target": 10297,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 238,
+     "natural_added": 132.6,
+     "added": 2555.9,
+     "target": 2574,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 468,
+     "natural_added": 132.6,
+     "added": 4967.9,
+     "target": 5149,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 937,
+     "natural_added": 132.6,
+     "added": 10135.3,
+     "target": 10297,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/meta-llama/llama-3.3-70b-instruct/comm_parity": {
+  "family": "comm_parity",
+  "model_id": "openai/meta-llama/llama-3.3-70b-instruct",
+  "difficulty": {
+   "n": 8,
+   "variant": "parity"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 6431.8,
+  "targets": {
+   "medium": 6432
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 64,
+     "filler_tokens": 4,
+     "natural_added": 6415.4,
+     "added": 6441.9,
+     "target": 6432,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 513,
+     "natural_added": 1384.6,
+     "added": 6223.8,
+     "target": 6432,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 1,
+     "filler_tokens": 595,
+     "natural_added": 715.2,
+     "added": 6484.4,
+     "target": 6432,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2744,
+     "natural_added": -180.8,
+     "added": 6372.4,
+     "target": 6432,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 4518,
+     "natural_added": -4485.2,
+     "added": 6400.6,
+     "target": 6432,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 4547,
+     "natural_added": -4496.8,
+     "added": 6349.4,
+     "target": 6432,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 794,
+     "natural_added": -28.0,
+     "added": 6395.8,
+     "target": 6432,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 671,
+     "natural_added": -63.0,
+     "added": 6334.3,
+     "target": 6432,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/mistralai/mistral-small-3.2-24b-instruct/comm_parity": {
+  "family": "comm_parity",
+  "model_id": "openai/mistralai/mistral-small-3.2-24b-instruct",
+  "difficulty": {
+   "n": 8,
+   "variant": "parity"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 5649.9,
+  "targets": {
+   "small": 2825,
+   "medium": 5650,
+   "large": 11300
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 32,
+     "filler_tokens": 0,
+     "natural_added": 2827.2,
+     "added": 2827.2,
+     "target": 2825,
+     "matched": true
+    },
+    "medium": {
+     "strength": 32,
+     "filler_tokens": 260,
+     "natural_added": 2827.2,
+     "added": 5731.2,
+     "target": 5650,
+     "matched": true
+    },
+    "large": {
+     "strength": 64,
+     "filler_tokens": 455,
+     "natural_added": 6213.0,
+     "added": 11401.4,
+     "target": 11300,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 356,
+     "natural_added": -214.2,
+     "added": 2170.6,
+     "target": 2825,
+     "matched": false
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 581,
+     "natural_added": -214.2,
+     "added": 5561.2,
+     "target": 5650,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 1077,
+     "natural_added": -214.2,
+     "added": 11022.1,
+     "target": 11300,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 1,
+     "filler_tokens": 298,
+     "natural_added": -425.2,
+     "added": 2714.9,
+     "target": 2825,
+     "matched": true
+    },
+    "medium": {
+     "strength": 1,
+     "filler_tokens": 552,
+     "natural_added": -425.2,
+     "added": 5677.4,
+     "target": 5650,
+     "matched": true
+    },
+    "large": {
+     "strength": 1,
+     "filler_tokens": 1055,
+     "natural_added": -425.2,
+     "added": 11077.1,
+     "target": 11300,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 1024,
+     "natural_added": -47.8,
+     "added": 3221.7,
+     "target": 2825,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2048,
+     "natural_added": -47.8,
+     "added": 5503.7,
+     "target": 5650,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 4121,
+     "natural_added": -47.8,
+     "added": 11020.5,
+     "target": 11300,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "high",
+     "filler_tokens": 2597,
+     "natural_added": -3983.8,
+     "added": 2754.6,
+     "target": 2825,
+     "matched": true
+    },
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 3633,
+     "natural_added": -3983.8,
+     "added": 5544.6,
+     "target": 5650,
+     "matched": true
+    },
+    "large": {
+     "strength": "high",
+     "filler_tokens": 5535,
+     "natural_added": -3983.8,
+     "added": 10893.5,
+     "target": 11300,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 2576,
+     "natural_added": -4168.4,
+     "added": 2805.9,
+     "target": 2825,
+     "matched": true
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 3675,
+     "natural_added": -4168.4,
+     "added": 5766.2,
+     "target": 5650,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 5575,
+     "natural_added": -4168.4,
+     "added": 11112.8,
+     "target": 11300,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 361,
+     "natural_added": -272.7,
+     "added": 2968.1,
+     "target": 2825,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 702,
+     "natural_added": -272.7,
+     "added": 5883.5,
+     "target": 5650,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1246,
+     "natural_added": -272.7,
+     "added": 11169.5,
+     "target": 11300,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 323,
+     "natural_added": -351.8,
+     "added": 3108.4,
+     "target": 2825,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 583,
+     "natural_added": -351.8,
+     "added": 5801.3,
+     "target": 5650,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1036,
+     "natural_added": -351.8,
+     "added": 10764.3,
+     "target": 11300,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/nvidia/nemotron-3.5-super-vl/comm_parity": {
+  "family": "comm_parity",
+  "model_id": "openai/nvidia/nemotron-3.5-super-vl",
+  "difficulty": {
+   "n": 8,
+   "variant": "parity"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 6269.4,
+  "targets": {
+   "medium": 6269
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 32,
+     "filler_tokens": 247,
+     "natural_added": 3469.2,
+     "added": 6246.8,
+     "target": 6269,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 0,
+     "natural_added": 5931.6,
+     "added": 5931.6,
+     "target": 6269,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 1,
+     "filler_tokens": 633,
+     "natural_added": -913.1,
+     "added": 6389.3,
+     "target": 6269,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2322,
+     "natural_added": -203.1,
+     "added": 6218.7,
+     "target": 6269,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 3588,
+     "natural_added": -3857.7,
+     "added": 6404.1,
+     "target": 6269,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 2819,
+     "natural_added": -1690.1,
+     "added": 6200.1,
+     "target": 6269,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 674,
+     "natural_added": 63.6,
+     "added": 6356.9,
+     "target": 6269,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 551,
+     "natural_added": 175.0,
+     "added": 6272.1,
+     "target": 6269,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/qwen/qwen3-235b-a22b-2507/comm_parity": {
+  "family": "comm_parity",
+  "model_id": "openai/qwen/qwen3-235b-a22b-2507",
+  "difficulty": {
+   "n": 8,
+   "variant": "parity"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 6497.2,
+  "targets": {
+   "medium": 6497
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 64,
+     "filler_tokens": 0,
+     "natural_added": 6513.8,
+     "added": 6513.8,
+     "target": 6497,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:2",
+     "filler_tokens": 339,
+     "natural_added": 4067.5,
+     "added": 7297.8,
+     "target": 6497,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 1,
+     "filler_tokens": 768,
+     "natural_added": -813.2,
+     "added": 6528.8,
+     "target": 6497,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2814,
+     "natural_added": -246.3,
+     "added": 6496.7,
+     "target": 6497,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 4406,
+     "natural_added": -3881.0,
+     "added": 6459.6,
+     "target": 6497,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 3723,
+     "natural_added": -2352.8,
+     "added": 7420.4,
+     "target": 6497,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 796,
+     "natural_added": 78.8,
+     "added": 6458.7,
+     "target": 6497,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 680,
+     "natural_added": 66.6,
+     "added": 6517.2,
+     "target": 6497,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/xiaomi/mimo-v2.6-flash/comm_parity": {
+  "family": "comm_parity",
+  "model_id": "openai/xiaomi/mimo-v2.6-flash",
+  "difficulty": {
+   "n": 8,
+   "variant": "parity"
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 5739.2,
+  "targets": {
+   "small": 2870,
+   "medium": 5739,
+   "large": 11478
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 32,
+     "filler_tokens": 0,
+     "natural_added": 2855.4,
+     "added": 2855.4,
+     "target": 2870,
+     "matched": true
+    },
+    "medium": {
+     "strength": 32,
+     "filler_tokens": 287,
+     "natural_added": 2855.4,
+     "added": 5786.9,
+     "target": 5739,
+     "matched": true
+    },
+    "large": {
+     "strength": 64,
+     "filler_tokens": 526,
+     "natural_added": 6293.9,
+     "added": 11159.0,
+     "target": 11478,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 306,
+     "natural_added": 72.4,
+     "added": 3095.4,
+     "target": 2870,
+     "matched": false
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 627,
+     "natural_added": 72.4,
+     "added": 5186.8,
+     "target": 5739,
+     "matched": false
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 1162,
+     "natural_added": 72.4,
+     "added": 11356.0,
+     "target": 11478,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 1,
+     "filler_tokens": 451,
+     "natural_added": -1436.2,
+     "added": 2876.2,
+     "target": 2870,
+     "matched": true
+    },
+    "medium": {
+     "strength": 1,
+     "filler_tokens": 757,
+     "natural_added": -1436.2,
+     "added": 5711.4,
+     "target": 5739,
+     "matched": true
+    },
+    "large": {
+     "strength": 1,
+     "filler_tokens": 1346,
+     "natural_added": -1436.2,
+     "added": 11519.4,
+     "target": 11478,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 1319,
+     "natural_added": -164.0,
+     "added": 3118.4,
+     "target": 2870,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 2483,
+     "natural_added": -164.0,
+     "added": 5764.7,
+     "target": 5739,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 4863,
+     "natural_added": -164.0,
+     "added": 11367.6,
+     "target": 11478,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "high",
+     "filler_tokens": 2978,
+     "natural_added": -4171.2,
+     "added": 2887.0,
+     "target": 2870,
+     "matched": true
+    },
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 4077,
+     "natural_added": -4171.2,
+     "added": 5892.6,
+     "target": 5739,
+     "matched": true
+    },
+    "large": {
+     "strength": "high",
+     "filler_tokens": 6495,
+     "natural_added": -4171.2,
+     "added": 11441.4,
+     "target": 11478,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 2848,
+     "natural_added": -4247.0,
+     "added": 3166.4,
+     "target": 2870,
+     "matched": false
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 4098,
+     "natural_added": -4247.0,
+     "added": 5565.0,
+     "target": 5739,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 6404,
+     "natural_added": -4247.0,
+     "added": 11258.0,
+     "target": 11478,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 398,
+     "natural_added": 125.8,
+     "added": 3000.8,
+     "target": 2870,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 707,
+     "natural_added": 125.8,
+     "added": 5893.7,
+     "target": 5739,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1398,
+     "natural_added": 125.8,
+     "added": 11486.9,
+     "target": 11478,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 332,
+     "natural_added": -208.6,
+     "added": 3285.2,
+     "target": 2870,
+     "matched": false
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 645,
+     "natural_added": -208.6,
+     "added": 5923.6,
+     "target": 5739,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1190,
+     "natural_added": -208.6,
+     "added": 11279.3,
+     "target": 11478,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/anthropic/claude-haiku-5.5/info": {
+  "family": "info",
+  "model_id": "openai/anthropic/claude-haiku-5.5",
+  "difficulty": {
+   "k": 3,
+   "p": 0.1
+  },
+  "n_instances": 0,
+  "baseline_mean_tokens": 4328.0,
+  "targets": {
+   "medium": 4328
+  },
+  "unmatched_defaults": true,
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 15,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4328,
+     "matched": false
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4328,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 100,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4328,
+     "matched": false
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4328,
+     "matched": false
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4328,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 4328,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1082,
+     "natural_added": null,
+     "added": null,
+     "target": 4328,
+     "matched": false
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1082,
+     "natural_added": null,
+     "added": null,
+     "target": 4328,
+     "matched": false
+    }
+   }
+  },
+  "gate_failed": true,
+  "harness": {}
+ },
+ "openai/deepseek/deepseek-v4-flash/info": {
+  "family": "info",
+  "model_id": "openai/deepseek/deepseek-v4-flash",
+  "difficulty": {
+   "k": 3,
+   "p": 0.0
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1720.5,
+  "targets": {
+   "medium": 1720
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 169,
+     "natural_added": 915.4,
+     "added": 1707.1,
+     "target": 1720,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:1",
+     "filler_tokens": 177,
+     "natural_added": 656.4,
+     "added": 1646.6,
+     "target": 1720,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 216,
+     "natural_added": 713.0,
+     "added": 1784.5,
+     "target": 1720,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1436,
+     "natural_added": 1.5,
+     "added": 1722.0,
+     "target": 1720,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": 1720.9,
+     "added": 1720.9,
+     "target": 1720,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 968,
+     "natural_added": -595.7,
+     "added": 1821.1,
+     "target": 1720,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 407,
+     "natural_added": 31.5,
+     "added": 1691.5,
+     "target": 1720,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 358,
+     "natural_added": 27.0,
+     "added": 1705.5,
+     "target": 1720,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/google/gemma-3-27b-it/info": {
+  "family": "info",
+  "model_id": "openai/google/gemma-3-27b-it",
+  "difficulty": {
+   "k": 2,
+   "p": 0.0
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1264.0,
+  "targets": {
+   "small": 632,
+   "medium": 1264,
+   "large": 2528
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 10,
+     "filler_tokens": 6,
+     "natural_added": 607.6,
+     "added": 634.5,
+     "target": 632,
+     "matched": true
+    },
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 50,
+     "natural_added": 981.5,
+     "added": 1262.7,
+     "target": 1264,
+     "matched": true
+    },
+    "large": {
+     "strength": 16,
+     "filler_tokens": 277,
+     "natural_added": 981.5,
+     "added": 2518.5,
+     "target": 2528,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "medium:1",
+     "filler_tokens": 0,
+     "natural_added": 772.3,
+     "added": 772.3,
+     "target": 632,
+     "matched": false
+    },
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 79,
+     "natural_added": 745.4,
+     "added": 1272.2,
+     "target": 1264,
+     "matched": true
+    },
+    "large": {
+     "strength": "xhigh:1",
+     "filler_tokens": 260,
+     "natural_added": 708.3,
+     "added": 2505.4,
+     "target": 2528,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 200,
+     "filler_tokens": 18,
+     "natural_added": 522.7,
+     "added": 616.3,
+     "target": 632,
+     "matched": true
+    },
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 128,
+     "natural_added": 522.7,
+     "added": 1250.8,
+     "target": 1264,
+     "matched": true
+    },
+    "large": {
+     "strength": 200,
+     "filler_tokens": 355,
+     "natural_added": 522.7,
+     "added": 2532.8,
+     "target": 2528,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 452,
+     "natural_added": 0.0,
+     "added": 630.0,
+     "target": 632,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 905,
+     "natural_added": 0.0,
+     "added": 1267.0,
+     "target": 1264,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1807,
+     "natural_added": 0.0,
+     "added": 2527.0,
+     "target": 2528,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "low",
+     "filler_tokens": 322,
+     "natural_added": 164.4,
+     "added": 636.9,
+     "target": 632,
+     "matched": true
+    },
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 786,
+     "natural_added": 164.4,
+     "added": 1259.0,
+     "target": 1264,
+     "matched": true
+    },
+    "large": {
+     "strength": "low",
+     "filler_tokens": 1679,
+     "natural_added": 164.4,
+     "added": 2509.3,
+     "target": 2528,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 310,
+     "natural_added": -149.7,
+     "added": 637.9,
+     "target": 632,
+     "matched": true
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 546,
+     "natural_added": -149.7,
+     "added": 1266.7,
+     "target": 1264,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 960,
+     "natural_added": -149.7,
+     "added": 2482.8,
+     "target": 2528,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 158,
+     "natural_added": 40.0,
+     "added": 660.0,
+     "target": 632,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 293,
+     "natural_added": 40.0,
+     "added": 1272.0,
+     "target": 1264,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 576,
+     "natural_added": 40.0,
+     "added": 2516.0,
+     "target": 2528,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 115,
+     "natural_added": 28.0,
+     "added": 644.0,
+     "target": 632,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 226,
+     "natural_added": 28.0,
+     "added": 1260.0,
+     "target": 1264,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 452,
+     "natural_added": 28.0,
+     "added": 2520.0,
+     "target": 2528,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/meta-llama/llama-3.3-70b-instruct/info": {
+  "family": "info",
+  "model_id": "openai/meta-llama/llama-3.3-70b-instruct",
+  "difficulty": {
+   "k": 3,
+   "p": 0.0
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1760.0,
+  "targets": {
+   "medium": 1760
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 197,
+     "natural_added": 828.0,
+     "added": 1763.6,
+     "target": 1760,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 145,
+     "natural_added": 1011.0,
+     "added": 1757.4,
+     "target": 1760,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 218,
+     "natural_added": 679.0,
+     "added": 1675.1,
+     "target": 1760,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1466,
+     "natural_added": 0.0,
+     "added": 1758.0,
+     "target": 1760,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 1510,
+     "natural_added": -59.0,
+     "added": 1765.3,
+     "target": 1760,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 924,
+     "natural_added": -251.8,
+     "added": 1814.8,
+     "target": 1760,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 440,
+     "natural_added": 36.0,
+     "added": 1792.0,
+     "target": 1760,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 366,
+     "natural_added": 24.0,
+     "added": 1752.0,
+     "target": 1760,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/mistralai/mistral-small-3.2-24b-instruct/info": {
+  "family": "info",
+  "model_id": "openai/mistralai/mistral-small-3.2-24b-instruct",
+  "difficulty": {
+   "k": 3,
+   "p": 0.0
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1903.5,
+  "targets": {
+   "small": 952,
+   "medium": 1904,
+   "large": 3807
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 16,
+     "filler_tokens": 25,
+     "natural_added": 850.7,
+     "added": 994.9,
+     "target": 952,
+     "matched": true
+    },
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 193,
+     "natural_added": 850.7,
+     "added": 1919.8,
+     "target": 1904,
+     "matched": true
+    },
+    "large": {
+     "strength": 16,
+     "filler_tokens": 532,
+     "natural_added": 850.7,
+     "added": 3797.3,
+     "target": 3807,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "medium:1",
+     "filler_tokens": 0,
+     "natural_added": 1143.3,
+     "added": 1143.3,
+     "target": 952,
+     "matched": false
+    },
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 179,
+     "natural_added": 1187.3,
+     "added": 1943.9,
+     "target": 1904,
+     "matched": true
+    },
+    "large": {
+     "strength": "xhigh:1",
+     "filler_tokens": 417,
+     "natural_added": 1481.4,
+     "added": 3672.0,
+     "target": 3807,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 200,
+     "filler_tokens": 17,
+     "natural_added": 824.5,
+     "added": 944.5,
+     "target": 952,
+     "matched": true
+    },
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 184,
+     "natural_added": 824.5,
+     "added": 1715.3,
+     "target": 1904,
+     "matched": false
+    },
+    "large": {
+     "strength": 200,
+     "filler_tokens": 543,
+     "natural_added": 824.5,
+     "added": 3838.9,
+     "target": 3807,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 677,
+     "natural_added": 1.5,
+     "added": 949.4,
+     "target": 952,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1359,
+     "natural_added": 1.5,
+     "added": 1901.5,
+     "target": 1904,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 2715,
+     "natural_added": 1.5,
+     "added": 3808.5,
+     "target": 3807,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "low",
+     "filler_tokens": 661,
+     "natural_added": -45.4,
+     "added": 1028.9,
+     "target": 952,
+     "matched": false
+    },
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 1371,
+     "natural_added": -45.4,
+     "added": 1843.3,
+     "target": 1904,
+     "matched": true
+    },
+    "large": {
+     "strength": "high",
+     "filler_tokens": 289,
+     "natural_added": 3103.3,
+     "added": 3645.1,
+     "target": 3807,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 603,
+     "natural_added": -277.8,
+     "added": 1016.6,
+     "target": 952,
+     "matched": false
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 971,
+     "natural_added": -277.8,
+     "added": 1970.5,
+     "target": 1904,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 1643,
+     "natural_added": -277.8,
+     "added": 3840.8,
+     "target": 3807,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 214,
+     "natural_added": 33.0,
+     "added": 958.6,
+     "target": 952,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 413,
+     "natural_added": 33.0,
+     "added": 1898.5,
+     "target": 1904,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 818,
+     "natural_added": 33.0,
+     "added": 3756.2,
+     "target": 3807,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 166,
+     "natural_added": 63.4,
+     "added": 958.8,
+     "target": 952,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 336,
+     "natural_added": 63.4,
+     "added": 1901.2,
+     "target": 1904,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 675,
+     "natural_added": 63.4,
+     "added": 3810.0,
+     "target": 3807,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/nvidia/nemotron-3.5-super-vl/info": {
+  "family": "info",
+  "model_id": "openai/nvidia/nemotron-3.5-super-vl",
+  "difficulty": {
+   "k": 3,
+   "p": 0.0
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1940.0,
+  "targets": {
+   "medium": 1940
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 206,
+     "natural_added": 801.6,
+     "added": 1948.0,
+     "target": 1940,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 74,
+     "natural_added": 1313.2,
+     "added": 2011.5,
+     "target": 1940,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 214,
+     "natural_added": 747.8,
+     "added": 1882.7,
+     "target": 1940,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1385,
+     "natural_added": 0.0,
+     "added": 1939.0,
+     "target": 1940,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 1507,
+     "natural_added": -166.8,
+     "added": 1916.2,
+     "target": 1940,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 568,
+     "natural_added": 417.9,
+     "added": 3270.6,
+     "target": 1940,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 423,
+     "natural_added": 40.0,
+     "added": 1952.0,
+     "target": 1940,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 346,
+     "natural_added": 28.0,
+     "added": 1932.0,
+     "target": 1940,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/openai/gpt-4o-mini/info": {
+  "family": "info",
+  "model_id": "openai/openai/gpt-4o-mini",
+  "difficulty": {
+   "k": 2,
+   "p": 0.0
+  },
+  "n_instances": 0,
+  "baseline_mean_tokens": 1499.5733333333333,
+  "targets": {
+   "medium": 1500
+  },
+  "unmatched_defaults": true,
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 2,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 1500,
+     "matched": false
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 1500,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 100,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 1500,
+     "matched": false
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 1500,
+     "matched": false
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 1500,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 1500,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 375,
+     "natural_added": null,
+     "added": null,
+     "target": 1500,
+     "matched": false
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 375,
+     "natural_added": null,
+     "added": null,
+     "target": 1500,
+     "matched": false
+    }
+   }
+  },
+  "gate_failed": true,
+  "harness": {}
+ },
+ "openai/qwen/qwen3-235b-a22b-2507/info": {
+  "family": "info",
+  "model_id": "openai/qwen/qwen3-235b-a22b-2507",
+  "difficulty": {
+   "k": 3,
+   "p": 0.0
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1924.0,
+  "targets": {
+   "medium": 1924
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 235,
+     "natural_added": 798.4,
+     "added": 1928.0,
+     "target": 1924,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:1",
+     "filler_tokens": 214,
+     "natural_added": 753.8,
+     "added": 1875.0,
+     "target": 1924,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 190,
+     "natural_added": 1161.5,
+     "added": 1965.5,
+     "target": 1924,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1606,
+     "natural_added": 0.0,
+     "added": 1926.0,
+     "target": 1924,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 1357,
+     "natural_added": 283.4,
+     "added": 1984.7,
+     "target": 1924,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 1116,
+     "natural_added": -687.0,
+     "added": 1943.6,
+     "target": 1924,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 481,
+     "natural_added": 36.0,
+     "added": 1952.0,
+     "target": 1924,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 401,
+     "natural_added": 24.0,
+     "added": 1920.0,
+     "target": 1924,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/xiaomi/mimo-v2.6-flash/info": {
+  "family": "info",
+  "model_id": "openai/xiaomi/mimo-v2.6-flash",
+  "difficulty": {
+   "k": 3,
+   "p": 0.0
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1924.0,
+  "targets": {
+   "small": 962,
+   "medium": 1924,
+   "large": 3848
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 16,
+     "filler_tokens": 52,
+     "natural_added": 750.8,
+     "added": 998.8,
+     "target": 962,
+     "matched": true
+    },
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 247,
+     "natural_added": 750.8,
+     "added": 1920.0,
+     "target": 1924,
+     "matched": true
+    },
+    "large": {
+     "strength": 16,
+     "filler_tokens": 649,
+     "natural_added": 750.8,
+     "added": 3840.0,
+     "target": 3848,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "medium:1",
+     "filler_tokens": 0,
+     "natural_added": 1343.3,
+     "added": 1343.3,
+     "target": 962,
+     "matched": false
+    },
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 177,
+     "natural_added": 1214.8,
+     "added": 2019.6,
+     "target": 1924,
+     "matched": true
+    },
+    "large": {
+     "strength": "xhigh:1",
+     "filler_tokens": 463,
+     "natural_added": 1280.2,
+     "added": 3891.8,
+     "target": 3848,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 200,
+     "filler_tokens": 6,
+     "natural_added": 936.4,
+     "added": 961.0,
+     "target": 962,
+     "matched": true
+    },
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 246,
+     "natural_added": 936.4,
+     "added": 1998.9,
+     "target": 1924,
+     "matched": true
+    },
+    "large": {
+     "strength": 200,
+     "filler_tokens": 629,
+     "natural_added": 936.4,
+     "added": 3804.0,
+     "target": 3848,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 803,
+     "natural_added": 0.0,
+     "added": 960.0,
+     "target": 962,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1606,
+     "natural_added": 0.0,
+     "added": 1926.0,
+     "target": 1924,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 3209,
+     "natural_added": 0.0,
+     "added": 3846.0,
+     "target": 3848,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "low",
+     "filler_tokens": 813,
+     "natural_added": 148.2,
+     "added": 1002.1,
+     "target": 962,
+     "matched": true
+    },
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 1510,
+     "natural_added": 148.2,
+     "added": 1841.3,
+     "target": 1924,
+     "matched": true
+    },
+    "large": {
+     "strength": "low",
+     "filler_tokens": 3070,
+     "natural_added": 148.2,
+     "added": 3757.3,
+     "target": 3848,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 513,
+     "natural_added": -72.4,
+     "added": 1181.4,
+     "target": 962,
+     "matched": false
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 904,
+     "natural_added": -72.4,
+     "added": 2069.2,
+     "target": 1924,
+     "matched": false
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 1747,
+     "natural_added": -72.4,
+     "added": 3849.2,
+     "target": 3848,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 240,
+     "natural_added": 36.0,
+     "added": 976.0,
+     "target": 962,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 481,
+     "natural_added": 36.0,
+     "added": 1952.0,
+     "target": 1924,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 962,
+     "natural_added": 36.0,
+     "added": 3912.0,
+     "target": 3848,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 200,
+     "natural_added": 24.0,
+     "added": 960.0,
+     "target": 962,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 401,
+     "natural_added": 24.0,
+     "added": 1920.0,
+     "target": 1924,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 803,
+     "natural_added": 24.0,
+     "added": 3840.0,
+     "target": 3848,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/anthropic/claude-haiku-5.5/reason": {
+  "family": "reason",
+  "model_id": "openai/anthropic/claude-haiku-5.5",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 2643.2,
+  "targets": {
+   "medium": 2643
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 147,
+     "natural_added": 1700.4,
+     "added": 2628.4,
+     "target": 2643,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:1",
+     "filler_tokens": 238,
+     "natural_added": 742.8,
+     "added": 2644.0,
+     "target": 2643,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 309,
+     "natural_added": 663.3,
+     "added": 2648.8,
+     "target": 2643,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 1653,
+     "natural_added": 0.0,
+     "added": 2640.0,
+     "target": 2643,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 374,
+     "natural_added": 1474.6,
+     "added": 2613.9,
+     "target": 2643,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 1216,
+     "natural_added": -1267.2,
+     "added": 2622.2,
+     "target": 2643,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 343,
+     "natural_added": 87.2,
+     "added": 2612.0,
+     "target": 2643,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 412,
+     "natural_added": 32.0,
+     "added": 2624.0,
+     "target": 2643,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/deepseek/deepseek-v4-flash/reason": {
+  "family": "reason",
+  "model_id": "openai/deepseek/deepseek-v4-flash",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 857.6,
+  "targets": {
+   "medium": 858
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 72,
+     "natural_added": 511.6,
+     "added": 849.6,
+     "target": 858,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 56,
+     "natural_added": 522.1,
+     "added": 885.7,
+     "target": 858,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 91,
+     "natural_added": 499.6,
+     "added": 855.4,
+     "target": 858,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 714,
+     "natural_added": 2.0,
+     "added": 852.4,
+     "target": 858,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 694,
+     "natural_added": 53.1,
+     "added": 898.2,
+     "target": 858,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 403,
+     "natural_added": -109.2,
+     "added": 843.6,
+     "target": 858,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 214,
+     "natural_added": 36.4,
+     "added": 885.6,
+     "target": 858,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 182,
+     "natural_added": 24.8,
+     "added": 862.0,
+     "target": 858,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/google/gemma-3-27b-it/reason": {
+  "family": "reason",
+  "model_id": "openai/google/gemma-3-27b-it",
+  "difficulty": {
+   "d": 2
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 855.5,
+  "targets": {
+   "small": 428,
+   "medium": 856,
+   "large": 1711
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 4,
+     "filler_tokens": 24,
+     "natural_added": 299.8,
+     "added": 409.1,
+     "target": 428,
+     "matched": true
+    },
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 45,
+     "natural_added": 595.5,
+     "added": 845.1,
+     "target": 856,
+     "matched": true
+    },
+    "large": {
+     "strength": 16,
+     "filler_tokens": 93,
+     "natural_added": 1187.1,
+     "added": 1694.5,
+     "target": 1711,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "medium:1",
+     "filler_tokens": 0,
+     "natural_added": 662.1,
+     "added": 662.1,
+     "target": 428,
+     "matched": false
+    },
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 33,
+     "natural_added": 675.3,
+     "added": 846.3,
+     "target": 856,
+     "matched": true
+    },
+    "large": {
+     "strength": "xhigh:1",
+     "filler_tokens": 158,
+     "natural_added": 612.0,
+     "added": 1713.6,
+     "target": 1711,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 200,
+     "filler_tokens": 0,
+     "natural_added": 438.7,
+     "added": 438.7,
+     "target": 428,
+     "matched": true
+    },
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 83,
+     "natural_added": 438.7,
+     "added": 847.5,
+     "target": 856,
+     "matched": true
+    },
+    "large": {
+     "strength": 200,
+     "filler_tokens": 236,
+     "natural_added": 438.7,
+     "added": 1715.3,
+     "target": 1711,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 304,
+     "natural_added": 1.3,
+     "added": 421.6,
+     "target": 428,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 613,
+     "natural_added": 1.3,
+     "added": 855.6,
+     "target": 856,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1225,
+     "natural_added": 1.3,
+     "added": 1713.9,
+     "target": 1711,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "low",
+     "filler_tokens": 244,
+     "natural_added": 101.6,
+     "added": 427.0,
+     "target": 428,
+     "matched": true
+    },
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 555,
+     "natural_added": 101.6,
+     "added": 875.4,
+     "target": 856,
+     "matched": true
+    },
+    "large": {
+     "strength": "low",
+     "filler_tokens": 1168,
+     "natural_added": 101.6,
+     "added": 1713.7,
+     "target": 1711,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 163,
+     "natural_added": -35.5,
+     "added": 437.4,
+     "target": 428,
+     "matched": true
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 315,
+     "natural_added": -35.5,
+     "added": 837.7,
+     "target": 856,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 631,
+     "natural_added": -35.5,
+     "added": 1708.4,
+     "target": 1711,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 107,
+     "natural_added": 44.2,
+     "added": 440.9,
+     "target": 428,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 198,
+     "natural_added": 44.2,
+     "added": 835.5,
+     "target": 856,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 392,
+     "natural_added": 44.2,
+     "added": 1719.0,
+     "target": 1711,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 77,
+     "natural_added": 27.3,
+     "added": 426.1,
+     "target": 428,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 155,
+     "natural_added": 27.3,
+     "added": 869.8,
+     "target": 856,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 306,
+     "natural_added": 27.3,
+     "added": 1715.9,
+     "target": 1711,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/meta-llama/llama-3.3-70b-instruct/reason": {
+  "family": "reason",
+  "model_id": "openai/meta-llama/llama-3.3-70b-instruct",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 0,
+  "baseline_mean_tokens": 884.7866666666666,
+  "targets": {
+   "medium": 885
+  },
+  "unmatched_defaults": true,
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 885,
+     "matched": false
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 885,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 100,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 885,
+     "matched": false
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 885,
+     "matched": false
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 885,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "xhigh",
+     "filler_tokens": 0,
+     "natural_added": null,
+     "added": null,
+     "target": 885,
+     "matched": false
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 221,
+     "natural_added": null,
+     "added": null,
+     "target": 885,
+     "matched": false
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 221,
+     "natural_added": null,
+     "added": null,
+     "target": 885,
+     "matched": false
+    }
+   }
+  },
+  "gate_failed": true,
+  "harness": {}
+ },
+ "openai/mistralai/mistral-small-3.2-24b-instruct/reason": {
+  "family": "reason",
+  "model_id": "openai/mistralai/mistral-small-3.2-24b-instruct",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 857.2,
+  "targets": {
+   "small": 429,
+   "medium": 857,
+   "large": 1714
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 4,
+     "filler_tokens": 33,
+     "natural_added": 258.7,
+     "added": 416.8,
+     "target": 429,
+     "matched": true
+    },
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 66,
+     "natural_added": 499.4,
+     "added": 869.9,
+     "target": 857,
+     "matched": true
+    },
+    "large": {
+     "strength": 16,
+     "filler_tokens": 125,
+     "natural_added": 1013.3,
+     "added": 1709.9,
+     "target": 1714,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "medium:1",
+     "filler_tokens": 0,
+     "natural_added": 956.5,
+     "added": 956.5,
+     "target": 429,
+     "matched": false
+    },
+    "medium": {
+     "strength": "medium:1",
+     "filler_tokens": 0,
+     "natural_added": 956.5,
+     "added": 956.5,
+     "target": 857,
+     "matched": false
+    },
+    "large": {
+     "strength": "high:1",
+     "filler_tokens": 168,
+     "natural_added": 1049.1,
+     "added": 1735.1,
+     "target": 1714,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 200,
+     "filler_tokens": 18,
+     "natural_added": 389.5,
+     "added": 380.8,
+     "target": 429,
+     "matched": false
+    },
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 82,
+     "natural_added": 389.5,
+     "added": 844.4,
+     "target": 857,
+     "matched": true
+    },
+    "large": {
+     "strength": 200,
+     "filler_tokens": 237,
+     "natural_added": 389.5,
+     "added": 1704.3,
+     "target": 1714,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 301,
+     "natural_added": 10.1,
+     "added": 434.5,
+     "target": 429,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 603,
+     "natural_added": 10.1,
+     "added": 853.5,
+     "target": 857,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1216,
+     "natural_added": 10.1,
+     "added": 1718.1,
+     "target": 1714,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "low",
+     "filler_tokens": 286,
+     "natural_added": 38.3,
+     "added": 421.3,
+     "target": 429,
+     "matched": true
+    },
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 584,
+     "natural_added": 38.3,
+     "added": 837.9,
+     "target": 857,
+     "matched": true
+    },
+    "large": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": 1761.6,
+     "added": 1761.6,
+     "target": 1714,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 576,
+     "natural_added": 411.1,
+     "added": -129.2,
+     "target": 429,
+     "matched": false
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 272,
+     "natural_added": 411.1,
+     "added": 911.1,
+     "target": 857,
+     "matched": false
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 505,
+     "natural_added": 411.1,
+     "added": 1720.9,
+     "target": 1714,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 97,
+     "natural_added": 51.1,
+     "added": 437.3,
+     "target": 429,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 185,
+     "natural_added": 51.1,
+     "added": 836.5,
+     "target": 857,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 373,
+     "natural_added": 51.1,
+     "added": 1726.5,
+     "target": 1714,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 77,
+     "natural_added": 22.9,
+     "added": 431.4,
+     "target": 429,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 155,
+     "natural_added": 22.9,
+     "added": 875.4,
+     "target": 857,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 307,
+     "natural_added": 22.9,
+     "added": 1716.8,
+     "target": 1714,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/nvidia/nemotron-3.5-super-vl/reason": {
+  "family": "reason",
+  "model_id": "openai/nvidia/nemotron-3.5-super-vl",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 879.8,
+  "targets": {
+   "medium": 880
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 69,
+     "natural_added": 500.4,
+     "added": 867.1,
+     "target": 880,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 45,
+     "natural_added": 546.8,
+     "added": 907.0,
+     "target": 880,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 83,
+     "natural_added": 465.5,
+     "added": 886.9,
+     "target": 880,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 629,
+     "natural_added": -2.6,
+     "added": 877.6,
+     "target": 880,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 627,
+     "natural_added": 36.2,
+     "added": 910.4,
+     "target": 880,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 326,
+     "natural_added": -56.2,
+     "added": 911.8,
+     "target": 880,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 199,
+     "natural_added": 37.0,
+     "added": 887.8,
+     "target": 880,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 157,
+     "natural_added": 26.6,
+     "added": 868.4,
+     "target": 880,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/openai/gpt-4o-mini/reason": {
+  "family": "reason",
+  "model_id": "openai/openai/gpt-4o-mini",
+  "difficulty": {
+   "d": 2
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1085.8,
+  "targets": {
+   "medium": 1086
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 36,
+     "natural_added": 940.0,
+     "added": 1103.6,
+     "target": 1086,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 40,
+     "natural_added": 869.8,
+     "added": 1026.0,
+     "target": 1086,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 95,
+     "natural_added": 583.1,
+     "added": 1066.4,
+     "target": 1086,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 904,
+     "natural_added": 3.2,
+     "added": 1081.2,
+     "target": 1086,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 813,
+     "natural_added": 104.4,
+     "added": 1101.5,
+     "target": 1086,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 405,
+     "natural_added": 130.2,
+     "added": 1047.8,
+     "target": 1086,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 271,
+     "natural_added": 37.8,
+     "added": 1063.4,
+     "target": 1086,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 227,
+     "natural_added": 28.1,
+     "added": 1079.8,
+     "target": 1086,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/qwen/qwen3-235b-a22b-2507/reason": {
+  "family": "reason",
+  "model_id": "openai/qwen/qwen3-235b-a22b-2507",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 901.8,
+  "targets": {
+   "medium": 902
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 82,
+     "natural_added": 511.8,
+     "added": 896.0,
+     "target": 902,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "medium:1",
+     "filler_tokens": 0,
+     "natural_added": 954.2,
+     "added": 954.2,
+     "target": 902,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 90,
+     "natural_added": 487.9,
+     "added": 917.5,
+     "target": 902,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 749,
+     "natural_added": 0.8,
+     "added": 895.4,
+     "target": 902,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 638,
+     "natural_added": 126.9,
+     "added": 915.6,
+     "target": 902,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 0,
+     "natural_added": 920.4,
+     "added": 920.4,
+     "target": 902,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 225,
+     "natural_added": 40.4,
+     "added": 907.3,
+     "target": 902,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 187,
+     "natural_added": 24.8,
+     "added": 892.6,
+     "target": 902,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/xiaomi/mimo-v2.6-flash/reason": {
+  "family": "reason",
+  "model_id": "openai/xiaomi/mimo-v2.6-flash",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 875.5,
+  "targets": {
+   "small": 438,
+   "medium": 876,
+   "large": 1751
+  },
+  "arms": {
+   "E": {
+    "small": {
+     "strength": 4,
+     "filler_tokens": 44,
+     "natural_added": 260.0,
+     "added": 452.9,
+     "target": 438,
+     "matched": true
+    },
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 77,
+     "natural_added": 518.5,
+     "added": 874.9,
+     "target": 876,
+     "matched": true
+    },
+    "large": {
+     "strength": 16,
+     "filler_tokens": 148,
+     "natural_added": 1028.5,
+     "added": 1731.5,
+     "target": 1751,
+     "matched": true
+    }
+   },
+   "K": {
+    "small": {
+     "strength": "medium:1",
+     "filler_tokens": 0,
+     "natural_added": 555.2,
+     "added": 555.2,
+     "target": 438,
+     "matched": false
+    },
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 53,
+     "natural_added": 562.1,
+     "added": 982.6,
+     "target": 876,
+     "matched": false
+    },
+    "large": {
+     "strength": "xhigh:1",
+     "filler_tokens": 215,
+     "natural_added": 545.0,
+     "added": 1714.0,
+     "target": 1751,
+     "matched": true
+    }
+   },
+   "M": {
+    "small": {
+     "strength": 200,
+     "filler_tokens": 0,
+     "natural_added": 455.6,
+     "added": 455.6,
+     "target": 438,
+     "matched": true
+    },
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 83,
+     "natural_added": 455.6,
+     "added": 858.2,
+     "target": 876,
+     "matched": true
+    },
+    "large": {
+     "strength": 200,
+     "filler_tokens": 269,
+     "natural_added": 455.6,
+     "added": 1727.6,
+     "target": 1751,
+     "matched": true
+    }
+   },
+   "A1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 368,
+     "natural_added": 0.1,
+     "added": 440.8,
+     "target": 438,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 727,
+     "natural_added": 0.1,
+     "added": 869.6,
+     "target": 876,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 1460,
+     "natural_added": 0.1,
+     "added": 1752.5,
+     "target": 1751,
+     "matched": true
+    }
+   },
+   "A2": {
+    "small": {
+     "strength": "low",
+     "filler_tokens": 264,
+     "natural_added": 110.3,
+     "added": 446.3,
+     "target": 438,
+     "matched": true
+    },
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 630,
+     "natural_added": 110.3,
+     "added": 867.7,
+     "target": 876,
+     "matched": true
+    },
+    "large": {
+     "strength": "low",
+     "filler_tokens": 1353,
+     "natural_added": 110.3,
+     "added": 1746.6,
+     "target": 1751,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "small": {
+     "strength": "max",
+     "filler_tokens": 257,
+     "natural_added": -75.5,
+     "added": 430.3,
+     "target": 438,
+     "matched": true
+    },
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 435,
+     "natural_added": -75.5,
+     "added": 882.1,
+     "target": 876,
+     "matched": true
+    },
+    "large": {
+     "strength": "max",
+     "filler_tokens": 767,
+     "natural_added": -75.5,
+     "added": 1697.3,
+     "target": 1751,
+     "matched": true
+    }
+   },
+   "P1": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 109,
+     "natural_added": 37.3,
+     "added": 417.2,
+     "target": 438,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 219,
+     "natural_added": 37.3,
+     "added": 866.6,
+     "target": 876,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 437,
+     "natural_added": 37.3,
+     "added": 1760.8,
+     "target": 1751,
+     "matched": true
+    }
+   },
+   "P2": {
+    "small": {
+     "strength": null,
+     "filler_tokens": 92,
+     "natural_added": 28.5,
+     "added": 440.0,
+     "target": 438,
+     "matched": true
+    },
+    "medium": {
+     "strength": null,
+     "filler_tokens": 185,
+     "natural_added": 28.5,
+     "added": 897.2,
+     "target": 876,
+     "matched": true
+    },
+    "large": {
+     "strength": null,
+     "filler_tokens": 365,
+     "natural_added": 28.5,
+     "added": 1756.5,
+     "target": 1751,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/z-ai/glm-4.7-flash/reason": {
+  "family": "reason",
+  "model_id": "openai/z-ai/glm-4.7-flash",
+  "difficulty": {
+   "d": 2
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 827.2,
+  "targets": {
+   "medium": 827
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 69,
+     "natural_added": 499.3,
+     "added": 815.5,
+     "target": 827,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "high:1",
+     "filler_tokens": 36,
+     "natural_added": 652.1,
+     "added": 917.9,
+     "target": 827,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 114,
+     "natural_added": 285.8,
+     "added": 811.5,
+     "target": 827,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 693,
+     "natural_added": 0.3,
+     "added": 827.8,
+     "target": 827,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "low",
+     "filler_tokens": 745,
+     "natural_added": -52.2,
+     "added": 824.2,
+     "target": 827,
+     "matched": true
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 367,
+     "natural_added": 18.6,
+     "added": 864.8,
+     "target": 827,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 206,
+     "natural_added": 34.8,
+     "added": 811.2,
+     "target": 827,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 176,
+     "natural_added": 21.2,
+     "added": 825.4,
+     "target": 827,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ }
+}

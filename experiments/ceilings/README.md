@@ -10,6 +10,7 @@ resource budgets.
 - Notebook: [notebooks/ceilings_small_run.ipynb](notebooks/ceilings_small_run.ipynb)
 - Local test-run findings: [TESTING.md](TESTING.md)
 - Free-tier pilot on NVIDIA build (Oct 2026): [PILOT_RESULTS.md](PILOT_RESULTS.md)
+- Paid run on OpenRouter, ten models (Oct 2026): [RESULTS.md](RESULTS.md)
 
 The fork is public: <https://github.com/Ishan-K-S/coffeelaw>; this project lives in
 `experiments/ceilings/`. The rest of the repository is the upstream paper code from
