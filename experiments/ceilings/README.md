@@ -104,6 +104,13 @@ its run records found arms that did not test what they were meant to; design 2 f
 - **Answer cap**: the answer turn allows 60 tokens per option (16 hosts: 960), up from a flat 400
   that truncated up to 46% of a cell's H6 answers.
 
+Two independent reviews of design 2 left three things to state in its pre-registration, which
+[prereg/DESIGN2_PLAN.md](prereg/DESIGN2_PLAN.md) drafts along with the rerun's scope:
+- K now also cuts the sample count, which is conservative for H2.
+- M on reason is a null by construction (a consistency check).
+- Four reasoning agents cost about 2-2.7× the medium target, so A2 is not matched to a level
+  and H5 is tested on reason only, at A2's realized cost.
+
 `ceilings.arms.ARM_DESIGN` is part of every new run ID and run record, and `ceilings run`
 refuses to add design-2 runs to a root that holds design-1 runs. Use a new `--root` and a new
 pre-registration for a design-2 run.

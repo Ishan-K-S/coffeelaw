@@ -153,10 +153,13 @@ def candidates(arm_id: str, family: str, n_bits: int | None = None) -> list[obje
     if arm_id == "E":
         return list(range(1, 17)) if family == "info" else [2, 4, 8, 16, 32, 64]
     if arm_id == "K":
-        # 1, 2 or all 4 reasoning samples, then deeper: K could not reach a medium delta in the
-        # pilot because a reasoning stage on every sample cost 1.8-2x the target.
-        return _above(family, ["medium:1", "medium:2", "high:1", "medium", "high:2", "xhigh:1",
-                               "high", "xhigh:2", "xhigh", "max"])
+        # 1, 2 or all 4 reasoning samples, each at rising depth: K could not reach a medium delta
+        # in the pilot because a reasoning stage on every sample cost 1.8-2x the target. Cost
+        # grows mostly with the number of samples (paid run: about 520-960 tokens per reasoning
+        # sample at any depth), so the list is ordered by count first; matching's binary search
+        # needs cost to rise along it.
+        return _above(family, ["medium:1", "high:1", "xhigh:1", "medium:2", "high:2", "xhigh:2",
+                               "medium", "high", "xhigh", "max"])
     if arm_id == "M":
         if family == "comm_parity":
             return [1]

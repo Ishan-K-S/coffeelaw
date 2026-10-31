@@ -102,3 +102,12 @@ def test_design_is_part_of_new_run_ids_and_runs_of_two_designs_never_mix(tmp_pat
         check_design(path)
     path.write_text(json.dumps({"run_id": base, "arm_design": arms.ARM_DESIGN}) + "\n")
     check_design(path)
+
+
+def test_k_candidates_rise_in_sample_count_then_depth():
+    # matching's binary search needs cost to rise along the list, and cost tracks sample count
+    order = arms.DEPTH_ORDER
+    for fam in ("reason", "comm_ip"):
+        cfgs = [arms.build("K", fam, s) for s in arms.candidates("K", fam)]
+        keys = [(c.samples, order.index(c.depth)) for c in cfgs]
+        assert keys == sorted(keys), fam
