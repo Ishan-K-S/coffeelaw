@@ -1,0 +1,477 @@
+{
+ "openai/openai/gpt-4o-mini/reason": {
+  "family": "reason",
+  "model_id": "openai/openai/gpt-4o-mini",
+  "difficulty": {
+   "d": 2
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 1087.6,
+  "targets": {
+   "medium": 1088
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 16,
+     "filler_tokens": 38,
+     "natural_added": 935.8,
+     "added": 1103.4,
+     "target": 1088,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:1",
+     "filler_tokens": 418,
+     "natural_added": 99.6,
+     "added": 1077.0,
+     "target": 1088,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 164,
+     "natural_added": 318.5,
+     "added": 1073.1,
+     "target": 1088,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 909,
+     "natural_added": -0.6,
+     "added": 1085.6,
+     "target": 1088,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": 2082.6,
+     "added": 2082.6,
+     "target": 1088,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 825,
+     "natural_added": 122.6,
+     "added": 2127.0,
+     "target": 2083,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 272,
+     "natural_added": 36.0,
+     "added": 1060.2,
+     "target": 1088,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 229,
+     "natural_added": 24.2,
+     "added": 1074.8,
+     "target": 1088,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/mistralai/mistral-small-3.2-24b-instruct/reason": {
+  "family": "reason",
+  "model_id": "openai/mistralai/mistral-small-3.2-24b-instruct",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 874.6,
+  "targets": {
+   "medium": 875
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 69,
+     "natural_added": 491.9,
+     "added": 848.9,
+     "target": 875,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:1",
+     "filler_tokens": 337,
+     "natural_added": 94.1,
+     "added": 880.6,
+     "target": 875,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 94,
+     "natural_added": 359.8,
+     "added": 858.8,
+     "target": 875,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 631,
+     "natural_added": -11.5,
+     "added": 877.3,
+     "target": 875,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": 1898.3,
+     "added": 1898.3,
+     "target": 875,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 685,
+     "natural_added": 270.6,
+     "added": 1904.6,
+     "target": 1898,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 196,
+     "natural_added": 38.7,
+     "added": 884.5,
+     "target": 875,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 160,
+     "natural_added": 4.6,
+     "added": 882.9,
+     "target": 875,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/deepseek/deepseek-v4-flash/reason": {
+  "family": "reason",
+  "model_id": "openai/deepseek/deepseek-v4-flash",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 861.2,
+  "targets": {
+   "medium": 861
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 74,
+     "natural_added": 512.0,
+     "added": 849.6,
+     "target": 861,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:2",
+     "filler_tokens": 46,
+     "natural_added": 647.0,
+     "added": 900.6,
+     "target": 861,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 106,
+     "natural_added": 363.9,
+     "added": 871.1,
+     "target": 861,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 720,
+     "natural_added": -0.6,
+     "added": 857.6,
+     "target": 861,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": 1673.4,
+     "added": 1673.4,
+     "target": 861,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 748,
+     "natural_added": -137.8,
+     "added": 1674.4,
+     "target": 1673,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 215,
+     "natural_added": 31.6,
+     "added": 884.3,
+     "target": 861,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 179,
+     "natural_added": 20.4,
+     "added": 836.8,
+     "target": 861,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/z-ai/glm-4.7-flash/reason": {
+  "family": "reason",
+  "model_id": "openai/z-ai/glm-4.7-flash",
+  "difficulty": {
+   "d": 2
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 828.7,
+  "targets": {
+   "medium": 829
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 72,
+     "natural_added": 494.5,
+     "added": 826.9,
+     "target": 829,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:2",
+     "filler_tokens": 0,
+     "natural_added": 860.3,
+     "added": 860.3,
+     "target": 829,
+     "matched": true
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 114,
+     "natural_added": 270.9,
+     "added": 827.1,
+     "target": 829,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 689,
+     "natural_added": -1.5,
+     "added": 817.7,
+     "target": 829,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": 1935.6,
+     "added": 1935.6,
+     "target": 829,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 778,
+     "natural_added": -26.5,
+     "added": 1842.3,
+     "target": 1936,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 207,
+     "natural_added": 34.5,
+     "added": 807.3,
+     "target": 829,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 177,
+     "natural_added": 22.1,
+     "added": 825.3,
+     "target": 829,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ },
+ "openai/xiaomi/mimo-v2.6-flash/reason": {
+  "family": "reason",
+  "model_id": "openai/xiaomi/mimo-v2.6-flash",
+  "difficulty": {
+   "d": 3
+  },
+  "n_instances": 10,
+  "baseline_mean_tokens": 875.6,
+  "targets": {
+   "medium": 876
+  },
+  "arms": {
+   "E": {
+    "medium": {
+     "strength": 8,
+     "filler_tokens": 77,
+     "natural_added": 517.6,
+     "added": 873.6,
+     "target": 876,
+     "matched": true
+    }
+   },
+   "K": {
+    "medium": {
+     "strength": "xhigh:2",
+     "filler_tokens": 54,
+     "natural_added": 739.9,
+     "added": 1022.0,
+     "target": 876,
+     "matched": false
+    }
+   },
+   "M": {
+    "medium": {
+     "strength": 200,
+     "filler_tokens": 97,
+     "natural_added": 406.4,
+     "added": 860.0,
+     "target": 876,
+     "matched": true
+    }
+   },
+   "A1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 731,
+     "natural_added": 2.4,
+     "added": 876.8,
+     "target": 876,
+     "matched": true
+    }
+   },
+   "A2": {
+    "medium": {
+     "strength": "medium",
+     "filler_tokens": 0,
+     "natural_added": 2573.1,
+     "added": 2573.1,
+     "target": 876,
+     "matched": false
+    }
+   },
+   "A2_single_ref": {
+    "medium": {
+     "strength": "max",
+     "filler_tokens": 1111,
+     "natural_added": -91.6,
+     "added": 2549.2,
+     "target": 2573,
+     "matched": true
+    }
+   },
+   "P1": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 219,
+     "natural_added": 38.4,
+     "added": 867.7,
+     "target": 876,
+     "matched": true
+    }
+   },
+   "P2": {
+    "medium": {
+     "strength": null,
+     "filler_tokens": 184,
+     "natural_added": 30.0,
+     "added": 871.1,
+     "target": 876,
+     "matched": true
+    }
+   }
+  },
+  "harness": {}
+ }
+}

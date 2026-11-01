@@ -1,0 +1,312 @@
+[
+  {
+    "prediction_id": "H1",
+    "statement": "On information-bound tasks, E helps; K, M, A1, P1 and P2 do not",
+    "paper_source": "Thm 1, Cor 1",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "not evaluable",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/deepseek/deepseek-v4-flash": "not evaluable",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "not evaluable",
+        "openai/openai/gpt-4o-mini": "not evaluable",
+        "openai/xiaomi/mimo-v2.6-flash": "not evaluable",
+        "openai/z-ai/glm-4.7-flash": "not evaluable"
+      },
+      "reasons": {
+        "openai/deepseek/deepseek-v4-flash": [
+          "missing arm A1 vs baseline on info",
+          "missing arm E vs baseline on info",
+          "missing arm K vs baseline on info",
+          "missing arm M vs baseline on info",
+          "missing arm P1 vs baseline on info",
+          "missing arm P2 vs baseline on info"
+        ],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "missing arm A1 vs baseline on info",
+          "missing arm E vs baseline on info",
+          "missing arm K vs baseline on info",
+          "missing arm M vs baseline on info",
+          "missing arm P1 vs baseline on info",
+          "missing arm P2 vs baseline on info"
+        ],
+        "openai/openai/gpt-4o-mini": [
+          "missing arm A1 vs baseline on info",
+          "missing arm E vs baseline on info",
+          "missing arm K vs baseline on info",
+          "missing arm M vs baseline on info",
+          "missing arm P1 vs baseline on info",
+          "missing arm P2 vs baseline on info"
+        ],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "missing arm A1 vs baseline on info",
+          "missing arm E vs baseline on info",
+          "missing arm K vs baseline on info",
+          "missing arm M vs baseline on info",
+          "missing arm P1 vs baseline on info",
+          "missing arm P2 vs baseline on info"
+        ],
+        "openai/z-ai/glm-4.7-flash": [
+          "missing arm A1 vs baseline on info",
+          "missing arm E vs baseline on info",
+          "missing arm K vs baseline on info",
+          "missing arm M vs baseline on info",
+          "missing arm P1 vs baseline on info",
+          "missing arm P2 vs baseline on info"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H2",
+    "statement": "On reasoning-bound tasks, K helps; E (restated evidence), M, A1, P1, P2 do not",
+    "paper_source": "Thm 2, Cor 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/deepseek/deepseek-v4-flash": "inconclusive",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "inconclusive",
+        "openai/openai/gpt-4o-mini": "inconclusive",
+        "openai/xiaomi/mimo-v2.6-flash": "inconclusive",
+        "openai/z-ai/glm-4.7-flash": "inconclusive"
+      },
+      "reasons": {
+        "openai/deepseek/deepseek-v4-flash": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ],
+        "openai/openai/gpt-4o-mini": [
+          "E on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "A1 on reason (p_equiv)",
+          "P1 on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ],
+        "openai/z-ai/glm-4.7-flash": [
+          "E on reason (p_equiv)",
+          "M on reason (p_equiv)",
+          "P2 on reason (p_equiv)"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H3",
+    "statement": "On communication-bound tasks, M helps; K, same-kind E, A1, P1, P2 do not",
+    "paper_source": "Thm 5",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "not evaluable",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/deepseek/deepseek-v4-flash": "not evaluable",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "not evaluable",
+        "openai/openai/gpt-4o-mini": "not evaluable",
+        "openai/xiaomi/mimo-v2.6-flash": "not evaluable",
+        "openai/z-ai/glm-4.7-flash": "not evaluable"
+      },
+      "reasons": {
+        "openai/deepseek/deepseek-v4-flash": [
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ],
+        "openai/openai/gpt-4o-mini": [
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ],
+        "openai/z-ai/glm-4.7-flash": [
+          "missing arm A1 vs baseline on comm_ip",
+          "missing arm A1 vs baseline on comm_parity",
+          "missing arm E vs baseline on comm_ip",
+          "missing arm E vs baseline on comm_parity",
+          "missing arm K vs baseline on comm_ip",
+          "missing arm K vs baseline on comm_parity",
+          "missing arm M vs baseline on comm_ip",
+          "missing arm M vs baseline on comm_parity",
+          "missing arm P1 vs baseline on comm_ip",
+          "missing arm P1 vs baseline on comm_parity",
+          "missing arm P2 vs baseline on comm_ip",
+          "missing arm P2 vs baseline on comm_parity"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H4",
+    "statement": "A1 (more agents, same totals) gives no gain on any family",
+    "paper_source": "Cor 1, Thm 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "supported",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/deepseek/deepseek-v4-flash": "inconclusive",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "inconclusive",
+        "openai/openai/gpt-4o-mini": "supported",
+        "openai/xiaomi/mimo-v2.6-flash": "inconclusive",
+        "openai/z-ai/glm-4.7-flash": "supported"
+      },
+      "reasons": {
+        "openai/deepseek/deepseek-v4-flash": [
+          "A1 on reason (p_equiv)"
+        ],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "A1 on reason (p_equiv)"
+        ],
+        "openai/openai/gpt-4o-mini": [],
+        "openai/xiaomi/mimo-v2.6-flash": [
+          "A1 on reason (p_equiv)"
+        ],
+        "openai/z-ai/glm-4.7-flash": []
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H5",
+    "statement": "A2 gain equals the gain from the same compute given to one agent",
+    "paper_source": "Thm 3",
+    "test": "exact McNemar superiority + Newcombe TOST, Holm-adjusted",
+    "verdict": "supported",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {
+        "openai/deepseek/deepseek-v4-flash": "supported",
+        "openai/mistralai/mistral-small-3.2-24b-instruct": "inconclusive",
+        "openai/openai/gpt-4o-mini": "supported",
+        "openai/xiaomi/mimo-v2.6-flash": "supported",
+        "openai/z-ai/glm-4.7-flash": "inconclusive"
+      },
+      "reasons": {
+        "openai/deepseek/deepseek-v4-flash": [],
+        "openai/mistralai/mistral-small-3.2-24b-instruct": [
+          "A2 on reason (p_equiv)"
+        ],
+        "openai/openai/gpt-4o-mini": [],
+        "openai/xiaomi/mimo-v2.6-flash": [],
+        "openai/z-ai/glm-4.7-flash": [
+          "A2 on reason (p_equiv)"
+        ]
+      },
+      "min_n": 850,
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H6",
+    "statement": "Information-bound error never falls significantly below the Fano floor",
+    "paper_source": "Cor 2",
+    "test": "binomial floor check on powered cells, Holm",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "cells": [],
+      "per_model": {},
+      "reasons": {
+        "all": [
+          "no cell with a positive floor and enough runs to reject"
+        ]
+      },
+      "min_models": 2
+    }
+  },
+  {
+    "prediction_id": "H7",
+    "statement": "Inner-product splits stay flat then rise; parity splits jump at 1 bit",
+    "paper_source": "Thm 5",
+    "test": "change-point vs linear (instance-grouped CV) + slope test",
+    "verdict": "inconclusive",
+    "estimate": null,
+    "ci": null,
+    "p_adj": null,
+    "detail": {
+      "per_model": {},
+      "reasons": {}
+    }
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "model": "openai/deepseek/deepseek-v4-flash",
+    "family": "reason",
+    "gate": "two_stage",
+    "stage1_passed": true,
+    "n_gate": 300,
+    "baseline_acc": 0.26666666666666666,
+    "chance": 0.25,
+    "full_acc": 1.0,
+    "pooled_correct": 293,
+    "pooled_n": 1150,
+    "stage2_passed": true,
+    "passed": true
+  },
+  {
+    "model": "openai/mistralai/mistral-small-3.2-24b-instruct",
+    "family": "reason",
+    "gate": "two_stage",
+    "stage1_passed": true,
+    "n_gate": 300,
+    "baseline_acc": 0.28,
+    "chance": 0.25,
+    "full_acc": 0.9833333333333333,
+    "pooled_correct": 308,
+    "pooled_n": 1150,
+    "stage2_passed": true,
+    "passed": true
+  },
+  {
+    "model": "openai/openai/gpt-4o-mini",
+    "family": "reason",
+    "gate": "two_stage",
+    "stage1_passed": true,
+    "n_gate": 300,
+    "baseline_acc": 0.25666666666666665,
+    "chance": 0.25,
+    "full_acc": 0.9433333333333334,
+    "pooled_correct": 310,
+    "pooled_n": 1150,
+    "stage2_passed": true,
+    "passed": true
+  },
+  {
+    "model": "openai/xiaomi/mimo-v2.6-flash",
+    "family": "reason",
+    "gate": "two_stage",
+    "stage1_passed": true,
+    "n_gate": 300,
+    "baseline_acc": 0.28,
+    "chance": 0.25,
+    "full_acc": 1.0,
+    "pooled_correct": 291,
+    "pooled_n": 1150,
+    "stage2_passed": true,
+    "passed": true
+  },
+  {
+    "model": "openai/z-ai/glm-4.7-flash",
+    "family": "reason",
+    "gate": "two_stage",
+    "stage1_passed": true,
+    "n_gate": 300,
+    "baseline_acc": 0.25666666666666665,
+    "chance": 0.25,
+    "full_acc": 0.9866666666666667,
+    "pooled_correct": 309,
+    "pooled_n": 1150,
+    "stage2_passed": true,
+    "passed": true
+  }
+]
