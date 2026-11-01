@@ -26,6 +26,10 @@ def test_quote_channel_passes_only_verbatim_task_lines_in_task_order():
     d = ch.send("B", "A", lambda retry: sent)
     assert d.text == "Cleo works shift C.\nZola works 1 shift(s) after Cleo."
     assert ch.send("B", "A", lambda retry: "The answer is D.").text == ""
+    # list markers and quotes that models add are ignored; the delivered text is the task's own
+    listed = '- "Zola works 1 shift(s) after Cleo."\n2. Cleo works shift C.\n* Ugo works shift D.'
+    assert _channel().send("B", "A", lambda retry: listed).text == \
+        "Cleo works shift C.\nZola works 1 shift(s) after Cleo."
 
 
 def test_quote_channel_cuts_whole_lines_at_the_budget():

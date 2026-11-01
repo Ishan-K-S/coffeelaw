@@ -102,9 +102,14 @@ class Channel:
         return delivery
 
     def quoted(self, text: str) -> str:
-        """The task lines that `text` quotes exactly (whitespace-normalised), in task order."""
+        """The task lines that `text` quotes exactly (whitespace-normalised, and ignoring a list
+        marker or quotes around a line, which models add), in task order."""
         def norm(line: str) -> str:
             return " ".join(line.split())
 
-        sent = {norm(line) for line in (text or "").splitlines()}
+        def unwrap(line: str) -> str:
+            line = re.sub(r"^\s*(?:[-*•]|\d+[.)])\s+", "", line).strip()
+            return line.strip("\"'`“”")
+
+        sent = {norm(unwrap(line)) for line in (text or "").splitlines()}
         return "\n".join(line for line in self.quotable if norm(line) and norm(line) in sent)

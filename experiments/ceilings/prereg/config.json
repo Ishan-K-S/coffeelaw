@@ -40,10 +40,10 @@
       "margin": 0.05
     },
     "H5": {
-      "statement": "The A2 gain equals the gain from the same delta compute given to one agent",
+      "statement": "The A2 gain equals the gain from the same compute given to one agent, tested on the reason family only, at A2's realized cost",
       "paper_source": "Thm 3",
       "falsified_if": "Multi-agent A2 significantly beats single-agent + delta compute",
-      "test": "Newcombe paired TOST (A2 vs A2_single_ref) per family; falsifier: exact McNemar superiority of A2",
+      "test": "Newcombe paired TOST (A2 vs A2_single_ref) on reason; falsifier: exact McNemar superiority of A2. A2 is not matched to a delta level (four reasoning agents add about 1.9-2.7x the medium target); A2_single_ref is matched to A2's realized added cost, mostly with padding, so audit delta_matching flags on A2 are expected. Info and comm are left out: A2 and its reference both sit at chance there, so equivalence cannot fail",
       "margin": 0.05
     },
     "H6": {
@@ -154,22 +154,41 @@
       "xhigh": 2048,
       "max": 4096
     },
-    "K": "strength is a depth plus how many of the 4 answer samples reason at it (e.g. 'medium:1'); the others answer at the family's baseline depth; candidates in cost order, matched to the target",
-    "A2_single_ref": "one agent whose reasoning depth is chosen by cost matching to A2's target (not A2's own strength topped up with filler)",
-    "ablations": "each harness option is cost-matched in its own run root; `ceilings run` refuses an arms table matched under different harness options"
+    "K": "strength is a depth plus how many answer samples the team uses (e.g. 'medium:1' is one sample reasoning at medium; a bare depth is all 4); every sample reasons; candidates ordered by sample count, then depth, matched to the target. Fewer votes works against K, so this is conservative for H2",
+    "A2_single_ref": "one agent whose reasoning depth and padding are cost-matched to A2's realized added cost",
+    "ablations": "each harness option is cost-matched in its own run root; `ceilings run` refuses an arms table matched under different harness options",
+    "arm_design": 2,
+    "M_reason": "M's channel on reason carries only lines copied word for word from the task (list markers and quotes ignored), delivered in task order. Both agents hold every fact, so M on reason is a consistency check, null by construction",
+    "A2": "four agents, every one reasoning (depth medium or high), relaying partial work D->C->B->A through a 200-token channel"
   },
   "run_plan": {
-    "decided": "2026-10-26, by the researcher, to fit a budget of about $500",
-    "models": "the 10 in configs/openrouter.json (10 developers), each pinned to one hosting provider",
-    "main_grid": "all 9 arms at the medium delta, n = 850 paired instances per cell, for every (model, family) whose confirmation gate passes",
-    "delta_curves": "all three delta levels (small, medium, large) on 3 models, chosen after calibration as the models with the most passing families, at most one per developer; a documented deviation from FR-009 for the other 7",
-    "sweeps": "H6 and H7 sweeps (ceilings sweep, default T, flip rates, L and n = 100) on Qwen, DeepSeek, Nemotron and MiMo, the only 4 models whose info, comm_parity and comm_ip gates all passed stage 1; H7 needs both comm gates and H6 the info gate, so these are the models on which both can be judged, and 4 meets the rule of 2 agreeing evaluable models",
-    "gate": "prepare --gate two_stage on about 300 fresh instances per family (stage 2 on the pooled baselines in the analysis)",
-    "estimate": "about $260-500 including calibration and prepare",
-    "deviations": [
-      "2026-10-28: the one-stage confirmation gate (equivalence on the 300 gate instances alone) was replaced by the two-stage gate before any main-grid run. At n = 300 the one-stage gate passes a baseline exactly at chance only 5% of the time at chance 0.5, 21% at 0.25 and 65% at 0.125, so it would have excluded families at random; the first three paid gates (info on Nemotron, MiMo, gpt-4o-mini) were re-scored from their logged runs under the new rule, no runs repeated. Equivalence by the same test and margin is kept, on about 1,150 instances (pass rate at chance about 0.92, 0.97 and 1.00).",
-      "2026-10-28: reason was re-gated at d = 3 for Qwen, Llama, Mistral, DeepSeek, Nemotron, MiMo and Haiku before any main-grid run. Their d = 2 setting came from the n = 30 difficulty screen, which was too noisy: on the 300-instance gate every one had a baseline of 0.31 to 0.42 at chance 0.25 and failed. The re-gate used the same two-stage rule on 300 instances generated at d = 3 (new instance IDs; the d = 2 runs stay in the logs and are excluded from stage 2's pooling, which counts only rows at the gate's difficulty). Six passed (baselines 0.27 to 0.30, full fix 0.98 to 1.00) and were cost-matched at d = 3; Llama failed (baseline 91/300 = 0.303) and reason stays not evaluable for it. Gemma, gpt-4o-mini and GLM keep their passing d = 2 gates. Cost about $2.73.",
-      "2026-10-28: the H6 and H7 sweeps were missing from the run plan, which would have left both not evaluable. They were added before any main-grid or sweep run, on 4 models (see sweeps) rather than all 10 to keep the study within its $500 budget (about $23 for the 4, roughly $43 for all 10). Running them on the other 6 would add H6 evidence from Llama, Mistral and Gemma only; none of the 6 can be judged on H7."
-    ]
+    "decided": "2026-11-01, by the researcher: rerun only the tests arm design 1 got wrong (H2, H5)",
+    "arm_design": 2,
+    "root": "data/design2",
+    "family": "reason only",
+    "models": {
+      "openai/deepseek/deepseek-v4-flash": {
+        "d": 3
+      },
+      "openai/mistralai/mistral-small-3.2-24b-instruct": {
+        "d": 3
+      },
+      "openai/xiaomi/mimo-v2.6-flash": {
+        "d": 3
+      },
+      "openai/openai/gpt-4o-mini": {
+        "d": 2
+      },
+      "openai/z-ai/glm-4.7-flash": {
+        "d": 2
+      }
+    },
+    "models_rule": "the 5 models whose reason gate passed in the paid run, each at its gated difficulty",
+    "main_grid": "all 9 arms at the medium delta, n = 850 paired instances per cell",
+    "gate": "the paid run's reason gates (two_stage, 300 instances) are reused: gates use only the baseline and K at xhigh on all 4 samples, which arm design 2 does not change; stage 2 pools them with the new main-grid baselines",
+    "matching": "fresh cost matching (prepare --n-match 10 --delta medium)",
+    "budget": "about $15-20, capped at $20",
+    "design1": "the paid run's frozen pre-registration is archived in prereg/design1/ (hash 7961e5c2...)",
+    "deviations": []
   }
 }
