@@ -127,6 +127,33 @@ Temperature is sent explicitly (`CEILINGS_TEMPERATURE`, default 0.7). Claude kee
 **off**, so no model substitution can occur, and every adapter marks a run invalid if the provider
 serves a different model.
 
+### Agent teams (arm design 3, not yet run)
+
+Design 2's A2 was a fixed relay of one-call agents, and on weaker models the final agent copied
+the wrong guesses it was sent. Design 3 tests H5 on teams that work the way deployed agent systems
+do (`ceilings.teams`; plan and pre-registration draft in
+[prereg/DESIGN3_PLAN.md](prereg/DESIGN3_PLAN.md)):
+
+- Every agent runs a loop of turns: it thinks (a reasoning stage at medium depth), then takes one
+  action written as JSON, and the harness shows the result in its next turn.
+- **S** is one agent alone. **L** is a lead that must hand parts of the work to 2-3 workers, which
+  see the task and their brief, and the lead sees only their reports. **W** is 4 peers sharing a
+  notes board and voting. **W0** (optional) is W without the board. **R** is an author and a
+  reviewer.
+- All arms share one team budget of total tokens, checked before each turn. An agent whose turns
+  or budget run out is asked for its answer at once, and the run is flagged as a forced answer.
+- The task is the reason family with long chains cut into 3 sections in chain order
+  (`layout=sections`, split `design3`), so the work can be divided by section.
+- `ceilings check` also verifies that every agent's first prompt holds every fact, that no agent
+  sees another's reasoning unless it was sent, and that every turn, budget and text cap holds.
+
+```bash
+ceilings --root data/design3 team-run --model sim-bounded --d 12 --n 20 --budget 20000
+```
+
+`--budget 0` runs without a token cap (the chain-length pilot). Analysis of the team arms
+(H5a-H5c) is not written yet.
+
 ## A real run, in order
 
 ```bash

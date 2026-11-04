@@ -16,7 +16,7 @@ class StubOracleAdapter(ModelAdapter):
 
     model_id = "stub-oracle"
 
-    def complete(self, messages, depth, answer_space, seed, max_tokens=16000):
+    def complete(self, messages, depth, answer_space, seed, max_tokens=16000, text_tokens=None):
         text = "\n".join(str(m["content"]) for m in messages)
         rng = np.random.default_rng(seed)
         usage = Usage(input_tokens=approx_tokens(text), output_tokens=20)

@@ -13,9 +13,10 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-ArmId = Literal["baseline", "E", "K", "M", "A1", "A2", "A2_single_ref", "P1", "P2", "E+K", "M+K"]
+ArmId = Literal["baseline", "E", "K", "M", "A1", "A2", "A2_single_ref", "P1", "P2", "E+K", "M+K",
+                "S", "L", "W", "R", "W0"]  # the last five: arm design 3 teams (ceilings.teams)
 DeltaLevel = Literal["small", "medium", "large"]
-Split = Literal["calibration", "main", "heldout_blind"]
+Split = Literal["calibration", "main", "heldout_blind", "design3"]
 
 
 def content_hash(obj: Any) -> str:
@@ -163,6 +164,7 @@ class RunRecord(_Frozen):
     valid: bool = True
     refusal: Refusal | None
     ledger: ResourceLedger
+    team: dict | None = None  # arm design 3 teams: turns, workers, forced answers, budget
     transcript_ref: str
     provider_request_ids: list[str]
     started_at: datetime

@@ -246,8 +246,10 @@ class ModelAdapter(abc.ABC):
         answer_space: list[str] | None,
         seed: int,
         max_tokens: int = 16000,
+        text_tokens: int | None = None,
     ) -> AdapterResult:
-        """Answer (answer_space given) or produce free text (answer_space None)."""
+        """Answer (answer_space given) or produce free text (answer_space None). `text_tokens`
+        caps a free-text reply (default: the adapter's own cap)."""
 
     def count_tokens(self, text: str) -> int:
         return approx_tokens(text)
@@ -286,7 +288,7 @@ class ChatAdapter(ModelAdapter):
               seed: int) -> ChatReply:
         """One chat call; `schema` constrains the output to JSON when given."""
 
-    def complete(self, messages, depth, answer_space, seed, max_tokens=16000):
+    def complete(self, messages, depth, answer_space, seed, max_tokens=16000, text_tokens=None):
         budget = self.reasoning_budget(depth)
         convo = [dict(m) for m in messages]
         in_tok = out_tok = 0
@@ -323,7 +325,7 @@ class ChatAdapter(ModelAdapter):
             convo[-1] = {**convo[-1],
                          "content": f"{convo[-1]['content']} {json_format_note(schema)}"}
         cap = (max(self.answer_max_tokens, ANSWER_TOKENS_PER_OPTION * len(answer_space))
-               if answer_space else self.text_max_tokens)
+               if answer_space else text_tokens or self.text_max_tokens)
         sent.append([dict(m) for m in convo])
         reply = self._chat(convo, schema, cap, seed + 1)
         in_tok, out_tok = in_tok + reply.input_tokens, out_tok + reply.output_tokens

@@ -36,7 +36,7 @@
     },
     "arm_id": {
       "type": "string",
-      "pattern": "^(baseline|E|K|M|A1|A2|A2_single_ref|P1|P2|E\\+K|M\\+K)$"
+      "pattern": "^(baseline|E|K|M|A1|A2|A2_single_ref|P1|P2|E\\+K|M\\+K|S|L|W|R|W0)$"
     },
     "delta_level": {
       "type": [
@@ -243,6 +243,13 @@
           "minimum": 0
         }
       }
+    },
+    "team": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "arm design 3 teams (ceilings.teams): turns, workers, forced answers, budget"
     },
     "transcript_ref": {
       "type": "string"

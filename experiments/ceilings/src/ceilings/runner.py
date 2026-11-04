@@ -15,6 +15,7 @@ from ceilings.agents import Policy
 from ceilings.arms import ArmConfig
 from ceilings.orchestrator import effective_config, run_team
 from ceilings.records import Refusal, RunRecord, Sweep, TaskInstance, content_hash, now
+from ceilings.teams import TeamConfig, run_team_arm
 
 
 class BudgetExceeded(RuntimeError):
@@ -24,7 +25,7 @@ class BudgetExceeded(RuntimeError):
 @dataclass
 class Cell:
     instance: TaskInstance
-    cfg: ArmConfig
+    cfg: ArmConfig | TeamConfig
     delta_level: str | None = None
     replicate: int = 0
     sweep: dict | None = None
@@ -39,15 +40,26 @@ def run_id_for(
     sweep: dict | None = None,
     harness: dict | None = None,
     design: int = 1,
+    team: dict | None = None,
 ) -> str:
     """Content hash of the run's identity. Non-default harness options and an arm design after
-    the first are part of it (design-1 default runs keep the IDs they had before either existed)."""
+    the first are part of it (design-1 default runs keep the IDs they had before either existed),
+    and so is a design-3 team's whole config (its budget and caps)."""
     parts = [instance_id, arm_id, delta_level, model_id, replicate, sweep]
     if harness:
         parts.append(harness)
     if design != 1:
         parts.append({"arm_design": design})
+    if team is not None:
+        parts.append({"team": team})
     return content_hash(parts)
+
+
+def cell_run_id(cell: Cell, policy: Policy) -> str:
+    team = cell.cfg.to_dict() if isinstance(cell.cfg, TeamConfig) else None
+    return run_id_for(cell.instance.instance_id, cell.cfg.arm_id, cell.delta_level,
+                      policy.model_id, cell.replicate, cell.sweep, policy.options.non_default(),
+                      arms.ARM_DESIGN, team)
 
 
 def check_design(path: Path) -> None:
@@ -76,12 +88,14 @@ def run_cell(
     cell: Cell, policy: Policy, prereg_hash: str, transcript_dir: Path | None
 ) -> RunRecord:
     inst, cfg = cell.instance, cell.cfg
-    rid = run_id_for(
-        inst.instance_id, cfg.arm_id, cell.delta_level, policy.model_id, cell.replicate, cell.sweep,
-        policy.options.non_default(), arms.ARM_DESIGN,
-    )
+    rid = cell_run_id(cell, policy)
     started = now()
-    outcome = run_team(inst, cfg, policy, seed=int(rid[:8], 16))
+    if isinstance(cfg, TeamConfig):
+        outcome = run_team_arm(inst, cfg, policy, seed=int(rid[:8], 16))
+        config = cfg.to_dict()
+    else:
+        outcome = run_team(inst, cfg, policy, seed=int(rid[:8], 16))
+        config = effective_config(cfg, policy, inst.family_id).to_dict()
     ref = ""
     if transcript_dir is not None:
         transcript_dir.mkdir(parents=True, exist_ok=True)
@@ -90,7 +104,7 @@ def run_cell(
             "run_id": rid, "instance_id": inst.instance_id, "family": inst.family_id,
             "answer": inst.answer, "model_id": policy.model_id, "delta_level": cell.delta_level,
             "sweep": cell.sweep,
-            "config": effective_config(cfg, policy, inst.family_id).to_dict(),
+            "config": config,
             "harness": policy.harness_record(),
             "steps": outcome.transcript,
         }, default=str))
@@ -114,6 +128,7 @@ def run_cell(
         valid=outcome.valid,
         refusal=Refusal(**outcome.refusal) if outcome.refusal else None,
         ledger=outcome.ledger.to_record(),
+        team=outcome.team,
         transcript_ref=ref,
         provider_request_ids=outcome.request_ids,
         started_at=started,
@@ -145,9 +160,7 @@ def run_grid(
         if path not in done:
             done[path] = existing_run_ids(path)
             check_design(path)
-        rid = run_id_for(cell.instance.instance_id, cell.cfg.arm_id, cell.delta_level,
-                         policy.model_id, cell.replicate, cell.sweep, policy.options.non_default(),
-                         arms.ARM_DESIGN)
+        rid = cell_run_id(cell, policy)
         if rid not in done[path]:
             done[path].add(rid)
             todo.append((cell, path))

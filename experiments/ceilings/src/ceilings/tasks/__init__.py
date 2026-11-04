@@ -52,7 +52,8 @@ def generate_many(
     skipped, and a setting with too few distinct prompts raises instead of repeating them (the
     paid run's Gemma info cell, k=2, had only 96 distinct prompts behind 850 instances, so its
     tests counted repeats as independent evidence)."""
-    offset = {"calibration": 1_000_000, "main": 0, "heldout_blind": 2_000_000}[split]
+    offset = {"calibration": 1_000_000, "main": 0, "heldout_blind": 2_000_000,
+              "design3": 3_000_000}[split]
     gen = GENERATORS[family]
     if not balance:
         return [gen(seed0 + offset + i, split=split, **difficulty) for i in range(count)]

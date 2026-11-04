@@ -25,7 +25,10 @@ def _difficulty(text: str | None, family: str) -> dict | None:
     out = {}
     for part in text.split(","):
         key, value = part.split("=")
-        out[key] = float(value) if "." in value else int(value)
+        try:
+            out[key] = float(value) if "." in value else int(value)
+        except ValueError:
+            out[key] = value  # e.g. layout=sections
     return out
 
 
@@ -123,6 +126,22 @@ def cmd_run(a) -> int:
                               require_frozen=a.split == "main" and a.require_frozen,
                               concurrency=a.concurrency, progress=_progress(fam)))
     print(f"new runs: {total}")
+    return 0
+
+
+def cmd_team_run(a) -> int:
+    """Arm design 3 (prereg/DESIGN3_PLAN.md): agent teams on the sectioned reason family."""
+    from ceilings.runner import Cell
+    from ceilings.teams import team_config
+
+    policy = _policy(a)
+    insts = tasks.generate_many("reason", a.n, a.split, a.seed, d=a.d, layout="sections")
+    tasks.save_instances(insts, Path(a.root))  # `ceilings check` reads them back
+    cells = [Cell(inst, team_config(arm, a.budget, max_turns=a.max_turns))
+             for arm in a.arms.split(",") for inst in insts]
+    new = run_grid(cells, policy, a.root, a.max_cost, require_frozen=a.require_frozen,
+                   concurrency=a.concurrency, progress=_progress(f"reason d={a.d}"))
+    print(f"new runs: {len(new)}")
     return 0
 
 
@@ -331,6 +350,22 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--max-cost", type=float, default=None)
     r.add_argument("--require-frozen", action="store_true")
     r.set_defaults(fn=cmd_run)
+
+    tr = sub.add_parser("team-run", help="arm design 3: agent teams (prereg/DESIGN3_PLAN.md)")
+    model_opt(tr)
+    conc_opt(tr)
+    tr.add_argument("--arms", default="S,L,W,R,W0")
+    tr.add_argument("--d", type=int, required=True, help="chain length")
+    tr.add_argument("--n", type=int, required=True, help="instances")
+    tr.add_argument("--budget", type=int, required=True,
+                    help="team cap on total tokens, checked before each turn; 0 means no cap "
+                         "(the chain-length pilot)")
+    tr.add_argument("--max-turns", type=int, default=6, help="per agent")
+    tr.add_argument("--split", default="design3")
+    tr.add_argument("--seed", type=int, default=0)
+    tr.add_argument("--max-cost", type=float, default=None)
+    tr.add_argument("--require-frozen", action="store_true")
+    tr.set_defaults(fn=cmd_team_run)
 
     s = sub.add_parser("sweep", help="H6 (tool calls) and H7 (message bits) sweeps")
     s.add_argument("--family", default="all", choices=["info", "comm", "all"])

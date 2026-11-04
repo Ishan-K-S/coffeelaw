@@ -15,6 +15,7 @@ transcript, so each run can be audited after the fact.
 
 from __future__ import annotations
 
+import json
 import math
 import re
 from dataclasses import dataclass, field
@@ -102,8 +103,32 @@ class Policy:
         """`AdapterResult.extra` carries the log entry under `log`."""
         raise NotImplementedError
 
+    # Arm design 3 (ceilings.teams): one turn of an agentic loop, a forced report or review, and
+    # the final answer at the end of an agent's loop. `agent` is a teams.TeamAgent.
+    def act(self, agent, depth: str, reply_tokens: int, seed: int) -> Action:
+        raise NotImplementedError
+
+    def write(self, agent, instruction: str, seed: int) -> Action:
+        raise NotImplementedError
+
+    def final_answer(self, agent, forced: bool, seed: int) -> AdapterResult:
+        raise NotImplementedError
+
     def count_tokens(self, text: str) -> int:
         return approx_tokens(text)
+
+
+def with_user(messages: list[dict], text: str) -> list[dict]:
+    """`messages` ending in a user turn that carries `text`."""
+    if messages and messages[-1]["role"] == "user":
+        return messages[:-1] + [{"role": "user",
+                                 "content": f"{messages[-1]['content']}\n\n{text}"}]
+    return messages + [{"role": "user", "content": text}]
+
+
+def final_instruction(forced: bool) -> str:
+    lead = "Your turns or the team's budget ran out. " if forced else ""
+    return f"{lead}Give your final answer to the question now. {ANSWER_RULES}"
 
 
 # --- Simulated bounded agent -------------------------------------------------------------------
@@ -188,6 +213,60 @@ class SimPolicy(Policy):
         probs = normalize_probabilities(probs, space)
         return AdapterResult(answer, probs, None, usage, f"sim-{seed}",
                              extra={"log": {"kind": "answer", "value": answer}})
+
+    def act(self, agent, depth, reply_tokens, seed):
+        text = json.dumps(_SimTeam.action(agent))
+        return Action(text, _SimTeam.usage(agent, STEP_BUDGET[depth]),
+                      {"kind": "turn", "value": text})
+
+    def write(self, agent, instruction, seed):
+        return Action("My part is done.", _SimTeam.usage(agent, 1),
+                      {"kind": "write", "value": "My part is done."})
+
+    def final_answer(self, agent, forced, seed):
+        space = agent.answer_space
+        value, _ = _reason_solve(agent.public, STEP_BUDGET[agent.depth] * agent.turns, None)
+        guess = space[int(content_hash([agent.scenario, agent.name])[:8], 16) % len(space)]
+        answer = space[value] if value is not None else guess
+        probs = _confident(answer, space) if value is not None else _uniform(space)
+        return AdapterResult(answer, normalize_probabilities(probs, space), None,
+                             _SimTeam.usage(agent, 1), f"sim-{seed}",
+                             extra={"log": {"kind": "answer", "value": answer,
+                                            "forced": forced}})
+
+
+class _SimTeam:
+    """SimPolicy's team behaviour: each turn buys STEP_BUDGET[depth] more steps of the chain."""
+
+    @staticmethod
+    def usage(agent, steps: int) -> Usage:
+        return Usage(approx_tokens("\n".join(m["content"] for m in agent.messages)),
+                     10 * steps + 20)
+
+    @staticmethod
+    def solved(agent, turns: int) -> bool:
+        value, _ = _reason_solve(agent.public, STEP_BUDGET[agent.depth] * turns, None)
+        return value is not None
+
+    @classmethod
+    def action(cls, agent) -> dict:
+        solved = cls.solved(agent, agent.turns + 1)
+        if agent.role == "worker":
+            return ({"tool": "note", "args": {"text": "working"}} if agent.turns == 0 else
+                    {"tool": "report", "args": {"text": "My part is done."}})
+        if agent.role == "reviewer":
+            return {"tool": "review", "args": {"text": "The solution checks out."}}
+        if agent.role == "lead" and not agent.inbox:
+            return {"tool": "delegate", "args": {"briefs": ["Work out part 1.",
+                                                            "Work out part 2."]}}
+        if agent.role == "author" and not agent.inbox:
+            return ({"tool": "request_review", "args": {"solution": "My worked solution."}}
+                    if solved else {"tool": "note", "args": {"text": "working"}})
+        if solved:
+            return {"tool": "submit", "args": {}}
+        if "append_note" in agent.tools:
+            return {"tool": "append_note", "args": {"text": "still working"}}
+        return {"tool": "note", "args": {"text": "working"}}
 
 
 def _reason_solve(public, steps, progress):
@@ -352,6 +431,23 @@ class LLMPolicy(Policy):
         res.extra["log"] = self._log("answer", msgs, res, res.final_answer)
         return res
 
+    def act(self, agent, depth, reply_tokens, seed):
+        res = self.adapter.complete(agent.messages, depth, None, seed, text_tokens=reply_tokens)
+        text = (res.text or "").strip()
+        return Action(text, res.usage, self._log("turn", agent.messages, res, text))
+
+    def write(self, agent, instruction, seed):
+        msgs = with_user(agent.messages, instruction)
+        res = self.adapter.complete(msgs, "low", None, seed)
+        text = (res.text or "").strip()
+        return Action(text, res.usage, self._log("write", msgs, res, text))
+
+    def final_answer(self, agent, forced, seed):
+        msgs = with_user(agent.messages, final_instruction(forced))
+        res = self.adapter.complete(msgs, "low", agent.answer_space, seed)
+        res.extra["log"] = self._log("answer", msgs, res, res.final_answer)
+        return res
+
     def count_tokens(self, text: str) -> int:
         return self.adapter.count_tokens(text)
 
@@ -366,4 +462,5 @@ def make_policy(model_id: str, options: HarnessOptions = DEFAULT_OPTIONS) -> Pol
     return LLMPolicy(make_adapter(model_id), options)
 
 
-__all__ = ["View", "Action", "Policy", "SimPolicy", "LLMPolicy", "make_policy", "STEP_BUDGET"]
+__all__ = ["View", "Action", "Policy", "SimPolicy", "LLMPolicy", "make_policy", "STEP_BUDGET",
+           "with_user", "final_instruction"]

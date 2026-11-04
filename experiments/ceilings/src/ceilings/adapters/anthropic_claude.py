@@ -94,7 +94,9 @@ class ClaudeAdapter(ModelAdapter):
         return AdapterResult(answer, probs, None, usage, request_id, text=text, valid=valid,
                              extra=extra)
 
-    def complete(self, messages, depth, answer_space, seed, max_tokens=16000):
+    def complete(self, messages, depth, answer_space, seed, max_tokens=16000, text_tokens=None):
+        # Native effort shares `max_tokens` between thinking and the reply, so `text_tokens` (a
+        # cap on the reply alone) has no separate setting here.
         params = self._params(messages, depth, answer_space, max_tokens, seed)
         if max_tokens > 16000:
             with self.client.messages.stream(**params) as stream:

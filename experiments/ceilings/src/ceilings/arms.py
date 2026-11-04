@@ -11,9 +11,10 @@ from dataclasses import asdict, dataclass, replace
 
 DEPTH_ORDER = ["low", "medium", "high", "xhigh", "max"]
 # Arm design version, part of every new run ID and run record. Version 2 (after the October 2026
-# paid run) fixes K, M on reason and A2; see README "Design changes after the paid run". Runs of
-# different versions never share a run root.
-ARM_DESIGN = 2
+# paid run) fixes K, M on reason and A2; see README "Design changes after the paid run". Version 3
+# adds the agent-team arms S, L, W, W0 and R (ceilings.teams, prereg/DESIGN3_PLAN.md) and changes
+# no earlier arm. Runs of different versions never share a run root.
+ARM_DESIGN = 3
 ARMS = ["baseline", "E", "K", "M", "A1", "A2", "A2_single_ref", "P1", "P2"]
 DELTA_MULTIPLIERS = {"small": 0.5, "medium": 1.0, "large": 2.0}
 FILLER_LINE = "-- (no content) --"

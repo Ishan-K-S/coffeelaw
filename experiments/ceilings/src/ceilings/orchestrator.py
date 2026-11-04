@@ -38,6 +38,7 @@ class TeamOutcome:
     ledger: Ledger
     transcript: list[dict] = field(default_factory=list)
     request_ids: list[str] = field(default_factory=list)
+    team: dict | None = None  # arm design 3 summary (ceilings.teams)
 
 
 def _view(instance: TaskInstance, name: str, cfg: ArmConfig, answerer: bool) -> View:
@@ -171,21 +172,25 @@ def run_team(instance: TaskInstance, cfg: ArmConfig, policy: Policy, seed: int) 
                                "probabilities": res.probabilities, "refusal": res.refusal,
                                "valid": res.valid, "call": res.extra.get("log")})
 
-    space = instance.answer_space
+    final, mean = aggregate(results, instance.answer_space, rng)
+    refusal = next((r.refusal for r in results if r.refusal), None)
+    return TeamOutcome(final, mean, [r.final_answer for r in results], refusal,
+                       all(r.valid for r in results), ledger, transcript, request_ids)
+
+
+def aggregate(results: list, space: list[str], rng) -> tuple[str | None, dict[str, float]]:
+    """Majority vote over the answers (ties broken by mean probability, then by `rng`) and the
+    normalised mean probability."""
     mean = {a: float(np.mean([r.probabilities.get(a, 0.0) for r in results])) for a in space}
     total = sum(mean.values()) or 1.0
     mean = {a: v / total for a, v in mean.items()}
     votes = Counter(r.final_answer for r in results if r.final_answer is not None)
-    if votes:
-        top = max(votes.values())
-        tied = [a for a, c in votes.items() if c == top]
-        best = max(mean[a] for a in tied)
-        # A tie that the mean probability does not break is broken with the run's own seed, not
-        # by the order the answers came in.
-        tied = sorted(a for a in tied if mean[a] >= best - 1e-12)
-        final = tied[int(rng.integers(len(tied)))] if len(tied) > 1 else tied[0]
-    else:
-        final = None
-    refusal = next((r.refusal for r in results if r.refusal), None)
-    return TeamOutcome(final, mean, [r.final_answer for r in results], refusal,
-                       all(r.valid for r in results), ledger, transcript, request_ids)
+    if not votes:
+        return None, mean
+    top = max(votes.values())
+    tied = [a for a, c in votes.items() if c == top]
+    best = max(mean[a] for a in tied)
+    # A tie that the mean probability does not break is broken with the run's own seed, not
+    # by the order the answers came in.
+    tied = sorted(a for a in tied if mean[a] >= best - 1e-12)
+    return (tied[int(rng.integers(len(tied)))] if len(tied) > 1 else tied[0]), mean
