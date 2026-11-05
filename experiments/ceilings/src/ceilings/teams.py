@@ -10,7 +10,10 @@ differ only in topology:
   worker starts with the task and its brief, and the lead sees only its report;
 - W: 4 peers sharing a notes board, answering by majority vote;
 - W0: W without the board (4 independent attempts and a vote);
-- R: an author and a reviewer (code review).
+- R: an author and a reviewer (code review);
+- S_ref: S raised until it spends what a team spends (ceilings.team_match), through deeper
+  reasoning per turn and then several independent attempts and a vote, as design 2's K and
+  A2_single_ref were (the samples of one agent are its compute, as in every arm's baseline).
 
 Every agent's first prompt holds every fact of the task: a brief is extra instruction, never a
 substitute for the facts. The team shares one token budget (ledger total tokens, checked before
@@ -31,7 +34,7 @@ from ceilings.ledger import Ledger
 from ceilings.orchestrator import TeamOutcome, aggregate
 from ceilings.records import TaskInstance
 
-TEAM_ARMS = ("S", "L", "W", "R", "W0")
+TEAM_ARMS = ("S", "L", "W", "R", "W0", "S_ref")
 NAMES = ["A", "B", "C", "D"]
 
 TOOLS = {
@@ -63,11 +66,14 @@ class TeamConfig:
     budget: int = 0  # team cap on ledger total tokens, checked before each turn; 0 means no cap
     max_turns: int = 6  # per agent
     depth: str = "medium"  # every turn's reasoning stage
-    reply_tokens: int = 600  # every turn's action reply
+    # Every turn's action reply. 1,200 after the pilot: at 600, MiMo's long notes were cut off
+    # mid-JSON, rejected and retried, and one solo run grew to 101,619 tokens.
+    reply_tokens: int = 1200
     report_tokens: int = 300  # briefs, reports, notes, solutions and reviews
     min_workers: int = 2  # L: reports needed before the lead may submit
     max_workers: int = 3  # L: workers over the whole run
     peers: int = 4  # W and W0
+    samples: int = 1  # S and S_ref: independent attempts by the one agent, majority vote
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -76,7 +82,16 @@ class TeamConfig:
 def team_config(arm_id: str, budget: int = 0, **kw) -> TeamConfig:
     if arm_id not in TEAM_ARMS:
         raise ValueError(f"unknown team arm {arm_id!r}; expected one of {TEAM_ARMS}")
-    return TeamConfig(arm_id=arm_id, budget=budget, **kw)
+    cfg = TeamConfig(arm_id=arm_id, budget=budget, **kw)
+    if cfg.samples != 1 and arm_id not in ("S", "S_ref"):
+        raise ValueError("only S and S_ref take several attempts")
+    return cfg
+
+
+def ref_config(strength: str, budget: int = 0, **kw) -> TeamConfig:
+    """S_ref at a strength from team_match.LADDER: 'max' (one attempt) or 'max:3' (three)."""
+    depth, _, n = strength.partition(":")
+    return team_config("S_ref", budget, depth=depth, samples=int(n or 1), **kw)
 
 
 @dataclass
@@ -97,6 +112,7 @@ class TeamAgent:
     notes: list[str] = field(default_factory=list)  # what this agent wrote down
     seen_notes: int = 0  # W: shared notes already shown to this agent
     depth: str = "medium"
+    last_reasoning: str = ""  # the reasoning stage of the agent's latest turn
     done: bool = False
 
 
@@ -189,8 +205,9 @@ class _Team:
             else "your final answer"
         rules = (f"You work in turns. In each turn, reply with exactly one action, a JSON object, "
                  f"and nothing else. Your actions:\n{lines}\nYou have at most {cfg.max_turns} "
-                 f"turns. Text you send to others (briefs, reports, notes, solutions, reviews) "
-                 f"is cut to {cfg.report_tokens} tokens.")
+                 f"turns. Keep each action short: a reply that is cut off is not valid JSON and "
+                 f"is rejected. Text you send to others (briefs, reports, notes, solutions, "
+                 f"reviews) is cut to {cfg.report_tokens} tokens.")
         if cfg.budget:
             rules += (f" The team shares a budget of {cfg.budget} tokens: everything any "
                       "teammate reads and writes counts against it, and each turn shows what is "
@@ -241,6 +258,7 @@ class _Team:
                 self.invalid += 1
                 agent.pending = f"Rejected again: {error}. That turn is used up."
         agent.turns += 1
+        agent.last_reasoning = (act.log or {}).get("reasoning") or ""
         self.transcript.append({"step": "turn", "agent": agent.name, "role": agent.role,
                                 "turn": agent.turns, "budget_left": left, "action": action,
                                 "error": error if action is None else None,
@@ -258,8 +276,18 @@ class _Team:
 
     @staticmethod
     def flush(agent: TeamAgent) -> None:
-        """Show the agent its last action's result (e.g. the workers' reports) before it is asked
-        for an answer, report or review outside a turn."""
+        """Before an agent is asked for an answer, report or review outside a turn: keep the
+        reasoning of its latest turn with the action it led to (only the action stays in the
+        conversation between turns, so without this an agent that submits right after working
+        the chain out would answer without its own working), and show it its last action's result
+        (e.g. the workers' reports)."""
+        if agent.last_reasoning:
+            i = max(i for i, m in enumerate(agent.messages) if m["role"] == "assistant")
+            msg = agent.messages[i]
+            agent.messages = agent.messages[:i] + [
+                {"role": "assistant", "content": f"{agent.last_reasoning}\n\n{msg['content']}"}
+            ] + agent.messages[i + 1:]
+            agent.last_reasoning = ""
         if agent.pending:
             agent.messages = with_user(agent.messages, agent.pending)
             agent.pending = ""
@@ -292,22 +320,31 @@ class _Team:
     # --- topologies -------------------------------------------------------------------------
 
     def solo(self) -> list:
-        a = self.start("A", "solo", ("note", "submit"),
-                       "You are working on this task alone.")
-        while True:
-            act = self.turn(a)
-            if act is None:
-                return [self.answer(a, forced=True)]
-            if act["tool"] == "submit":
-                return [self.answer(a, forced=False)]
+        """One agent; with `samples` > 1 it makes that many independent attempts (each in a
+        fresh conversation) and the team answer is their majority vote."""
+        results = []
+        for _ in range(self.cfg.samples):
+            a = self.start("A", "solo", ("note", "submit"),
+                           "You are working on this task alone.")
+            while True:
+                act = self.turn(a)
+                if act is None or act["tool"] == "submit":
+                    results.append(self.answer(a, forced=act is None))
+                    break
+        return results
 
     def lead(self) -> list:
         cfg = self.cfg
+        tools = ("note", "delegate", "submit")
         lead = self.start(
-            "A", "lead", ("note", "delegate", "submit"),
-            f"You lead a team. You can hand parts of the work to up to {cfg.max_workers} workers, "
-            f"and you must have reports from at least {cfg.min_workers} workers before you "
-            "submit. Workers see the task and the brief you give them, not your working.")
+            "A", "lead", tools,
+            f"You lead a team. Use delegate to hand parts of the work to workers, one brief per "
+            f"worker (up to {cfg.max_workers} workers in all). Until at least {cfg.min_workers} "
+            f"workers have reported, delegate is your only action; after that you may also note "
+            "and submit. Workers see the task and the brief you give them, not your working.")
+        # Delegate first (decided 2026-11-04): in the pilot, leads free to choose mostly worked
+        # alone, so L did not test splitting. Any other action is rejected until enough reports.
+        lead.tools = ("delegate",)
         reports = 0
         used = 0
         while True:
@@ -318,7 +355,8 @@ class _Team:
                 if reports >= cfg.min_workers:
                     return [self.answer(lead, forced=False)]
                 self.refuse(lead, "submit", f"you need reports from at least {cfg.min_workers} "
-                                            f"workers first; you have {reports}.")
+                                            f"workers first; you have {reports}. Start workers "
+                                            f"with {TOOLS['delegate'][0]}, one brief per worker.")
             elif act["tool"] == "delegate":
                 room = cfg.max_workers - used
                 if room <= 0:
@@ -328,6 +366,8 @@ class _Team:
                 texts = self.run_workers(lead, NAMES[1 + used: 1 + used + len(briefs)], briefs)
                 used += len(briefs)
                 reports += len(texts)
+                if reports >= cfg.min_workers:
+                    lead.tools = tools
                 dropped = len(act["args"]["briefs"]) - len(briefs)
                 lead.pending = "Reports:\n" + "\n".join(
                     f"From worker {n}: {t}" for n, t in texts) + (
@@ -439,13 +479,14 @@ class _Team:
 
     def run(self) -> TeamOutcome:
         arm = self.cfg.arm_id
-        results = {"S": self.solo, "L": self.lead, "W": lambda: self.swarm(True),
+        results = {"S": self.solo, "S_ref": self.solo, "L": self.lead, "W": lambda: self.swarm(True),
                    "W0": lambda: self.swarm(False), "R": self.review}[arm]()
         final, mean = aggregate(results, self.inst.answer_space, self.rng)
         refusal = next((r.refusal for r in results if r.refusal), None)
         turns = {s["agent"]: s["turn"] for s in self.transcript if s["step"] == "turn"}
         summary = {
             "budget": self.cfg.budget, "spent": self.ledger.total_tokens,
+            "depth": self.cfg.depth, "samples": self.cfg.samples,
             "generated": sum(a.output_tokens for a in self.ledger.agents.values()),
             "turns": turns, "agents": sorted(self.ledger.agents),
             "workers": sum(s["kind"] == "brief" for s in self.transcript
@@ -465,4 +506,5 @@ def run_team_arm(inst: TaskInstance, cfg: TeamConfig, policy: Policy, seed: int)
     return _Team(inst, cfg, policy, seed).run()
 
 
-__all__ = ["TEAM_ARMS", "TeamConfig", "TeamAgent", "team_config", "parse_action", "run_team_arm"]
+__all__ = ["TEAM_ARMS", "TeamConfig", "TeamAgent", "team_config", "ref_config", "parse_action",
+           "run_team_arm"]

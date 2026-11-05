@@ -147,8 +147,13 @@ do (`ceilings.teams`; plan and pre-registration draft in
 - `ceilings check` also verifies that every agent's first prompt holds every fact, that no agent
   sees another's reasoning unless it was sent, and that every turn, budget and text cap holds.
 
+- Given the same cap, a lone agent stops early while teams spend 2-15× as much, so H5 compares
+  each team with **S_ref**: the same one agent matched to that team's spend, through deeper
+  reasoning per turn and then several attempts and a vote (`ceilings.team_match`).
+
 ```bash
-ceilings --root data/design3 team-run --model sim-bounded --d 12 --n 20 --budget 20000
+ceilings --root data/design3 team-match --model sim-bounded --d 12 --budget 20000
+ceilings --root data/design3 team-run --model sim-bounded --d 12 --n 20 --budget 20000 --with-refs
 ```
 
 `--budget 0` runs without a token cap (the chain-length pilot). Analysis of the team arms

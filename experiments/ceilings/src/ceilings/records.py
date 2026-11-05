@@ -14,7 +14,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 ArmId = Literal["baseline", "E", "K", "M", "A1", "A2", "A2_single_ref", "P1", "P2", "E+K", "M+K",
-                "S", "L", "W", "R", "W0"]  # the last five: arm design 3 teams (ceilings.teams)
+                "S", "L", "W", "R", "W0", "S_ref"]  # the last six: arm design 3 (ceilings.teams)
 DeltaLevel = Literal["small", "medium", "large"]
 Split = Literal["calibration", "main", "heldout_blind", "design3"]
 

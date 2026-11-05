@@ -96,7 +96,7 @@ def test_every_agent_starts_with_every_fact_and_every_run_ends_with_answers(arm)
     inst = _inst()
     out = run_team_arm(inst, team_config(arm), make_policy("sim-bounded"), 3)
     starts = [s for s in out.transcript if s["step"] == "start"]
-    assert len(starts) >= (2 if arm != "S" else 1)
+    assert len(starts) >= (1 if arm in ("S", "S_ref") else 2)
     for s in starts:
         assert inst.shared_evidence in s["prompt"][-1]["content"]
     answers = [s for s in out.transcript if s["step"] == "answer"]
@@ -109,11 +109,23 @@ def test_the_lead_cannot_submit_before_two_workers_report():
                        SUBMIT],
               "worker": [{"tool": "report", "args": {"text": "part done"}}]}
     out = run_team_arm(_inst(), team_config("L"), Scripted(script), 1)
-    refused = [s for s in out.transcript if s["step"] == "refused"]
-    assert [s["tool"] for s in refused] == ["submit"]
+    # until two workers have reported, delegate is the lead's only action: an early submit is
+    # rejected as an invalid action and retried
+    first = next(s for s in out.transcript if s["step"] == "turn" and s["agent"] == "A")
+    assert first["retried"] and first["action"]["tool"] == "delegate"
     reports = [s for s in out.transcript if s["step"] == "deliver" and s["kind"] == "report"]
     assert len(reports) == 2 and out.team["forced_answers"] == 0
     assert out.team["workers"] == 2
+
+
+def test_a_lead_that_starts_one_worker_must_start_another_before_it_can_submit():
+    script = {"lead": [{"tool": "delegate", "args": {"briefs": ["part 1"]}}, SUBMIT,
+                       {"tool": "delegate", "args": {"briefs": ["part 2"]}}, SUBMIT],
+              "worker": [{"tool": "report", "args": {"text": "part done"}}]}
+    out = run_team_arm(_inst(), team_config("L"), Scripted(script), 1)
+    tools = [s["action"]["tool"] for s in out.transcript
+             if s["step"] == "turn" and s["agent"] == "A"]
+    assert tools == ["delegate", "delegate", "submit"] and out.team["workers"] == 2
 
 
 def test_extra_briefs_beyond_three_workers_are_dropped():
@@ -214,6 +226,9 @@ def test_llm_turns_reason_first_and_reply_within_the_turn_cap():
     assert turn["calls"][0]["reasoning"] == "thinking about the chain"
     assert chat.caps == [team_config("S").reply_tokens]
     assert out.final_answer == "A"
+    # the final answer is made with the reasoning of the turn that submitted, not without it
+    answer = next(s for s in out.transcript if s["step"] == "answer")
+    assert any("thinking about the chain" in m["content"] for m in answer["call"]["prompt"])
 
 
 def test_team_runs_record_their_config_in_the_run_id_and_pass_the_checks(tmp_path):
@@ -225,7 +240,8 @@ def test_team_runs_record_their_config_in_the_run_id_and_pass_the_checks(tmp_pat
     cells = [Cell(i, team_config(arm, budget=20000)) for arm in TEAM_ARMS for i in insts]
     run_grid(cells, policy, tmp_path)
     records = load_runs(tmp_path)
-    assert len(records) == 15 and {r["arm_design"] for r in records} == {arms.ARM_DESIGN}
+    assert len(records) == 3 * len(TEAM_ARMS)
+    assert {r["arm_design"] for r in records} == {arms.ARM_DESIGN}
     assert all(r["team"]["budget"] == 20000 for r in records)
     res = run_checks(tmp_path, records)
     assert res["passed"], {k: v for k, v in res["integrity"].items() if v["status"] != "PASS"}
@@ -237,3 +253,114 @@ def test_team_runs_record_their_config_in_the_run_id_and_pass_the_checks(tmp_pat
     open(ref, "w").write(json.dumps(t))
     res = run_checks(tmp_path, records)
     assert res["integrity"]["facts_in_every_prompt"]["status"] == "FAIL"
+
+
+def test_matching_words_in_an_agents_own_reply_are_not_a_reasoning_leak():
+    from collections import defaultdict
+
+    from ceilings.checks import _check_team_transcript
+
+    inst = _inst()
+    words = '{"tool": "submit", "args": {}} after working the whole chain through'
+    user = {"role": "user", "content": f"Task: {inst.scenario}\n\n{inst.shared_evidence}"}
+
+    def call(reasoning, prompt):
+        return {"reasoning": reasoning, "prompt": prompt}
+
+    def transcript(b_prompt):
+        steps = [{"step": "start", "agent": a, "role": "peer", "prompt": [user]} for a in "AB"]
+        steps += [{"step": "turn", "agent": "A", "turn": 1, "budget_left": None,
+                   "action": SUBMIT, "calls": [call(words, [user])]},
+                  {"step": "turn", "agent": "B", "turn": 1, "budget_left": None,
+                   "action": SUBMIT, "calls": [call("", b_prompt)]}]
+        return {"run_id": "r" * 64, "instance_id": inst.instance_id, "model_id": "m",
+                "family": "reason", "steps": steps,
+                "config": team_config("W", peers=2).to_dict()}
+
+    problems, rates = defaultdict(list), defaultdict(lambda: defaultdict(list))
+    own = [user, {"role": "assistant", "content": words}]  # B wrote the same words itself
+    _check_team_transcript(transcript(own), inst, problems, rates)
+    assert not problems["reasoning_hidden"]
+    leaked = [{"role": "user", "content": f"{user['content']}\n\n{words}"}]
+    _check_team_transcript(transcript(leaked), inst, problems, rates)
+    assert problems["reasoning_hidden"]
+
+
+def test_s_ref_is_one_agent_making_several_attempts_at_a_chosen_depth():
+    from ceilings.teams import ref_config
+
+    cfg = ref_config("max:3", 5000, max_turns=4)
+    assert (cfg.arm_id, cfg.depth, cfg.samples, cfg.budget) == ("S_ref", "max", 3, 5000)
+    assert ref_config("high").samples == 1
+    with pytest.raises(ValueError, match="only S and S_ref"):
+        team_config("W", samples=2)
+    out = run_team_arm(_inst(), cfg, make_policy("sim-bounded"), 2)
+    starts = [s for s in out.transcript if s["step"] == "start"]
+    assert len(starts) == 3 and {s["agent"] for s in starts} == {"A"}
+    assert len(out.sample_answers) == 3 and out.team["samples"] == 3
+
+
+def test_team_match_finds_each_teams_rung_and_team_run_adds_the_references(tmp_path):
+    from ceilings import cli
+    from ceilings.team_match import LADDER, load_table
+
+    root = str(tmp_path)
+    args = ["--root", root, "team-match", "--d", "9", "--n", "4", "--budget", "0",
+            "--arms", "L,R"]
+    code = cli.main(args)
+    table = load_table(root, "sim-bounded")
+    assert set(table["arms"]) == {"L", "R"} and code in (0, 2)
+    for e in table["arms"].values():
+        assert e["strength"] in LADDER
+        assert e["matched"] == (abs(e["gap"]) <= table["tolerance"])
+    # rungs are measured in ladder order; deeper reasoning can finish in fewer turns, so cost
+    # need not rise at every rung, and each team gets the nearest rung by measured cost
+    assert list(table["ladder_tokens"]) == LADDER[: len(table["ladder_tokens"])]
+    for e in table["arms"].values():
+        gaps = [abs(t / e["target_tokens"] - 1) for t in table["ladder_tokens"].values()]
+        assert abs(e["gap"]) == pytest.approx(min(gaps))
+    assert cli.main(["--root", root, "team-run", "--d", "9", "--n", "3", "--budget", "0",
+                     "--arms", "L,R", "--with-refs"]) == 0
+    main = {i.instance_id for i in tasks.generate_many("reason", 3, "design3", d=9,
+                                                        layout="sections")}
+    refs = [r for r in load_runs(root) if r["arm_id"] == "S_ref" and r["instance_id"] in main]
+    picked = {table["arms"][a]["strength"] for a in ("L", "R")}
+    assert {f"{r['team']['depth']}:{r['team']['samples']}" for r in refs} == {
+        s if ":" in s else f"{s}:1" for s in picked}
+    # a table matched under other settings is refused
+    assert cli.main(["--root", root, "team-run", "--d", "9", "--n", "3", "--budget", "100",
+                     "--arms", "L", "--with-refs"]) == 2
+
+
+def test_claims_are_graded_against_the_chain():
+    from ceilings.analysis.teams import chain_shifts, claims
+
+    inst = _inst(d=9)
+    truth = chain_shifts(inst.payload["public"])
+    target = inst.payload["public"]["target"]
+    assert truth[target] == inst.answer and len(truth) == 10
+    wrong = "ABCD"[("ABCD".index(inst.answer) + 1) % 4]
+    text = f"{target} works shift {wrong}. Nobody=A. {target}={inst.answer}"
+    assert claims(text, set(truth)) == [(target, wrong), (target, inst.answer)]
+
+
+def test_team_analysis_pairs_each_team_with_its_matched_reference(tmp_path):
+    from ceilings import cli
+
+    root = str(tmp_path)
+    cli.main(["--root", root, "team-match", "--d", "9", "--n", "4", "--budget", "0",
+              "--arms", "L,R,W"])
+    cli.main(["--root", root, "team-run", "--d", "9", "--n", "6", "--budget", "0",
+              "--arms", "L,R,W", "--with-refs"])
+    out = tmp_path / "reports"
+    assert cli.main(["--root", root, "team-analyze", "--out", str(out)]) == 0
+    res = json.loads((out / "team_verdicts.json").read_text())
+    table = json.loads(next((tmp_path / "team_match").glob("*.json")).read_text())
+    for t in res["tests"]:
+        assert t["ref"] == table["arms"][t["arm"]]["strength"]
+        assert t["n"] >= 6  # the main instances; matching instances share the folder
+        assert ("p_tost_holm" in t) == t["matched"]  # unmatched teams stay out of the verdicts
+    for h in ("H5a", "H5b"):
+        assert res[h]["verdict"] in ("supported", "contradicted", "inconclusive",
+                                     "not evaluable")
+    assert {c["arm"] for c in res["H5c"]["cells"]} <= {"L", "R", "W"}

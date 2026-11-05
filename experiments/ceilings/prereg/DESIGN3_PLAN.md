@@ -12,6 +12,33 @@ result.
 - The isolated-swarm control **W0 is in, but optional**: it is the first thing cut if the cost
   runs too high.
 - The **Claude Code swarm comes later**, after the main arms.
+- **2026-11-04, after the pilot: compare at equal spend, not equal caps.** Given the same budget,
+  the lone agent stopped after 1-2 turns while teams spent 2.3-15.5× as much. Equal caps would
+  compare unequal compute, so each team is compared with S_ref, one agent matched to that team's
+  spend (below). This replaces the 2026-11-03 rule that S is never padded up to a team's cost.
+- **2026-11-04, scope for the credit left (about $12.80):** 4 models (DeepSeek, Mistral, MiMo,
+  GLM), n = 300 per cell, W0 cut. gpt-4o-mini is dropped: it was about a third of the cost and
+  scored 0.05 alone at d = 12. Estimated total about $12.40, so n is re-checked against the
+  measured cost after matching and lowered before the main run if needed.
+- **2026-11-04, after the chain-length pilot** (one agent alone, 100 instances per step, $0.43):
+  - | Model | d = 6 | d = 9 | d = 12 | d = 18 | d = 24 |
+    |---|---|---|---|---|---|
+    | DeepSeek | | | 1.00 | 0.94 | 0.99 |
+    | MiMo | | | 0.66 | | |
+    | GLM | 0.47 | 0.33 | 0.28 | | |
+    | Mistral | 0.35 | 0.32 | 0.28 | | |
+  - Only MiMo met the 0.50-0.85 rule. The final answers follow the agents' own reasoning (Mistral
+    88 of 89 at d = 6), so the low scores are real reasoning errors, mostly on wrap-around steps.
+  - Asked for the setup most like real coding agents, we kept tasks that divide into parts (at
+    least 6 links, 2 per part; at 4 there is little to split) and **lowered the rule's floor from
+    0.50 to 0.35** (chance + 0.10). At a floor of 0.30 the rule would pick d = 9 for Mistral and
+    GLM, only 0.07-0.08 above chance, which leaves too little room to see a team do worse. The
+    matched S_ref spends more than S, so it will score above these figures.
+  - **Models and chain lengths: MiMo d = 12, GLM d = 6, Mistral d = 6. DeepSeek is dropped**: at
+    0.94-1.00 up to d = 24, no team could beat its S_ref, and equivalence there is trivial.
+  - **The lead delegates first**: in the pilot, leads free to choose mostly worked alone (forced
+    answers in 70% of Mistral's L runs, 30% of MiMo's, 25% of GLM's), so L did not test
+    splitting. Until 2 workers have reported, delegate is now the lead's only action.
 
 ## Why
 
@@ -61,10 +88,10 @@ instances, which regenerate unchanged.
 
 - **Chain length per model.** Each model gets the largest d in {6, 9, 12, 18, 24, 30} at which
   the solo agent's pilot accuracy (100 instances, turn cap only, no token cap, so its natural
-  cost is measured too) is between 0.50 and 0.85. That leaves room for a team to land above or
-  below the solo agent.
+  cost is measured too) is between 0.35 and 0.85 (the floor was 0.50 until the pilot; see
+  "Decisions made"). That leaves room for a team to land above or below the solo agent.
   - To keep the pilot cheap, the search starts at d = 12 and moves one step up if accuracy is
-    above 0.85, or one step down if it is below 0.50, with at most 3 steps per model.
+    above 0.85, or one step down if it is below the floor, with at most 3 steps per model.
   - If no d qualifies, the model is left out of H5 and reported as such: at a ceiling of 1.0 a
     team can't beat the solo agent, and equivalence would be trivial.
   - The rule is fixed before the pilot is looked at.
@@ -83,7 +110,8 @@ differs.
 
 | Arm | Topology | What happens |
 |---|---|---|
-| **S** (reference) | one agent | An agentic loop with a private notes file and `submit`. Same budget B. |
+| **S** | one agent | An agentic loop with a private notes file and `submit`, at the same depth as every team agent. Same budget B. Reported, not the H5 reference. |
+| **S_ref** (H5 reference, one per team arm) | one agent | S raised until it spends what that team spends: deeper reasoning per turn, then several independent attempts and a majority vote (see "Cost and matching"). |
 | **L** lead and workers (Claude Code subagent style) | 1 lead + 2-3 workers | The lead calls `delegate(brief)` (workers run in parallel and see the task facts plus the brief), reads the reports (capped at 300 tokens), may delegate again if budget is left, and calls `submit`. Calling `submit` before 2 workers have reported is refused with an error, so every L run actually splits the work. |
 | **W** swarm (shared workspace) | 4 peers, no lead | Each round, every peer reads the notes, works, and may `append_note`. A peer calls `submit` when it is confident. The team answer is the majority of submitted answers, with ties broken by mean probability. The run stops when all peers have submitted or B is spent. |
 | **R** author and reviewer (code-review style) | 2 agents | The author writes a worked solution. The reviewer checks it against the facts and writes a review. The author revises and submits. |
@@ -105,7 +133,10 @@ lists only A and B.
   style, the same for every model. Native tool calling varies by model and provider, and that
   difference would get mixed into the result.
 - **Per-turn effort.** Every turn is the adapter's standard free-text call: a reasoning stage at
-  medium depth (512 tokens), then the action reply (at most 600 tokens), the same in every arm.
+  medium depth (512 tokens), then the action reply (at most 1,200 tokens), the same in every arm.
+  The cap was 600 until the chain-length pilot, where MiMo's long notes were cut off mid-JSON,
+  rejected and retried, and one solo run grew to 101,619 tokens; agents are also told to keep
+  each action short.
   Only the action reply stays in the agent's conversation, as in most agent loops. Effort varies only through the number of turns and agents an arm
   chooses to use. Models without native reasoning think in their turn's output, as they do in a
   normal agent loop.
@@ -124,30 +155,40 @@ lists only A and B.
 - **Total cost is the measure** (decided 2026-11-03): ledger total tokens, counting every call by
   every agent. That includes tool-call I/O and the repeated reading of facts, notes and reports.
   This is what a user pays, and team overhead is a real cost of teams, so it counts against them.
-  It is also the measure design 2 matched on.
-  - Because overhead counts, H5a ("no team beats one agent") is a little easier to hold than it
-    would be under a compute-only measure. Generated tokens (output + reasoning), the closest
-    thing to the theory's "compute", are reported next to it so readers can see the gap.
-- **Budget B per model, the same for every arm:** the smallest of 2×, 3× and 4× the solo agent's
-  natural total cost in the pilot at which every team arm's forced-answer rate is below 10%. A
-  team of a lead and 3 workers reads the facts 4 times over, so too small a B would mostly
-  measure teams running out of budget.
-- **Primary comparison:** at equal caps B, which is the quantity a user actually sets.
-- **S is never padded.** A solo agent that stops early chose to stop, as it would in real use.
-  The design-2 approach of padding the reference up to the team's realized cost has no realistic
-  equivalent in an agent loop. Realized total cost and generated tokens per arm are reported, so
-  any gap in what was actually spent is visible.
+  It is also the measure design 2 matched on. Generated tokens (output + reasoning), the closest
+  thing to the theory's "compute", are reported next to it.
+- **Equal spend, not equal caps** (decided 2026-11-04). In the pilot (d = 12, no cap), teams spent
+  this much more than S, median across models: R 3.3×, W0 4×, L 4.5×, W 5.8×, and up to 15.5× on
+  MiMo. S chose to stop early. So H5 compares each team with its own **S_ref**, matched to the
+  team's realized cost the way design 2 matched K and A2_single_ref:
+  - `ceilings team-match` runs the teams on 20 matching instances (seeds apart from the main
+    grid's), then S_ref up the ladder `medium, high, xhigh, max, max:2, max:3, max:4, max:6,
+    max:8, max:12, max:16`. A depth is per-turn reasoning, and `max:3` is three independent
+    attempts at max depth with a majority vote. The climb stops once a rung spends more than
+    every team.
+  - Each team gets the rung whose mean total tokens are nearest its own. It is matched if that
+    rung is within ±10%; otherwise it is recorded as unmatched with the gap, which is reported
+    next to its H5 tests.
+  - Several attempts and a vote count as one agent's compute here, as in every arm's baseline
+    (four samples of agent A) and design 2's K. No filler padding is used, since in an agent loop
+    it would only make the reference worse.
+  - Deeper reasoning can finish in fewer turns, so a higher rung does not always cost more; the
+    matcher picks by measured cost, not by rung order.
+- **Budget B per model, the same for every arm,** is now a safety cap, not the matching device:
+  the smallest of 4×, 8×, 12× and 16× S's natural cost at which every team arm's forced-answer
+  rate in the pilot is below 10%. (The pilot showed teams at up to 15.5× S, so the earlier rule of
+  at most 4× would have cut off every swarm run.)
 
 ## Hypotheses (draft; to be frozen before any paid run)
 
-- **H5a, upper bound (confirmatory).** No topology beats S at equal cost.
-  - Falsifier: team > S, by exact McNemar superiority after Holm across the team arms run for
-    that model (L, W, R, and W0 if it is run).
+- **H5a, upper bound (confirmatory).** No team beats one agent that spends as much.
+  - Falsifier: team > its S_ref, by exact McNemar superiority after Holm across the team arms run
+    for that model (L, W, R, and W0 if it is run).
   - H5a is contradicted if 2 models reject.
   - This is the claim the design-2 falsifier already tested. The swarm's vote and the lead's
     divided chain are the strongest realistic challenges to it.
-- **H5b, equivalence (confirmatory, secondary).** Each team arm is within ±0.05 of S, by Newcombe
-  TOST after Holm.
+- **H5b, equivalence (confirmatory, secondary).** Each team arm is within ±0.05 of its S_ref, by
+  Newcombe TOST after Holm.
   - Predicted to hold on strong models (DeepSeek, MiMo, gpt-4o-mini).
   - Predicted to fail on Mistral and GLM, which showed a copying problem in design 2.
 - **H5c, mechanism (pre-registered, descriptive).** A team's deficit grows with how often it
@@ -217,29 +258,33 @@ these runs can't be seeded, and their cost can't be matched to the other arms.
 
 ## Scope and cost
 
-- **Models:** the five design-2 reason models.
-- **Cells:** 4 arms (S, L, W, R) per model, plus the optional W0. If the pilot shows the grid costs
-  too much, W0 is cut first, then n is lowered.
-- **Cost:** not yet estimable without a pilot.
-  - In design 2, A2 and its reference cost $3.50 for 5 models at n = 850, with one call per
-    agent at d = 2-3.
-  - Agentic loops at d = 6-30 make several calls per agent and re-read context, so a cost per
-    instance 5-15× higher is plausible. That puts the full grid well above the roughly $14 of
-    credit left.
-- **Plan:**
-  - A 20-instance pilot per arm (W0 included) on Mistral and gpt-4o-mini to measure cost.
-  - Then choose n per cell from the pilot's discordance and the budget. H5a's superiority test
-    needs far fewer instances than H5b's ±0.05 equivalence.
-  - Freeze n before the main run.
+- **Models:** MiMo v2.6 flash (d = 12), GLM 4.7 flash (d = 6) and Mistral Small 3.2 (d = 6),
+  decided 2026-11-04. gpt-4o-mini was dropped for cost, and DeepSeek because it is at ceiling.
+- **Cells:** S, L, W, R and each team's S_ref per model, plus the optional W0 and its S_ref. If
+  the grid costs too much, W0 is cut first, then n is lowered.
+- **Pilot (2026-11-04):** 5 arms × 20 instances × 5 models at d = 12 with no cap, $0.72 (an
+  earlier run, $0.56, found the bug where agents answered without their own last reasoning, and
+  was discarded). Measured cost per instance, all 5 models: S $0.0018, L + W + R $0.0258,
+  W0 $0.0082.
+- **Cost with matched references:** each S_ref costs about what its team costs, so matching
+  roughly doubles the team cost:
+  - per instance, 5 models: about $0.053 without W0, $0.070 with it;
+  - n = 300: about $16 without W0, $21 with it; n = 850: about $45 and $59;
+  - plus about $1-1.5 for matching and $0.2-0.5 for the chain-length pilot.
+- **Plan:** choose n per cell from the pilot's discordance and the budget (H5a's superiority test
+  needs far fewer instances than H5b's ±0.05 equivalence), and freeze n before the main run.
 
 ## Order of work
 
 1. Implement the team loop, the arms (S, L, W, R, W0), the sectioned task layout, the ledger
    additions and the checks, with SimPolicy tests. Free.
-2. Pilot to choose d (solo only, 100 instances per model), then pilot cost (20 per arm).
-3. Fill in B, d and n per model, add a DEVIATIONS.md entry, then `ceilings prereg freeze`.
-4. Main run with per-phase spending caps, then `check`, `audit` and `analyze`.
-5. Later, after the main arms: the Claude Code arm (decided 2026-11-03).
+2. Pilot to choose d (solo only, 100 instances per model), then pilot cost (20 per arm). Done
+   for cost at d = 12; the chain-length pilot is still to run.
+3. Match S_ref per model and team at the chosen d and B (`ceilings team-match`).
+4. Fill in B, d and n per model, add a DEVIATIONS.md entry, then `ceilings prereg freeze`.
+5. Main run (`ceilings team-run --with-refs`) with per-phase spending caps, then `check`, `audit`
+   and `analyze`.
+6. Later, after the main arms: the Claude Code arm (decided 2026-11-03).
 
 ## Open decisions
 

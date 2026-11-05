@@ -36,7 +36,7 @@
     },
     "arm_id": {
       "type": "string",
-      "pattern": "^(baseline|E|K|M|A1|A2|A2_single_ref|P1|P2|E\\+K|M\\+K|S|L|W|R|W0)$"
+      "pattern": "^(baseline|E|K|M|A1|A2|A2_single_ref|P1|P2|E\\+K|M\\+K|S|L|W|R|W0|S_ref)$"
     },
     "delta_level": {
       "type": [

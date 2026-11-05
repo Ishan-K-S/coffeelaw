@@ -132,16 +132,80 @@ def cmd_run(a) -> int:
 def cmd_team_run(a) -> int:
     """Arm design 3 (prereg/DESIGN3_PLAN.md): agent teams on the sectioned reason family."""
     from ceilings.runner import Cell
-    from ceilings.teams import team_config
+    from ceilings.team_match import load_table
+    from ceilings.teams import ref_config, team_config
 
     policy = _policy(a)
     insts = tasks.generate_many("reason", a.n, a.split, a.seed, d=a.d, layout="sections")
     tasks.save_instances(insts, Path(a.root))  # `ceilings check` reads them back
+    arm_ids = a.arms.split(",")
     cells = [Cell(inst, team_config(arm, a.budget, max_turns=a.max_turns))
-             for arm in a.arms.split(",") for inst in insts]
+             for arm in arm_ids for inst in insts]
+    if a.with_refs:
+        table = load_table(a.root, policy.model_id)
+        made = (table["difficulty"].get("d"), table["budget"], table["max_turns"])
+        if made != (a.d, a.budget, a.max_turns):
+            print(f"error: the S_ref table was matched at d, budget, max_turns = {made}, not "
+                  f"{(a.d, a.budget, a.max_turns)}", file=sys.stderr)
+            return 2
+        strengths = sorted({table["arms"][arm]["strength"] for arm in arm_ids
+                            if arm in table["arms"]})
+        cells += [Cell(inst, ref_config(st, a.budget, max_turns=a.max_turns))
+                  for st in strengths for inst in insts]
     new = run_grid(cells, policy, a.root, a.max_cost, require_frozen=a.require_frozen,
                    concurrency=a.concurrency, progress=_progress(f"reason d={a.d}"))
     print(f"new runs: {len(new)}")
+    return 0
+
+
+def cmd_team_match(a) -> int:
+    """Match S_ref (one agent, deeper reasoning, then several attempts) to each team's spend."""
+    from ceilings.team_match import match
+    from ceilings.teams import team_config
+
+    policy = _policy(a)
+    insts = tasks.generate_many("reason", a.n, a.split, a.seed, d=a.d, layout="sections")
+    tasks.save_instances(insts, Path(a.root))
+    teams = {arm: team_config(arm, a.budget, max_turns=a.max_turns) for arm in a.arms.split(",")}
+    table = match(policy, insts, teams, a.root, a.max_cost, a.concurrency,
+                  progress=_progress(f"match d={a.d}"))
+    for arm, e in table["arms"].items():
+        print(f"{arm}: team {e['target_tokens']:.0f} tokens -> S_ref {e['strength']} "
+              f"{e['ref_tokens']:.0f} ({e['gap']:+.0%}{'' if e['matched'] else ', UNMATCHED'})")
+    print(f"spent ${table['dollars']:.3f}")
+    return 0 if all(e["matched"] for e in table["arms"].values()) else 2
+
+
+def cmd_team_analyze(a) -> int:
+    """H5a-H5c for the design-3 teams, each paired with its matched S_ref."""
+    import pandas as pd
+
+    from ceilings.analysis.teams import mechanism, spearman, team_tests
+    from ceilings.checks import load_instances_index
+
+    tables = {}
+    for path in sorted(Path(a.root, "team_match").glob("*.json")):
+        t = json.loads(path.read_text())
+        tables[t["model_id"]] = t
+    if not tables:
+        print(f"error: no matching tables under {a.root}/team_match", file=sys.stderr)
+        return 2
+    records = load_runs(a.root)
+    res = team_tests(records, tables)
+    mech = mechanism(records, load_instances_index(a.root), res["tests"])
+    res["H5c"] = {"cells": mech, "spearman": spearman(mech)}
+    out = Path(a.out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "team_verdicts.json").write_text(json.dumps(res, indent=2))
+    pd.DataFrame(res["tests"]).to_csv(out / "team_tests.csv", index=False)
+    pd.DataFrame(mech).to_csv(out / "team_mechanism.csv", index=False)
+    for t in res["tests"]:
+        flag = "" if t["matched"] else f" (S_ref unmatched, cost gap {t['cost_gap']:+.0%})"
+        print(f"{t['model']} {t['arm']} vs S_ref {t['ref']}: {t['team_acc']:.3f} vs "
+              f"{t['ref_acc']:.3f}, diff {t['diff']:+.3f} (n {t['n']}){flag}")
+    for h in ("H5a", "H5b"):
+        print(f"{h}: {res[h]['verdict']} {res[h]['per_model']}")
+    print(f"H5c: {res['H5c']['spearman']}")
     return 0
 
 
@@ -365,7 +429,29 @@ def build_parser() -> argparse.ArgumentParser:
     tr.add_argument("--seed", type=int, default=0)
     tr.add_argument("--max-cost", type=float, default=None)
     tr.add_argument("--require-frozen", action="store_true")
+    tr.add_argument("--with-refs", action="store_true",
+                    help="also run each team's matched S_ref (from `team-match`)")
     tr.set_defaults(fn=cmd_team_run)
+
+    ta = sub.add_parser("team-analyze", help="arm design 3: H5a-H5c against matched S_ref")
+    ta.add_argument("--out", default="reports/teams")
+    ta.set_defaults(fn=cmd_team_analyze)
+
+    tm = sub.add_parser("team-match", help="arm design 3: match S_ref to each team's spend")
+    model_opt(tm)
+    conc_opt(tm)
+    tm.add_argument("--arms", default="L,W,R,W0")
+    tm.add_argument("--d", type=int, required=True)
+    tm.add_argument("--n", type=int, default=20, help="matching instances")
+    tm.add_argument("--budget", type=int, required=True)
+    tm.add_argument("--max-turns", type=int, default=6)
+    tm.add_argument("--split", default="design3")
+    # Seeds come in blocks of tasks.TRIES (4,096) per instance, so this keeps the matching
+    # instances clear of a main grid of up to 2,441 instances.
+    tm.add_argument("--seed", type=int, default=10_000_000,
+                    help="first seed of the matching instances (apart from the main grid's)")
+    tm.add_argument("--max-cost", type=float, default=None)
+    tm.set_defaults(fn=cmd_team_match)
 
     s = sub.add_parser("sweep", help="H6 (tool calls) and H7 (message bits) sweeps")
     s.add_argument("--family", default="all", choices=["info", "comm", "all"])

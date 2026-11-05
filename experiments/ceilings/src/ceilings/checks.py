@@ -209,7 +209,9 @@ def _check_team_transcript(t: dict, inst: TaskInstance | None, problems: dict,
                 reasoning[s["agent"]].append(r)
     for s in steps:
         for call in _team_calls(s):
-            text = _prompt_text(call)
+            # Only what the harness gives an agent (its user turns) can carry another's reasoning;
+            # its own replies may match another agent's words without anything being leaked.
+            text = "\n".join(m["content"] for m in call.get("prompt") or [] if m["role"] == "user")
             for other, rs in reasoning.items():
                 if other != s["agent"] and any(r in text for r in rs):
                     problems["reasoning_hidden"].append(f"{rid[:12]} {s['agent']} saw {other}")
@@ -230,7 +232,7 @@ def _check_team_transcript(t: dict, inst: TaskInstance | None, problems: dict,
     if over:
         problems["team_caps"].append(f"{rid[:12]}: {over} over {cfg['max_turns']} turns")
     answers = [s for s in steps if s["step"] == "answer"]
-    expected = cfg["peers"] if cfg["arm_id"] in ("W", "W0") else 1
+    expected = cfg["peers"] if cfg["arm_id"] in ("W", "W0") else cfg.get("samples", 1)
     if len(answers) != expected:
         problems["step_counts"].append(f"{rid[:12]}: {len(answers)} answers, expected {expected}")
     for s in answers:
