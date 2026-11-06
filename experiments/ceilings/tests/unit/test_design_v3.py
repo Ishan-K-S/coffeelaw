@@ -5,12 +5,27 @@ import json
 import pytest
 
 from ceilings import arms, tasks
-from ceilings.adapters.base import AdapterResult, ChatAdapter, ChatReply, Usage, approx_tokens
+from ceilings.adapters.base import (
+    TURN_ACTION_PROMPT,
+    TURN_REASON_PROMPT,
+    AdapterResult,
+    ChatAdapter,
+    ChatReply,
+    Usage,
+    approx_tokens,
+)
 from ceilings.agents import Action, LLMPolicy, Policy, make_policy
 from ceilings.checks import run_checks
+from ceilings.records import content_hash
 from ceilings.runner import Cell, cell_run_id, load_runs, run_grid
 from ceilings.tasks import reason
-from ceilings.teams import TEAM_ARMS, parse_action, run_team_arm, team_config
+from ceilings.teams import (
+    TEAM_ARMS,
+    action_in_reasoning,
+    parse_action,
+    run_team_arm,
+    team_config,
+)
 
 
 def _inst(d=9, i=0):
@@ -85,6 +100,9 @@ def test_design3_split_never_repeats_a_main_or_calibration_seed():
     ('{"tool": "note", "args": {}}', False),
     ('{"tool": "report", "args": {"text": "x"}}', False),  # not one of this agent's tools
     ("I think the answer is B.", False),
+    ('{"tool": "delegate", "briefs": ["part 1", "part 2"]}', True),  # args beside "tool"
+    ('{"tool": "note", "text": "Ada is B"}', True),
+    ('{"tool": "delegate", "briefs": []}', False),
 ])
 def test_actions_are_one_json_object_naming_one_of_the_agents_tools(text, ok):
     action, error = parse_action(text, ("note", "delegate", "submit"))
@@ -206,15 +224,17 @@ class JsonChat(ChatAdapter):
 
     def __init__(self):
         self.caps = []
+        self.reply_prompts = []
 
     def _chat(self, messages, schema, max_tokens, seed):
         n = approx_tokens(" ".join(m["content"] for m in messages))
         if schema is not None:
             body = json.dumps({"answer": "A", "probabilities": {o: 0.25 for o in "ABCD"}})
             return ChatReply(body, n, 10, "r", self.model_name, "stop")
-        if messages[-1]["content"].endswith("next turn."):  # the reasoning stage
+        if "write out only your reasoning" in messages[-1]["content"]:  # the reasoning stage
             return ChatReply("thinking about the chain", n, 20, "r", self.model_name, "stop")
         self.caps.append(max_tokens)
+        self.reply_prompts.append(messages[-1]["content"])
         return ChatReply('{"tool": "submit", "args": {}}', n, 10, "r", self.model_name, "stop")
 
 
@@ -229,6 +249,40 @@ def test_llm_turns_reason_first_and_reply_within_the_turn_cap():
     # the final answer is made with the reasoning of the turn that submitted, not without it
     answer = next(s for s in out.transcript if s["step"] == "answer")
     assert any("thinking about the chain" in m["content"] for m in answer["call"]["prompt"])
+
+
+def test_a_turn_asks_for_its_action_not_for_the_final_answer():
+    chat = JsonChat()
+    out = run_team_arm(_inst(), team_config("S"), LLMPolicy(chat), 1)
+    turn = next(s for s in out.transcript if s["step"] == "turn")
+    reasoning_prompt, reply_prompt = (c[-1]["content"] for c in turn["calls"][0]["sent"])
+    assert reasoning_prompt.endswith(TURN_REASON_PROMPT) and "final answer" not in TURN_REASON_PROMPT
+    assert chat.reply_prompts == [TURN_ACTION_PROMPT]
+
+
+class ReasonsTheAction(Scripted):
+    """Writes the delegate in its reasoning, then replies with the step after it (seen in the
+    November 2026 matching runs on GLM and Mistral)."""
+
+    def act(self, agent, depth, reply_tokens, seed):
+        a = super().act(agent, depth, reply_tokens, seed)
+        if agent.role == "lead" and self.calls[agent.name] == 1:
+            a.log["reasoning"] = ('Plan: two workers. {"tool": "note", "args": {"text": "x"}} '
+                                  'no, delegate: {"tool": "delegate", "args": {"briefs": '
+                                  '["part 1", "parts 2 and 3"]}}')
+        return a
+
+
+def test_an_action_written_only_in_the_reasoning_is_the_turns_action():
+    script = {"lead": [SUBMIT, SUBMIT], "worker": [{"tool": "report", "args": {"text": "B"}}]}
+    out = run_team_arm(_inst(), team_config("L"), ReasonsTheAction(script), 1)
+    first = next(s for s in out.transcript if s["step"] == "turn" and s["agent"] == "A")
+    assert first["action"]["tool"] == "delegate" and first["from_reasoning"]
+    assert not first["retried"] and len(first["calls"]) == 1
+    assert out.team["workers"] == 2 and out.team["actions_from_reasoning"] == 1
+    assert out.team["invalid_actions"] == 0
+    assert action_in_reasoning("no action here", ("delegate",)) is None
+    assert action_in_reasoning('{"tool": "submit", "args": {}}', ("delegate",)) is None
 
 
 def test_team_runs_record_their_config_in_the_run_id_and_pass_the_checks(tmp_path):
@@ -286,6 +340,35 @@ def test_matching_words_in_an_agents_own_reply_are_not_a_reasoning_leak():
     assert problems["reasoning_hidden"]
 
 
+def test_reasoning_that_only_copies_what_the_agent_was_shown_is_not_a_leak():
+    from collections import defaultdict
+
+    from ceilings.checks import _check_team_transcript
+
+    inst = _inst()
+    note = "From D: Part 1: Tara=D. Finn is 2 after Tara: D->A->B (Finn=B)."
+    seen = [{"role": "user", "content": f"Task: {inst.scenario}\n\nNew shared notes:\n{note}"}]
+    steps = [{"step": "start", "agent": a, "role": "peer", "prompt": seen} for a in "AB"]
+    steps += [{"step": "turn", "agent": a, "turn": 1, "budget_left": None, "action": SUBMIT,
+               "calls": [{"reasoning": note, "prompt": seen}]} for a in "AB"]
+    t = {"run_id": "r" * 64, "instance_id": inst.instance_id, "model_id": "m",
+         "family": "reason", "steps": steps, "config": team_config("W", peers=2).to_dict()}
+    problems, rates = defaultdict(list), defaultdict(lambda: defaultdict(list))
+    _check_team_transcript(t, inst, problems, rates)
+    assert not problems["reasoning_hidden"]
+
+
+def test_instances_saved_for_the_same_setting_are_merged_not_replaced(tmp_path):
+    a = tasks.generate_many("reason", 3, "design3", 0, d=6, layout="sections")
+    b = tasks.generate_many("reason", 2, "design3", 10_000_000, d=6, layout="sections")
+    tasks.save_instances(a, tmp_path)
+    tasks.save_instances(b, tmp_path)
+    tasks.save_instances(a, tmp_path)  # saving again adds nothing
+    from ceilings.checks import load_instances_index
+
+    assert set(load_instances_index(tmp_path)) == {i.instance_id for i in a + b}
+
+
 def test_s_ref_is_one_agent_making_several_attempts_at_a_chosen_depth():
     from ceilings.teams import ref_config
 
@@ -300,6 +383,54 @@ def test_s_ref_is_one_agent_making_several_attempts_at_a_chosen_depth():
     assert len(out.sample_answers) == 3 and out.team["samples"] == 3
 
 
+def test_a_half_rung_makes_the_whole_number_below_or_above_by_a_coin_fixed_per_instance():
+    from ceilings.analysis.teams import strength_of
+    from ceilings.teams import attempts, ref_config
+
+    cfg = ref_config("max:3.5")
+    assert cfg.samples == 3.5 and ref_config("max:3").samples == 3
+    insts = tasks.generate_many("reason", 40, "design3", d=9, layout="sections")
+    made = [attempts(cfg, i.instance_id) for i in insts]
+    assert set(made) == {3, 4} and 10 <= made.count(4) <= 30
+    assert made == [attempts(cfg, i.instance_id) for i in insts]  # the same on every rerun
+    out = run_team_arm(insts[0], cfg, make_policy("sim-bounded"), 2)
+    assert len(out.sample_answers) == made[0] == out.team["attempts"]
+    assert strength_of(out.team) == "max:3.5" and strength_of({"depth": "max", "samples": 3}) \
+        == "max:3"
+    with pytest.raises(ValueError, match="one decimal"):
+        ref_config("max:3.25")
+
+
+def test_a_tenth_rung_adds_an_attempt_on_that_share_of_instances_and_keeps_the_halves():
+    from ceilings.teams import attempts, ref_config
+
+    insts = tasks.generate_many("reason", 200, "design3", d=9, layout="sections")
+    seven = [attempts(ref_config("max:1.7"), i.instance_id) for i in insts]
+    assert set(seven) == {1, 2} and 120 <= seven.count(2) <= 160
+    # a half adds one exactly when the instance's hash is odd, as before tenths were allowed
+    for i in insts:
+        odd = int(content_hash([i.instance_id, "attempts"])[:8], 16) % 2
+        assert attempts(ref_config("max:3.5"), i.instance_id) == 3 + odd
+        assert attempts(ref_config("max:1.7"), i.instance_id) >= 1 + odd  # nested shares
+
+
+def test_a_half_rung_lies_only_between_neighbouring_attempt_counts():
+    from ceilings.team_match import half_between
+
+    assert half_between("max:3", "max:4") == "max:3.5"
+    assert half_between("max", "max:2") == "max:1.5"
+    assert half_between("max:8", "max:10") is None and half_between("xhigh", "max") is None
+
+
+def test_the_tenth_rung_interpolates_the_cost_between_its_neighbours():
+    from ceilings.team_match import interpolated
+
+    assert interpolated("max", "max:2", 5412, 11013, 9080) == "max:1.7"
+    assert interpolated("max:3", "max:4", 1000, 2000, 1500) is None  # that is the half
+    assert interpolated("max:3", "max:4", 1000, 2000, 1010) == "max:3.1"
+    assert interpolated("max:8", "max:10", 1000, 2000, 1500) is None
+
+
 def test_team_match_finds_each_teams_rung_and_team_run_adds_the_references(tmp_path):
     from ceilings import cli
     from ceilings.team_match import LADDER, load_table
@@ -311,11 +442,12 @@ def test_team_match_finds_each_teams_rung_and_team_run_adds_the_references(tmp_p
     table = load_table(root, "sim-bounded")
     assert set(table["arms"]) == {"L", "R"} and code in (0, 2)
     for e in table["arms"].values():
-        assert e["strength"] in LADDER
+        assert e["strength"] in LADDER or e["strength"] in table["ladder_tokens"]
         assert e["matched"] == (abs(e["gap"]) <= table["tolerance"])
     # rungs are measured in ladder order; deeper reasoning can finish in fewer turns, so cost
     # need not rise at every rung, and each team gets the nearest rung by measured cost
-    assert list(table["ladder_tokens"]) == LADDER[: len(table["ladder_tokens"])]
+    whole = [s for s in table["ladder_tokens"] if s in LADDER]
+    assert whole == LADDER[: len(whole)]
     for e in table["arms"].values():
         gaps = [abs(t / e["target_tokens"] - 1) for t in table["ladder_tokens"].values()]
         assert abs(e["gap"]) == pytest.approx(min(gaps))
@@ -358,8 +490,9 @@ def test_team_analysis_pairs_each_team_with_its_matched_reference(tmp_path):
     table = json.loads(next((tmp_path / "team_match").glob("*.json")).read_text())
     for t in res["tests"]:
         assert t["ref"] == table["arms"][t["arm"]]["strength"]
-        assert t["n"] >= 6  # the main instances; matching instances share the folder
+        assert t["n"] == 6  # only the main instances: the matching ones chose the strengths
         assert ("p_tost_holm" in t) == t["matched"]  # unmatched teams stay out of the verdicts
+        assert t["realized_cost_gap"] > -1
     for h in ("H5a", "H5b"):
         assert res[h]["verdict"] in ("supported", "contradicted", "inconclusive",
                                      "not evaluable")

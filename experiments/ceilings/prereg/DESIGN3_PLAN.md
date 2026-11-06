@@ -1,9 +1,8 @@
-# Arm design 3: realistic agent teams (draft design)
+# Arm design 3: realistic agent teams
 
-This is a design draft. It is not part of the frozen pre-registration (`config.json`, `HASH`),
-nothing here has been implemented, and no paid call depends on it. The design-2 A2 result stays
-in RESULTS.md as the result for a naive relay. Design 3 adds teams; it does not replace that
-result.
+This design is frozen in `config.json` and `HASH` (run_plan, arm_design 3) before the main run;
+the design-2 freeze is archived in `prereg/design2/`. The design-2 A2 result stays in RESULTS.md
+as the result for a naive relay. Design 3 adds teams; it does not replace that result.
 
 ## Decisions made (2026-11-03)
 
@@ -39,6 +38,34 @@ result.
   - **The lead delegates first**: in the pilot, leads free to choose mostly worked alone (forced
     answers in 70% of Mistral's L runs, 30% of MiMo's, 25% of GLM's), so L did not test
     splitting. Until 2 workers have reported, delegate is now the lead's only action.
+
+- **2026-11-05, fixes found by the matching runs** (all before the freeze):
+  - **Turn prompts.** A turn's reasoning stage reused the generic prompt that says "you will be
+    asked for the final answer", so leads wrote their whole answer there and then submitted
+    without delegating. Turns now say the action comes next and nothing has been done yet.
+  - **An action written only in the reasoning counts.** If the reply is not a valid action but
+    the reasoning ends with one, that action is taken (logged as `actions_from_reasoning`), as an
+    agent loop that reads the model's whole output would.
+  - **Arguments beside `"tool"`.** MiMo wrote `{"tool": "delegate", "brief": ...}` instead of
+    putting the arguments under `"args"`; the parser now accepts both. Only MiMo did this, so
+    the GLM and Mistral matching runs are unchanged.
+  - **MiMo is served by Xiaomi.** On DeepInfra, MiMo's replies were garbled in 6 of 8 calls when
+    one instance was replayed, and 0 of 6 on Xiaomi.
+  - **Denser ladder and half rungs.** The ladder now has every attempt count up to 8, then 10,
+    12 and 16. A team more than 10% from every rung and lying between two neighbouring attempt
+    counts gets the half rung between them: `max:3.5` makes 3 or 4 attempts, by a coin fixed per
+    instance, so the expected cost is halfway. Half rungs run only when needed. If the half
+    still misses (on 20 instances its coin can fall well off half: MiMo's R measured `max:1.5`
+    at -16%), the tenth rung whose expected cost, interpolated between the two neighbours, is the
+    team's is run instead (MiMo R: `max:1.7`, one extra attempt on 70% of instances). A tenth's
+    extra attempts include every instance a half's would, so the half rungs' runs are unchanged.
+  - **The matching was rerun with these fixes** on the same 20 instances (data/design3). Every
+    team of every model is matched (below), and no team's forced-answer rate is above 5%, so
+    B stays as set: MiMo 64,000 tokens, GLM and Mistral 32,000.
+- **2026-11-05, sample size from the measured cost.** The matched grid costs $0.0091 per
+  instance on GLM, $0.0070 on Mistral and about $0.014 on MiMo (logged cost; billing ran about 11%
+  higher). With about $10.5 of credit left, n = 300 on all three would leave under 5% margin, so
+  **GLM and Mistral run n = 300 and MiMo n = 250**.
 
 ## Why
 
@@ -162,8 +189,9 @@ lists only A and B.
   MiMo. S chose to stop early. So H5 compares each team with its own **S_ref**, matched to the
   team's realized cost the way design 2 matched K and A2_single_ref:
   - `ceilings team-match` runs the teams on 20 matching instances (seeds apart from the main
-    grid's), then S_ref up the ladder `medium, high, xhigh, max, max:2, max:3, max:4, max:6,
-    max:8, max:12, max:16`. A depth is per-turn reasoning, and `max:3` is three independent
+    grid's), then S_ref up the ladder `medium, high, xhigh, max, max:2, ..., max:8, max:10,
+    max:12, max:16`, with a half rung (e.g. `max:3.5`), then if needed an interpolated tenth (e.g.
+    `max:1.7`), between neighbouring attempt counts when a team falls between them. A depth is per-turn reasoning, and `max:3` is three independent
     attempts at max depth with a majority vote. The climb stops once a rung spends more than
     every team.
   - Each team gets the rung whose mean total tokens are nearest its own. It is matched if that
@@ -179,7 +207,7 @@ lists only A and B.
   rate in the pilot is below 10%. (The pilot showed teams at up to 15.5× S, so the earlier rule of
   at most 4× would have cut off every swarm run.)
 
-## Hypotheses (draft; to be frozen before any paid run)
+## Hypotheses (frozen 2026-11-05)
 
 - **H5a, upper bound (confirmatory).** No team beats one agent that spends as much.
   - Falsifier: team > its S_ref, by exact McNemar superiority after Holm across the team arms run
@@ -189,7 +217,7 @@ lists only A and B.
     divided chain are the strongest realistic challenges to it.
 - **H5b, equivalence (confirmatory, secondary).** Each team arm is within ±0.05 of its S_ref, by
   Newcombe TOST after Holm.
-  - Predicted to hold on strong models (DeepSeek, MiMo, gpt-4o-mini).
+  - Predicted to hold on the strong model (MiMo; DeepSeek and gpt-4o-mini were dropped).
   - Predicted to fail on Mistral and GLM, which showed a copying problem in design 2.
 - **H5c, mechanism (pre-registered, descriptive).** A team's deficit grows with how often it
   accepts a wrong intermediate result.

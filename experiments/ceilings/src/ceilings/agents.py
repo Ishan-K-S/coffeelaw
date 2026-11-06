@@ -22,6 +22,8 @@ from dataclasses import dataclass, field
 
 from ceilings.adapters.base import (
     ANSWER_RULES,
+    TURN_ACTION_PROMPT,
+    TURN_REASON_PROMPT,
     AdapterResult,
     ModelAdapter,
     Usage,
@@ -432,7 +434,8 @@ class LLMPolicy(Policy):
         return res
 
     def act(self, agent, depth, reply_tokens, seed):
-        res = self.adapter.complete(agent.messages, depth, None, seed, text_tokens=reply_tokens)
+        res = self.adapter.complete(agent.messages, depth, None, seed, text_tokens=reply_tokens,
+                                    prompts=(TURN_REASON_PROMPT, TURN_ACTION_PROMPT))
         text = (res.text or "").strip()
         return Action(text, res.usage, self._log("turn", agent.messages, res, text))
 

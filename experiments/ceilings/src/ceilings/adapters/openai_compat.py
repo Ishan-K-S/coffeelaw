@@ -226,8 +226,10 @@ class OpenAICompatAdapter(ChatAdapter):
             reasoning_tokens=details.get("reasoning_tokens"),
         )
 
-    def complete(self, messages, depth, answer_space, seed, max_tokens=16000, text_tokens=None):
-        res = super().complete(messages, depth, answer_space, seed, max_tokens, text_tokens)
+    def complete(self, messages, depth, answer_space, seed, max_tokens=16000, text_tokens=None,
+                 prompts=None):
+        res = super().complete(messages, depth, answer_space, seed, max_tokens, text_tokens,
+                               prompts)
         if res.extra.get("reported_cost") is None:  # no provider-reported cost: use the prices
             res.usage.dollars = (res.usage.input_tokens * self.price_in
                                  + res.usage.output_tokens * self.price_out) / 1e6

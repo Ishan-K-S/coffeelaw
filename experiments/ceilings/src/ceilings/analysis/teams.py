@@ -10,7 +10,8 @@ team's spend (ceilings.team_match). Per model, with Holm correction across its t
 - H5b (each team within +/- margin of its S_ref): supported if every team's TOST rejects;
   contradicted if a team's 95% interval lies wholly outside +/- margin; otherwise inconclusive.
 
-A team whose S_ref is unmatched (more than the tolerance away in cost) is tested and reported, but
+The matching instances (the table's `instances`) are left out of every test, since they chose the
+S_ref strengths. A team whose S_ref is unmatched (more than the tolerance away in cost) is tested and reported, but
 left out of the verdicts. A hypothesis needs MIN_MODELS agreeing evaluable models.
 
 H5c (descriptive): how often the team's answer agrees with a wrong claim about the target that a
@@ -39,8 +40,8 @@ CLAIM_RE = re.compile(r"\b([A-Z][a-z]+)(?:'s shift)?\s*(?:works(?: on)?|is on|is
 
 def strength_of(summary: dict) -> str:
     """A run's S_ref strength, as team_match.LADDER names it."""
-    return summary["depth"] if summary.get("samples", 1) == 1 \
-        else f"{summary['depth']}:{summary['samples']}"
+    n = summary.get("samples", 1)
+    return summary["depth"] if n == 1 else f"{summary['depth']}:{n:g}"
 
 
 def not_better_p(arm, ref, margin: float = MARGIN) -> float:
@@ -72,9 +73,14 @@ def team_tests(records: list[dict], tables: dict[str, dict]) -> dict:
     """Paired tests of every team arm against its S_ref, per model, and the H5a/H5b verdicts."""
     rows, h5a, h5b = [], {}, {}
     for model, table in sorted(tables.items()):
-        recs = [r for r in records if r["model_id"] == model and r.get("team")]
+        # the matching instances chose the S_ref strengths, so they never enter the tests
+        held = set(table.get("instances", []))
+        recs = [r for r in records if r["model_id"] == model and r.get("team")
+                and r["instance_id"] not in held]
         ref = {(strength_of(r["team"]), r["instance_id"]): float(r["correct"])
                for r in recs if r["arm_id"] == "S_ref"}
+        tokens = {(r["arm_id"] if r["arm_id"] != "S_ref" else strength_of(r["team"]),
+                   r["instance_id"]): r["ledger"]["total_tokens"] for r in recs}
         model_rows = []
         for arm in TEAM_ORDER:
             if arm not in table["arms"]:
@@ -91,6 +97,9 @@ def team_tests(records: list[dict], tables: dict[str, dict]) -> dict:
                 "model": model, "arm": arm, "ref": m["strength"], "n": len(ids),
                 "team_acc": float(a.mean()), "ref_acc": float(b.mean()), "diff": d,
                 "ci95": [lo, hi], "matched": m["matched"], "cost_gap": m["gap"],
+                # the same gap on these instances (reported; verdicts use the matching gap)
+                "realized_cost_gap": float(np.mean([tokens[(m["strength"], i)] for i in ids])
+                                           / np.mean([tokens[(arm, i)] for i in ids]) - 1),
                 "p_superiority": superiority(a, b), "p_not_better": not_better_p(a, b),
                 "p_tost": tost(a, b, MARGIN)})
         tested = [r for r in model_rows if r["matched"]]
@@ -136,12 +145,17 @@ def claims(text: str, people: set[str]) -> list[tuple[str, str]]:
     return [(p, s) for p, s in CLAIM_RE.findall(text or "") if p in people]
 
 
-def mechanism(records: list[dict], index: dict, tests: list[dict]) -> list[dict]:
-    """H5c: per model and team arm, how teammates' claims about the target fared."""
+def mechanism(records: list[dict], index: dict, tests: list[dict],
+              held: dict[str, set] | None = None) -> list[dict]:
+    """H5c: per model and team arm, how teammates' claims about the target fared. `held` maps a
+    model to its matching instances, which are left out here as in the tests."""
     deficit = {(t["model"], t["arm"]): t["ref_acc"] - t["team_acc"] for t in tests}
+    held = held or {}
     acc: dict[tuple[str, str], dict] = {}
     for r in records:
         if r["arm_id"] not in TEAM_ORDER or not r.get("transcript_ref"):
+            continue
+        if r["instance_id"] in held.get(r["model_id"], ()):
             continue
         inst = index.get(r["instance_id"])
         ref = Path(r["transcript_ref"])

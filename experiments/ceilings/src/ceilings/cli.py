@@ -192,7 +192,8 @@ def cmd_team_analyze(a) -> int:
         return 2
     records = load_runs(a.root)
     res = team_tests(records, tables)
-    mech = mechanism(records, load_instances_index(a.root), res["tests"])
+    mech = mechanism(records, load_instances_index(a.root), res["tests"],
+                     {m: set(t.get("instances", [])) for m, t in tables.items()})
     res["H5c"] = {"cells": mech, "spearman": spearman(mech)}
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -202,7 +203,8 @@ def cmd_team_analyze(a) -> int:
     for t in res["tests"]:
         flag = "" if t["matched"] else f" (S_ref unmatched, cost gap {t['cost_gap']:+.0%})"
         print(f"{t['model']} {t['arm']} vs S_ref {t['ref']}: {t['team_acc']:.3f} vs "
-              f"{t['ref_acc']:.3f}, diff {t['diff']:+.3f} (n {t['n']}){flag}")
+              f"{t['ref_acc']:.3f}, diff {t['diff']:+.3f} (n {t['n']}, S_ref spends "
+              f"{t['realized_cost_gap']:+.0%} here){flag}")
     for h in ("H5a", "H5b"):
         print(f"{h}: {res[h]['verdict']} {res[h]['per_model']}")
     print(f"H5c: {res['H5c']['spearman']}")

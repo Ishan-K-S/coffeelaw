@@ -105,7 +105,16 @@ def save_instances(instances: list[TaskInstance], root: Path) -> Path:
     path = instance_path(root, first.family_id, first.family_version, first.split,
                          dict(first.difficulty))
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("".join(i.model_dump_json() + "\n" for i in instances))
+    # Merge with what is there: the file is keyed by setting, not by seed, so the S_ref matching
+    # instances and the main grid's (same family, split and difficulty, other seeds) share it, and
+    # writing only the latest set once lost the other (design-3 main run, November 2026).
+    lines = {}
+    if path.exists():
+        for line in path.read_text().splitlines():
+            lines[json.loads(line)["instance_id"]] = line
+    for i in instances:
+        lines[i.instance_id] = i.model_dump_json()
+    path.write_text("".join(line + "\n" for line in lines.values()))
     return path
 
 

@@ -149,7 +149,7 @@
       "extra_body": {
         "provider": {
           "order": [
-            "DeepInfra"
+            "Xiaomi"
           ],
           "allow_fallbacks": false
         },
@@ -160,7 +160,7 @@
           "enabled": false
         }
       },
-      "notes": "pinned to DeepInfra (fp8), $0.091/$0.182 per M in/out on 2026-10-26"
+      "notes": "pinned to Xiaomi (first party, fp8), $0.14/$0.28 per M in/out list on 2026-11-04; was DeepInfra (fp8) through design 2, but on 2026-11-04 DeepInfra garbled about 14% of design-3 free-text turn replies (multilingual token soup; 6 of 8 on a replayed instance, 0 of 6 on Xiaomi with the same seed)"
     }
   },
   "run_models": [

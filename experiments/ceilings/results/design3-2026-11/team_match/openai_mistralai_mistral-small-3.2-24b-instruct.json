@@ -1,0 +1,67 @@
+{
+  "model_id": "openai/mistralai/mistral-small-3.2-24b-instruct",
+  "instances": [
+    "d0a69cfe96a7a887764cc5dc59018d8531827f8d77322993499e49e033bfeadb",
+    "1235e0cb85c2ec84f38492e668d7c1073fd1da7911f7876975f187359670f71c",
+    "4aad681bc44bdf6042b869c9e512f15f154f107023ea0f30d7c2d51ae21811f4",
+    "3530599da769b83f4978b3a61f2f837cbcc63055168c5a1e09d91f1704a29b44",
+    "dcf3368e40c27e5a68d6d1bb2afb8bca9f12321c14aa70c731d1345b79950692",
+    "0c330e39584fe408c6bdc9be4c4bdead07e57970e31e89ec7856e6077869fa6f",
+    "eb53efe074bb758540d14ff0c1ee6b19eb854de69116e0180493043e57330302",
+    "db029aca04c6d9f33c5693a96193f236be9eefb48880db84ad15c892b99980b4",
+    "ac9be1a6508d55a0e32450bea012e29b63ec58cc6cdbdba0753eeced4f36b554",
+    "79b55530298822d5f4d2795b963181559e9e8bc08f3c8b33d2a501d28b1231e2",
+    "c7b94dfdf87a10a3caa473bafc5aa3eb04bf82b1013717ec6914dd4efb5a0bd4",
+    "d27f6ca3af4274bcade6be89f7c10edce8fb22ee2257c31780a4dae690c1957f",
+    "fd452e1f2aefe627b4521e5e1ea6b70ebb7455eda249c329b6f58055cfb924a1",
+    "6c0ebe1b3f6d05395b1341b821a82c681c8b5df768190691759004af9a98cf36",
+    "418f7afa80d12f2349b96fd31ff606f6286997b1b4e9f8e447ac125fd614499c",
+    "8dec433cf0b11acac52c74131b3d9fa282dd6dba618451fa6f873e5716866167",
+    "746ead2dcc9b051efee0479ba9d32976c70c2786849c2c05a6072ce0724a19bf",
+    "2407a0fa5a49115a3356f2cd7cc26b0f01f1779c1c77240b049f46f727b48728",
+    "6cc59b737dc50b95378aeb972a80c04d4206a278fdf00060d9088c16fdd548f6",
+    "5b47810b38ac280649e973d3e635b23338327fece4296f53bda3a49058058b22"
+  ],
+  "difficulty": {
+    "d": 6,
+    "layout": "sections"
+  },
+  "budget": 32000,
+  "max_turns": 6,
+  "tolerance": 0.1,
+  "ladder_tokens": {
+    "medium": 2940.4,
+    "high": 3045.2,
+    "xhigh": 2926.85,
+    "max": 2974.15,
+    "max:2": 6177.15,
+    "max:3": 9262.2,
+    "max:4": 11658.45,
+    "max:5": 15058.4,
+    "max:6": 18048.45
+  },
+  "arms": {
+    "L": {
+      "target_tokens": 11015.95,
+      "strength": "max:4",
+      "ref_tokens": 11658.45,
+      "gap": 0.0583245203545768,
+      "matched": true
+    },
+    "W": {
+      "target_tokens": 14615,
+      "strength": "max:5",
+      "ref_tokens": 15058.4,
+      "gap": 0.030338693123503235,
+      "matched": true
+    },
+    "R": {
+      "target_tokens": 8582.6,
+      "strength": "max:3",
+      "ref_tokens": 9262.2,
+      "gap": 0.07918346421830225,
+      "matched": true
+    }
+  },
+  "dollars": 0.202261
+}

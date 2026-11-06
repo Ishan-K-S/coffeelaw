@@ -8,8 +8,12 @@ per cell and the design pre-registered before each run.
   - outputs in [results/paid-2026-10/](results/paid-2026-10/).
 - **H2 and H5** come from the November 2026 rerun of the reason family, with corrected K, M and A2
   arms (arm design 2; README, "Design changes after the October 2026 paid run"):
-  - pre-registration in [prereg/](prereg/), hash `a669f8f7…`;
+  - pre-registration archived in [prereg/design2/](prereg/design2/), hash `a669f8f7…`;
   - outputs in [results/design2-2026-11/](results/design2-2026-11/).
+- **H5a, H5b and H5c** come from the November 2026 agent-team run (arm design 3,
+  [prereg/DESIGN3_PLAN.md](prereg/DESIGN3_PLAN.md)):
+  - pre-registration in [prereg/](prereg/), hash `ccfdafd2…`;
+  - outputs in [results/design3-2026-11/](results/design3-2026-11/).
 - Raw runs and transcripts are in `data/` (not committed). Departures from the plans are in
   [prereg/DEVIATIONS.md](prereg/DEVIATIONS.md).
 
@@ -22,6 +26,8 @@ per cell and the design pre-registered before each run.
 | H3 communication: M helps; K, E, A1, P1, P2 do not | inconclusive | Nemotron | DeepSeek, Qwen, MiMo | 6 (comm_ip gate failed) |
 | H4 A1 (more agents, same totals) gives no gain | inconclusive | Llama | DeepSeek, Mistral, gpt-4o-mini, MiMo, GLM | 4 |
 | H5 A2 (compute split across agents) equals the same compute in one agent | **supported** | DeepSeek, gpt-4o-mini, MiMo | Mistral, GLM | 5 (reason gate failed) |
+| H5a no agent team beats one agent that spends as much | inconclusive | Mistral | MiMo, GLM | |
+| H5b each team within ±0.05 of one agent that spends as much | **contradicted** (Mistral, GLM) | | MiMo | |
 | H6 information error never significantly below the Fano floor | **supported** | DeepSeek, Nemotron, Qwen, MiMo | | |
 | H7 inner product flat then rising; parity jumps at 1 bit | **supported** | DeepSeek, Nemotron, Qwen, MiMo | | |
 
@@ -30,7 +36,8 @@ per cell and the design pre-registered before each run.
   superiority by exact McNemar for the matching arm, and equivalence within ±0.05 by Newcombe TOST
   for every other arm.
 - A hypothesis needs two agreeing evaluable models.
-- No hypothesis was contradicted: no falsifier test rejected for any model.
+- No hypothesis from designs 1 and 2 was contradicted: no falsifier test rejected for any model.
+  H5b (design 3) is contradicted on two models (below).
 
 **What the inconclusive verdicts mean.** In every family the matching arm helps on every model,
 and the other arms barely move accuracy. But at n = 850 many of those near-zero differences do not
@@ -74,6 +81,62 @@ results folder's `tests.csv` and `gain_table.csv`.
   gap looks like a real cost of relaying errors on weaker models.
 - Four reasoning agents cost 1.9-2.8× the medium target, so, as pre-registered, A2 is compared
   with one agent matched to A2's own cost (within 7% on every model).
+
+### Agent teams (H5a-H5c, arm design 3)
+
+Three realistic team shapes, each compared with one agent that spends the same total tokens
+(S_ref: the same model with more attempts and a majority vote, matched to the team's spend on 20
+separate instances). Every agent holds every fact, so a team can only lose by how it divides and
+passes on the work. The task is a chain of d shift offsets (GLM and Mistral d = 6, MiMo d = 12),
+n = 300 paired instances (MiMo 250).
+
+| Model | Alone (S) | Team | Team | S_ref | S_ref | Team − S_ref (95% CI) | S_ref spend vs team |
+|---|---|---|---|---|---|---|---|
+| Mistral Small 3.2 | 0.66 | L lead + workers | 0.610 | `max:4` | 0.733 | −0.123 (−0.190, −0.055) | +9% |
+| | | W swarm, shared notes | 0.617 | `max:5` | 0.730 | −0.113 (−0.172, −0.053) | +19% |
+| | | R author + reviewer | 0.597 | `max:3` | 0.667 | −0.070 (−0.140, +0.001) | +6% |
+| GLM 4.7 flash | 0.61 | L | 0.597 | `max:3.5` | 0.733 | −0.137 (−0.202, −0.070) | −12% |
+| | | W | 0.833 | `max:5.5` | 0.803 | +0.030 (−0.028, +0.088) | −1% |
+| | | R | 0.613 | `max:3` | 0.713 | −0.100 (−0.169, −0.030) | +15% |
+| MiMo v2.6 flash | 0.80 | L | 0.924 | `max:4.5` | 0.880 | +0.044 (−0.009, +0.098) | +38% |
+| | | W | 0.912 | `max:7` | 0.920 | −0.008 (−0.058, +0.042) | +7% |
+| | | R | 0.752 | `max:1.7` | 0.768 | −0.016 (−0.083, +0.051) | +14% |
+
+**H5a (no team beats one agent that spends as much):**
+- No team significantly beats its S_ref on any model (smallest Holm-adjusted superiority
+  p = 0.20, MiMo L), so H5a is not contradicted.
+- It is supported only on Mistral, where every team is shown to be no more than 0.05 better.
+- It is inconclusive on GLM and MiMo: GLM's swarm (+0.030) and MiMo's lead-and-workers
+  (+0.044) cannot rule out a gain of up to 0.09-0.10, and MiMo's R misses narrowly
+  (Holm p = 0.053). MiMo's L beat a reference that spent 38%
+  more than it on these instances, so at truly equal spend that gap could be larger.
+
+**H5b (each team within ±0.05):** contradicted, as predicted, on Mistral and GLM, where teams
+trail their reference by 0.07-0.14. Mistral's L and W and GLM's L lie wholly below −0.05. On
+MiMo all three teams are within 0.05 of their reference, but n = 250 is too few to show
+equivalence after Holm.
+
+**H5c (mechanism, descriptive):**
+- When a teammate sends a wrong claim about the target, the team's answer agrees with it 54-64%
+  of the time in the teams that trail most (Mistral and GLM, L and R), and 39% in Mistral's
+  swarm.
+- The teams that keep up with their reference accept far fewer: GLM's swarm 20%, and MiMo's L
+  and W 16-22%. MiMo's R is the exception: it accepts 76% but trails by only 0.016.
+- Across the 9 model × team cells, the deficit rises with that acceptance share (Spearman ρ = 0.48,
+  p = 0.19, not significant).
+- Teammates' claims about people's shifts are right 61-75% of the time. The parser found claims in
+  78-100% of reports, notes and reviews.
+
+**What this shows.** Dividing the work never let a team beat one agent spending the same. Weaker
+models lost 0.07-0.14 by trusting each other's mistakes. The exception is GLM's swarm (W), whose
+peers each work the whole chain and vote, which made it match its reference. Splitting a chain
+between workers (L) cost GLM and Mistral the most.
+
+**Caveats:**
+- The S_refs were matched on 20 instances. On the main instances 5 of 9 drifted more than 10%
+  from their team ([DEVIATIONS](prereg/DEVIATIONS.md)). In 4 of those 5 the reference spent more,
+  which favours it.
+- `max:3.5` and `max:1.7` make one extra attempt on 50% and 70% of instances.
 
 ### Other findings
 
@@ -160,6 +223,9 @@ The gates have two stages:
 - `ceilings check` passes on all 356,287 October rows and all 38,250 rerun rows: no answer leaks,
   private evidence stays private, message budgets and step counts hold, ledgers add up, and there
   are no invalid or refused runs.
+- `ceilings check` passes on all 6,810 design-3 rows (matching and main), after two bookkeeping
+  fixes recorded in DEVIATIONS (no run changed). No forced-answer rate is above 6%, and every
+  lead used at least 2 workers.
 - The October main grid, its curves and its sweeps each had an independent read-only audit, and two
   independent reviews checked the design-2 code before the rerun.
 
@@ -173,4 +239,5 @@ The gates have two stages:
 | Main grid | $182.22 |
 | Delta curves and H6/H7 sweeps | $88.99 |
 | Reason rerun (November 2026) | $10.29 |
-| **Total (key usage)** | **$315.89** |
+| Agent teams, design 3: pilots $1.71, matching $1.84, main grid $8.38 | $11.93 |
+| **Total (key usage)** | **$327.82** |

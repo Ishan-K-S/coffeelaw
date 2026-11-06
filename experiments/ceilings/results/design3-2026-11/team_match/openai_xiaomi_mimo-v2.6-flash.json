@@ -1,0 +1,72 @@
+{
+  "model_id": "openai/xiaomi/mimo-v2.6-flash",
+  "instances": [
+    "a0d5c2b2b4e467a3b69d00514f0da4d85271f1114245c9dc32a1f8d385364961",
+    "2aeb4e75568c217741a444de08ef9296b3450a6f5e15a2b1cf32f2abee811ac1",
+    "d8404d5d89af8a17e859a22d1bde04425fa2c0db6120bf8d5b00f818e741b131",
+    "6f8bd8a240fd314f2d176b0c746e67f946212dcc3027673f934e99d56fcef4af",
+    "aaad76d4e62eb2cc7116504dba655d0aaeb9a5178c4e49ae0b88196dce634233",
+    "0f0702e1181172b671999b0535d4e445dcecf954786fd64a42b3873b0a112ff8",
+    "293bf7868e7d1644e904cd8659c955fa43214264549a9349652def712eb534c0",
+    "622d201ade0d53a01331c4d2dfb3574b5b09dddcbcfefc0e46d66a2e5811235b",
+    "96a860c41f2bc32440f8d3c311f40a5a8da0d29244ac79e857e0e5646ee97d47",
+    "2060a0bc6ed22160968fd454897336e905951e9879ebdfc5243ad82c42beae99",
+    "98adab13a6ccfdc477414302e47b1d6bb8547e043e3f0a7cb9442af42769a82d",
+    "14a2c8010eb5edd18b1b56ec43edd99114d41e2d8e416ec22e892e9f657e2235",
+    "e486026e0e7bcda4b98516f4035b3218dc81b89fd1d9c8efd72509367a2b8737",
+    "d8102b8e6f55b179e94e44fa1af6ab041c13c2a0a65c327b8c67b5bf4a401066",
+    "8e0f5f71854f41ce1fefba732d0dde68c2af52d7438d243675061da728a9b8c7",
+    "9206b4d03cf18cc0ee6efcd867b8762224328e3ab530ae4570c2b059cc871193",
+    "e573101203c428a46a2e3c7208f505ff8bb85c4db0d4454d06feb2972fe20cdf",
+    "bba67d31a5ba9f0dbb8bd45a333e6ae1da6a6ff88b7b280e5a25958b6d0fe3cd",
+    "c002b3b871cf6ec37ca1d5d6e0cd6af187a608f54ac00fae476a342fcc7116b8",
+    "5d9337bcd8c94200a16bd5723c72bfb6a157242344d184131ec20818fb7940b1"
+  ],
+  "difficulty": {
+    "d": 12,
+    "layout": "sections"
+  },
+  "budget": 64000,
+  "max_turns": 6,
+  "tolerance": 0.1,
+  "ladder_tokens": {
+    "medium": 4634,
+    "high": 4939.05,
+    "xhigh": 5033.2,
+    "max": 5412.3,
+    "max:2": 11012.8,
+    "max:3": 17141.9,
+    "max:4": 19345.9,
+    "max:5": 27210.65,
+    "max:6": 30628.3,
+    "max:7": 35352.75,
+    "max:8": 43911.8,
+    "max:4.5": 22237.25,
+    "max:1.5": 7583.2,
+    "max:1.7": 8913.15
+  },
+  "arms": {
+    "L": {
+      "target_tokens": 22747.05,
+      "strength": "max:4.5",
+      "ref_tokens": 22237.25,
+      "gap": -0.022411697340973813,
+      "matched": true
+    },
+    "W": {
+      "target_tokens": 36270.15,
+      "strength": "max:7",
+      "ref_tokens": 35352.75,
+      "gap": -0.025293526494927665,
+      "matched": true
+    },
+    "R": {
+      "target_tokens": 9079.65,
+      "strength": "max:1.7",
+      "ref_tokens": 8913.15,
+      "gap": -0.018337711255389855,
+      "matched": true
+    }
+  },
+  "dollars": 0.021868
+}

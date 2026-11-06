@@ -37,6 +37,17 @@ REASON_PROMPT = (
 )
 FINAL_ANSWER_PROMPT = "Now give your final answer in the required format."
 FINAL_TEXT_PROMPT = "Now write only the requested reply, with nothing else."
+# A team agent's turn (arm design 3): the reply is the turn's one action. Without saying so, models
+# wrote the action inside their reasoning and then replied with the step after it (e.g. "submit"
+# right after a delegate they never sent), so the action they chose was lost (November 2026).
+TURN_REASON_PROMPT = (
+    "Do not take your action yet. First think it through step by step and write out only your "
+    "reasoning. You will be asked for this turn's action next."
+)
+TURN_ACTION_PROMPT = (
+    "Nothing has been done yet this turn: your reasoning above is private working. Now write the "
+    "one action you chose for this turn, as a single JSON object, and nothing else."
+)
 TRUNCATED_NOTE = "(Your reasoning was cut off at its length limit.) "
 ANSWER_RULES = (
     "Give a probability for every option; the probabilities must add up to 1. Your answer must be "
@@ -247,9 +258,11 @@ class ModelAdapter(abc.ABC):
         seed: int,
         max_tokens: int = 16000,
         text_tokens: int | None = None,
+        prompts: tuple[str, str] | None = None,
     ) -> AdapterResult:
         """Answer (answer_space given) or produce free text (answer_space None). `text_tokens`
-        caps a free-text reply (default: the adapter's own cap)."""
+        caps a free-text reply (default: the adapter's own cap); `prompts` replaces the reasoning
+        and reply instructions of a free-text call (a team agent's turn)."""
 
     def count_tokens(self, text: str) -> int:
         return approx_tokens(text)
@@ -288,8 +301,10 @@ class ChatAdapter(ModelAdapter):
               seed: int) -> ChatReply:
         """One chat call; `schema` constrains the output to JSON when given."""
 
-    def complete(self, messages, depth, answer_space, seed, max_tokens=16000, text_tokens=None):
+    def complete(self, messages, depth, answer_space, seed, max_tokens=16000, text_tokens=None,
+                 prompts=None):
         budget = self.reasoning_budget(depth)
+        reason_prompt, text_prompt = prompts or (REASON_PROMPT, FINAL_TEXT_PROMPT)
         convo = [dict(m) for m in messages]
         in_tok = out_tok = 0
         reasoning = ""
@@ -302,7 +317,7 @@ class ChatAdapter(ModelAdapter):
         served = set()
         sent: list[list[dict]] = []
         if budget > 0:
-            convo[-1]["content"] = f"{convo[-1]['content']}\n\n{REASON_PROMPT}"
+            convo[-1]["content"] = f"{convo[-1]['content']}\n\n{reason_prompt}"
             sent.append([dict(m) for m in convo])
             r = self._chat(convo, None, min(budget, max_tokens), seed)
             in_tok, out_tok = in_tok + r.input_tokens, out_tok + r.output_tokens
@@ -315,7 +330,7 @@ class ChatAdapter(ModelAdapter):
                 hidden_tokens.append(r.reasoning_tokens)
             costs.append(r.cost)
             providers.add(r.provider)
-            final = FINAL_ANSWER_PROMPT if answer_space else FINAL_TEXT_PROMPT
+            final = FINAL_ANSWER_PROMPT if answer_space else text_prompt
             if r.stop == "length":
                 final = TRUNCATED_NOTE + final
             convo = convo + [{"role": "assistant", "content": reasoning},

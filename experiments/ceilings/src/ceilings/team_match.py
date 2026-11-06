@@ -21,8 +21,36 @@ from ceilings.records import TaskInstance
 from ceilings.runner import Cell, cell_run_id, load_runs, run_grid
 from ceilings.teams import TeamConfig, ref_config
 
-LADDER = ["medium", "high", "xhigh", "max", "max:2", "max:3", "max:4", "max:6", "max:8", "max:12",
-          "max:16"]
+# Every attempt count up to 8, then wider steps: on GLM and Mistral the depth rungs spend about the
+# same (their reasoning stays well under the cap), so the attempt count is what moves the cost, and
+# with only 4, 6 and 8 attempts half the teams fell between two rungs (November 2026 matching).
+LADDER = ["medium", "high", "xhigh", "max", "max:2", "max:3", "max:4", "max:5", "max:6", "max:7",
+          "max:8", "max:10", "max:12", "max:16"]
+
+
+def _attempts(strength: str) -> float:
+    return float(strength.partition(":")[2] or 1)
+
+
+def half_between(below: str, above: str) -> str | None:
+    """The half rung between two neighbouring attempt rungs (3 or 4 attempts by a coin fixed per
+    instance, teams.attempts), e.g. 'max:3.5' between 'max:3' and 'max:4'; None if there is none."""
+    if not (below.startswith("max") and above.startswith("max")):
+        return None
+    lo, hi = _attempts(below), _attempts(above)
+    return f"max:{lo + 0.5:g}" if hi - lo == 1 else None
+
+
+def interpolated(below: str, above: str, cost_below: float, cost_above: float,
+                 target: float) -> str | None:
+    """The tenth rung between two neighbouring attempt rungs whose expected cost (linear between
+    theirs) is nearest the target, e.g. 'max:1.7'; None if there is none other than the half."""
+    if half_between(below, above) is None or cost_above <= cost_below:
+        return None
+    share = min(0.9, max(0.1, round((target - cost_below) / (cost_above - cost_below), 1)))
+    return None if share == 0.5 else f"max:{_attempts(below) + share:g}"
+
+
 MATCH_TOLERANCE = 0.10
 
 
@@ -63,9 +91,33 @@ def match(policy: Policy, insts: list[TaskInstance], teams: dict[str, TeamConfig
         measured[strength] = mean_tokens(root, policy, insts, cfg)
         if measured[strength] > (1 + MATCH_TOLERANCE) * max(targets.values()):
             break
+    def nearest(target: float) -> str:
+        return min(measured, key=lambda s: abs(measured[s] - target) / target)
+
+    # A team between two neighbouring attempt rungs and more than the tolerance from both: try the
+    # half between them, then, if the half still misses (on 20 instances its coin can fall well
+    # off half), the tenth whose expected cost, interpolated between the two, is the team's.
+    climbed = [s for s in LADDER if s in measured]
+
+    def measure(strength: str) -> None:
+        cfg = ref_config(strength, first.budget, max_turns=first.max_turns)
+        run([Cell(i, cfg) for i in insts])
+        measured[strength] = mean_tokens(root, policy, insts, cfg)
+
+    for target in targets.values():
+        for below, above in zip(climbed, climbed[1:], strict=False):
+            if not measured[below] < target < measured[above]:
+                continue
+            for step in ("half", "tenth"):
+                if abs(measured[nearest(target)] / target - 1) <= MATCH_TOLERANCE:
+                    break
+                rung = (half_between(below, above) if step == "half" else
+                        interpolated(below, above, measured[below], measured[above], target))
+                if rung and rung not in measured:
+                    measure(rung)
     arms = {}
     for arm, target in targets.items():
-        best = min(measured, key=lambda s, t=target: abs(measured[s] - t) / t)
+        best = nearest(target)
         gap = measured[best] / target - 1
         arms[arm] = {"target_tokens": target, "strength": best, "ref_tokens": measured[best],
                      "gap": gap, "matched": abs(gap) <= MATCH_TOLERANCE}
@@ -86,4 +138,5 @@ def load_table(root: Path | str, model_id: str) -> dict:
     return json.loads(path.read_text())
 
 
-__all__ = ["LADDER", "MATCH_TOLERANCE", "match", "load_table", "table_path", "mean_tokens"]
+__all__ = ["LADDER", "MATCH_TOLERANCE", "match", "load_table", "table_path", "mean_tokens",
+           "half_between", "interpolated"]

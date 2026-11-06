@@ -32,7 +32,7 @@ import numpy as np
 from ceilings.agents import Policy, with_user
 from ceilings.ledger import Ledger
 from ceilings.orchestrator import TeamOutcome, aggregate
-from ceilings.records import TaskInstance
+from ceilings.records import TaskInstance, content_hash
 
 TEAM_ARMS = ("S", "L", "W", "R", "W0", "S_ref")
 NAMES = ["A", "B", "C", "D"]
@@ -73,7 +73,10 @@ class TeamConfig:
     min_workers: int = 2  # L: reports needed before the lead may submit
     max_workers: int = 3  # L: workers over the whole run
     peers: int = 4  # W and W0
-    samples: int = 1  # S and S_ref: independent attempts by the one agent, majority vote
+    # S and S_ref: independent attempts by the one agent, majority vote. A half (e.g. 3.5) means 3
+    # or 4 attempts, by a fixed coin per instance: whole attempts step S_ref's spend by 2,000-5,000
+    # tokens, too coarse to come within 10% of some teams (GLM's L and W, November 2026 matching).
+    samples: int | float = 1
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -85,13 +88,35 @@ def team_config(arm_id: str, budget: int = 0, **kw) -> TeamConfig:
     cfg = TeamConfig(arm_id=arm_id, budget=budget, **kw)
     if cfg.samples != 1 and arm_id not in ("S", "S_ref"):
         raise ValueError("only S and S_ref take several attempts")
+    if cfg.samples < 1 or abs(10 * cfg.samples - round(10 * cfg.samples)) > 1e-9:
+        raise ValueError("samples must be a whole number or have one decimal, at least 1")
     return cfg
 
 
+# A fractional rung k.p makes one extra attempt on the instances whose hash digit (0-9) is among
+# the first 10p of this order. The odd digits come first, so k.5 adds one exactly when the hash is
+# odd, as the half rungs did before tenths were allowed (their matching runs stay valid).
+_EXTRA_ORDER = (1, 3, 5, 7, 9, 0, 2, 4, 6, 8)
+
+
+def attempts(cfg: TeamConfig, instance_id: str) -> int:
+    """How many attempts S/S_ref makes on this instance: `samples`, or for a fraction k.p, k or
+    k + 1 with k + 1 on a share p of instances, by a coin fixed by the instance (so every rerun
+    makes the same choice)."""
+    whole = int(cfg.samples)
+    tenths = round(10 * (cfg.samples - whole))
+    if tenths == 0:
+        return whole
+    digit = int(content_hash([instance_id, "attempts"])[:8], 16) % 10
+    return whole + (digit in _EXTRA_ORDER[:tenths])
+
+
 def ref_config(strength: str, budget: int = 0, **kw) -> TeamConfig:
-    """S_ref at a strength from team_match.LADDER: 'max' (one attempt) or 'max:3' (three)."""
+    """S_ref at a strength from team_match.LADDER: 'max' (one attempt), 'max:3' (three) or
+    'max:3.5' (three or four, see `attempts`), or any tenth, e.g. 'max:1.7'."""
     depth, _, n = strength.partition(":")
-    return team_config("S_ref", budget, depth=depth, samples=int(n or 1), **kw)
+    samples = float(n) if "." in n else int(n or 1)
+    return team_config("S_ref", budget, depth=depth, samples=samples, **kw)
 
 
 @dataclass
@@ -128,7 +153,9 @@ def parse_action(text: str, tools: tuple[str, ...]) -> tuple[dict | None, str | 
         return None, f"not valid JSON ({e.msg})"
     if not isinstance(obj, dict) or obj.get("tool") not in tools:
         return None, f"the tool must be one of {', '.join(tools)}"
-    args = obj.get("args", {})
+    # An action whose arguments sit beside "tool" instead of inside "args" is read the same way
+    # (MiMo wrote {"tool": "delegate", "briefs": [...]} in about 4 of 10 lead turns, November 2026).
+    args = obj["args"] if "args" in obj else {k: v for k, v in obj.items() if k != "tool"}
     if not isinstance(args, dict):
         return None, "args must be an object"
     tool = obj["tool"]
@@ -146,6 +173,19 @@ def parse_action(text: str, tools: tuple[str, ...]) -> tuple[dict | None, str | 
     return {"tool": tool, "args": {}}, None
 
 
+def action_in_reasoning(text: str, tools: tuple[str, ...]) -> dict | None:
+    """The last valid action written in a turn's reasoning: what the agent chose, for a reply that
+    is not itself a valid action (a single-stream agent's tool call comes from the same text)."""
+    t = text or ""
+    found = None
+    for i, ch in enumerate(t):
+        if ch == "{" and '"tool"' in t[i:i + 40]:
+            action, _ = parse_action(t[i:], tools)
+            if action is not None:
+                found = action
+    return found
+
+
 class _Team:
     def __init__(self, inst: TaskInstance, cfg: TeamConfig, policy: Policy, seed: int) -> None:
         self.inst, self.cfg, self.policy = inst, cfg, policy
@@ -155,6 +195,7 @@ class _Team:
         self.request_ids: list[str] = []
         self.forced: dict[str, int] = {"answer": 0, "report": 0, "review": 0}
         self.invalid = 0
+        self.recovered = 0
         self.refused = 0
 
     # --- accounting -------------------------------------------------------------------------
@@ -244,7 +285,16 @@ class _Team:
         self.charge(agent.name, act.usage, act.log)
         calls.append(act.log)
         action, error = parse_action(act.value, agent.tools)
-        agent.messages = agent.messages + [{"role": "assistant", "content": act.value or ""}]
+        recovered = False
+        if action is None:
+            action = action_in_reasoning((act.log or {}).get("reasoning"), agent.tools)
+            recovered = action is not None
+        if recovered:
+            self.recovered += 1
+            content = json.dumps(action)
+        else:
+            content = act.value or ""
+        agent.messages = agent.messages + [{"role": "assistant", "content": content}]
         if action is None:
             retried = True
             agent.messages = with_user(agent.messages, f"Rejected: {error}. Reply with exactly "
@@ -253,7 +303,13 @@ class _Team:
             self.charge(agent.name, act.usage, act.log)
             calls.append(act.log)
             action, error = parse_action(act.value, agent.tools)
-            agent.messages = agent.messages + [{"role": "assistant", "content": act.value or ""}]
+            if action is None:
+                action = action_in_reasoning((act.log or {}).get("reasoning"), agent.tools)
+                recovered = action is not None
+                self.recovered += recovered
+            agent.messages = agent.messages + [
+                {"role": "assistant", "content": json.dumps(action) if recovered
+                 else act.value or ""}]
             if action is None:
                 self.invalid += 1
                 agent.pending = f"Rejected again: {error}. That turn is used up."
@@ -262,7 +318,8 @@ class _Team:
         self.transcript.append({"step": "turn", "agent": agent.name, "role": agent.role,
                                 "turn": agent.turns, "budget_left": left, "action": action,
                                 "error": error if action is None else None,
-                                "retried": retried, "calls": calls})
+                                "retried": retried, "from_reasoning": recovered,
+                                "calls": calls})
         if action and action["tool"] == "note":
             agent.notes.append(action["args"]["text"])
             agent.pending = "Noted."
@@ -323,7 +380,7 @@ class _Team:
         """One agent; with `samples` > 1 it makes that many independent attempts (each in a
         fresh conversation) and the team answer is their majority vote."""
         results = []
-        for _ in range(self.cfg.samples):
+        for _ in range(attempts(self.cfg, self.inst.instance_id)):
             a = self.start("A", "solo", ("note", "submit"),
                            "You are working on this task alone.")
             while True:
@@ -487,12 +544,15 @@ class _Team:
         summary = {
             "budget": self.cfg.budget, "spent": self.ledger.total_tokens,
             "depth": self.cfg.depth, "samples": self.cfg.samples,
+            "attempts": attempts(self.cfg, self.inst.instance_id)
+            if self.cfg.arm_id in ("S", "S_ref") else None,
             "generated": sum(a.output_tokens for a in self.ledger.agents.values()),
             "turns": turns, "agents": sorted(self.ledger.agents),
             "workers": sum(s["kind"] == "brief" for s in self.transcript
                            if s["step"] == "deliver"),
             "forced_answers": self.forced["answer"], "forced_reports": self.forced["report"],
             "forced_reviews": self.forced["review"], "invalid_actions": self.invalid,
+            "actions_from_reasoning": self.recovered,
             "refused_actions": self.refused,
         }
         return TeamOutcome(final, mean, [r.final_answer for r in results], refusal,

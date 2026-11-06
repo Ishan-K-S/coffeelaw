@@ -197,7 +197,14 @@ def _check_team_transcript(t: dict, inst: TaskInstance | None, problems: dict,
                     problems["facts_in_every_prompt"].append(
                         f"{rid[:12]} agent {s['agent']}: {missing} of {len(facts)} lines missing")
     # Reasoning an agent sent on (in a brief, report, note, solution or review), or that only
-    # repeats the task, may appear in another agent's prompt; any other reasoning may not.
+    # repeats the task or what the agent was itself shown (a peer copying the shared notes into its
+    # reasoning, as a GLM swarm peer did in the design-3 main run), may appear in another agent's
+    # prompt; any other reasoning may not. Only what the harness gives an agent (its user turns)
+    # can carry another's reasoning; its own replies may match another agent's words without
+    # anything being leaked.
+    def shown(call: dict) -> str:
+        return "\n".join(m["content"] for m in call.get("prompt") or [] if m["role"] == "user")
+
     shared = "\n".join(s["text"] for s in steps if s["step"] == "deliver")
     if inst is not None:
         shared += f"\n{inst.scenario}\n{inst.shared_evidence}"
@@ -205,13 +212,11 @@ def _check_team_transcript(t: dict, inst: TaskInstance | None, problems: dict,
     for s in steps:
         for call in _team_calls(s):
             r = (call.get("reasoning") or "").strip()
-            if len(r) >= 40 and r not in shared:
+            if len(r) >= 40 and r not in shared and r not in shown(call):
                 reasoning[s["agent"]].append(r)
     for s in steps:
         for call in _team_calls(s):
-            # Only what the harness gives an agent (its user turns) can carry another's reasoning;
-            # its own replies may match another agent's words without anything being leaked.
-            text = "\n".join(m["content"] for m in call.get("prompt") or [] if m["role"] == "user")
+            text = shown(call)
             for other, rs in reasoning.items():
                 if other != s["agent"] and any(r in text for r in rs):
                     problems["reasoning_hidden"].append(f"{rid[:12]} {s['agent']} saw {other}")
@@ -232,7 +237,11 @@ def _check_team_transcript(t: dict, inst: TaskInstance | None, problems: dict,
     if over:
         problems["team_caps"].append(f"{rid[:12]}: {over} over {cfg['max_turns']} turns")
     answers = [s for s in steps if s["step"] == "answer"]
-    expected = cfg["peers"] if cfg["arm_id"] in ("W", "W0") else cfg.get("samples", 1)
+    if cfg["arm_id"] in ("W", "W0"):
+        expected = cfg["peers"]
+    else:
+        from ceilings.teams import TeamConfig, attempts
+        expected = attempts(TeamConfig(**cfg), t["instance_id"])
     if len(answers) != expected:
         problems["step_counts"].append(f"{rid[:12]}: {len(answers)} answers, expected {expected}")
     for s in answers:

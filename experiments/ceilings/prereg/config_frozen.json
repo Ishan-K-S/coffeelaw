@@ -41,7 +41,7 @@
     "K": "strength is a depth plus how many answer samples the team uses (e.g. 'medium:1' is one sample reasoning at medium; a bare depth is all 4); every sample reasons; candidates ordered by sample count, then depth, matched to the target. Fewer votes works against K, so this is conservative for H2",
     "M_reason": "M's channel on reason carries only lines copied word for word from the task (list markers and quotes ignored), delivered in task order. Both agents hold every fact, so M on reason is a consistency check, null by construction",
     "ablations": "each harness option is cost-matched in its own run root; `ceilings run` refuses an arms table matched under different harness options",
-    "arm_design": 2,
+    "arm_design": 3,
     "communication_families": "every arm reasons at depth 'medium' (baseline included); K starts above that depth",
     "information_family": "host table listed in a seeded random row order per instance; optional `known` attributes stated up front (partial-information setting); Fano floors use the full bound h(Pe) + Pe log2(M-1) >= H - B",
     "labels": "true answers balanced across instances (each option the truth equally often, in a seeded order)",
@@ -51,6 +51,15 @@
       "max": 4096,
       "medium": 512,
       "xhigh": 2048
+    },
+    "teams": {
+      "analysis": "ceilings team-analyze: each team arm paired by instance with its matched S_ref; the 20 matching instances are left out of every test; Holm across the model's team arms; a model's verdicts use only matched teams",
+      "arms": "S (one agent, reported), L (lead + 2-3 workers; the lead must have 2 worker reports before submit), W (4 peers sharing notes, majority vote), R (author + reviewer), S_ref (one agent matched to each team's total tokens); W0 cut for cost",
+      "cost_measure": "ledger total tokens, every call by every agent",
+      "matching": "ceilings team-match on 20 instances (split design3, seeds from 10,000,000): S_ref climbs medium, high, xhigh, max, max:2..max:8, max:10, max:12, max:16 until a rung spends more than 1.1x the largest team, plus a half rung (k or k+1 attempts by a coin fixed per instance) between neighbouring attempt counts for a team more than 10% from every rung, and if the half still misses, the tenth rung whose expected cost (linear between the two neighbours) is the team's; each team takes the nearest rung, matched if within +/-10%",
+      "plan": "prereg/DESIGN3_PLAN.md",
+      "task": "reason family, sectioned layout, chain length d per model",
+      "turn": "reasoning stage at medium depth (512 tokens) then one JSON action (reply cap 1,200 tokens); an action found only in the reasoning is taken; one retry on an invalid action; max 6 turns per agent; budget B checked before each turn; forced answer if turns or B run out"
     }
   },
   "exclusion_rules": [
@@ -123,6 +132,30 @@
       "statement": "The A2 gain equals the gain from the same compute given to one agent, tested on the reason family only, at A2's realized cost",
       "test": "Newcombe paired TOST (A2 vs A2_single_ref) on reason; falsifier: exact McNemar superiority of A2. A2 is not matched to a delta level (four reasoning agents add about 1.9-2.7x the medium target); A2_single_ref is matched to A2's realized added cost, mostly with padding, so audit delta_matching flags on A2 are expected. Info and comm are left out: A2 and its reference both sit at chance there, so equivalence cannot fail"
     },
+    "H5a": {
+      "falsified_if": "A team significantly beats its S_ref",
+      "family": "reason (sectioned, arm design 3)",
+      "margin": 0.05,
+      "paper_source": "Thm 3",
+      "statement": "No agent team (L lead and workers, W shared-notes swarm, R author and reviewer) beats one agent that spends as much (its matched S_ref)",
+      "test": "per model, exact one-sided McNemar superiority of each team arm over its S_ref, Holm across the model's team arms; supported for a model if every team's paired 90% Newcombe interval has its upper end below +0.05 (after Holm); contradicted across models if at least 2 models reject"
+    },
+    "H5b": {
+      "falsified_if": "A team's 95% paired interval lies wholly outside +/-0.05",
+      "family": "reason (sectioned, arm design 3)",
+      "margin": 0.05,
+      "paper_source": "Thm 3",
+      "statement": "Each team arm is within +/-0.05 of its matched S_ref",
+      "test": "Newcombe paired TOST per team arm vs its S_ref, Holm across the model's team arms; predicted to hold on MiMo and to fail on GLM and Mistral (copying of wrong intermediate results in design 2)"
+    },
+    "H5c": {
+      "falsified_if": "descriptive only, not tested",
+      "family": "reason (sectioned, arm design 3)",
+      "margin": null,
+      "paper_source": "design 2 copying result",
+      "statement": "A team's deficit to its S_ref grows with how often its answer agrees with a wrong claim about the target sent by a teammate",
+      "test": "per model and team arm: parse coverage, claim accuracy and the share of wrong-target texts the answer agrees with, next to the deficit; Spearman rank correlation across model x arm cells"
+    },
     "H6": {
       "falsified_if": "Error significantly below the floor (audited for leakage first)",
       "margin": null,
@@ -153,36 +186,96 @@
     }
   },
   "run_plan": {
-    "arm_design": 2,
-    "budget": "about $15-20, capped at $20",
-    "decided": "2026-11-01, by the researcher: rerun only the tests arm design 1 got wrong (H2, H5)",
-    "design1": "the paid run's frozen pre-registration is archived in prereg/design1/ (hash 7961e5c2...)",
+    "arm_design": 3,
+    "arms": [
+      "S",
+      "L",
+      "W",
+      "R",
+      "S_ref"
+    ],
+    "command": "ceilings --root data/design3 team-run --model <m> --d <d> --n <n> --budget <B> --arms S,L,W,R --with-refs --max-turns 6 --require-frozen --max-cost <cap>",
+    "decided": "2026-11-05, by the researcher (scope 2026-11-04: match spend, W0 cut; n sized to the credit after matching)",
+    "design2": "the design-2 frozen pre-registration is archived in prereg/design2/ (hash a669f8f7...)",
     "deviations": [],
-    "family": "reason only",
-    "gate": "the paid run's reason gates (two_stage, 300 instances) are reused: gates use only the baseline and K at xhigh on all 4 samples, which arm design 2 does not change; stage 2 pools them with the new main-grid baselines",
-    "main_grid": "all 9 arms at the medium delta, n = 850 paired instances per cell",
-    "matching": "fresh cost matching (prepare --n-match 10 --delta medium)",
+    "family": "reason, sectioned layout",
+    "max_turns": 6,
     "models": {
-      "openai/deepseek/deepseek-v4-flash": {
-        "d": 3
-      },
       "openai/mistralai/mistral-small-3.2-24b-instruct": {
-        "d": 3
-      },
-      "openai/openai/gpt-4o-mini": {
-        "d": 2
+        "budget_tokens": 32000,
+        "d": 6,
+        "max_cost_usd": 2.4,
+        "n": 300,
+        "s_ref": {
+          "L": {
+            "gap": 0.058,
+            "strength": "max:4"
+          },
+          "R": {
+            "gap": 0.079,
+            "strength": "max:3"
+          },
+          "W": {
+            "gap": 0.03,
+            "strength": "max:5"
+          }
+        }
       },
       "openai/xiaomi/mimo-v2.6-flash": {
-        "d": 3
+        "budget_tokens": 64000,
+        "d": 12,
+        "max_cost_usd": 4.05,
+        "n": 250,
+        "s_ref": {
+          "L": {
+            "gap": -0.022,
+            "strength": "max:4.5"
+          },
+          "R": {
+            "gap": -0.018,
+            "strength": "max:1.7"
+          },
+          "W": {
+            "gap": -0.025,
+            "strength": "max:7"
+          }
+        }
       },
       "openai/z-ai/glm-4.7-flash": {
-        "d": 2
+        "budget_tokens": 32000,
+        "d": 6,
+        "max_cost_usd": 3.15,
+        "n": 300,
+        "s_ref": {
+          "L": {
+            "gap": -0.008,
+            "strength": "max:3.5"
+          },
+          "R": {
+            "gap": 0.093,
+            "strength": "max:3"
+          },
+          "W": {
+            "gap": -0.036,
+            "strength": "max:5.5"
+          }
+        }
       }
     },
-    "models_rule": "the 5 models whose reason gate passed in the paid run, each at its gated difficulty",
-    "root": "data/design2"
+    "models_rule": "chain-length pilot (2026-11-04): d the largest of {6, 9, 12, 18, 24, 30} with the lone agent's accuracy in 0.35-0.85; DeepSeek dropped at ceiling, gpt-4o-mini for cost",
+    "root": "data/design3",
+    "spending": "per-model ledger cap as above, plus a billed-spend guard on the whole phase; spend checked every dollar",
+    "split": "design3, seeds from 0 (matching used seeds from 10,000,000)"
   },
   "sample_sizes": {
+    "design3": {
+      "method": "the most the remaining credit allows at the matched cost measured in team-match (logged cost about 11% under billing), with about 12% margin; H5a's superiority test needs far fewer instances than H5b's equivalence",
+      "per_cell": {
+        "openai/mistralai/mistral-small-3.2-24b-instruct": 300,
+        "openai/xiaomi/mimo-v2.6-flash": 250,
+        "openai/z-ai/glm-4.7-flash": 300
+      }
+    },
     "equivalence_margin": 0.05,
     "method": "ceilings power on pilot runs (see analysis.sample_size_method)",
     "per_cell": 850,
