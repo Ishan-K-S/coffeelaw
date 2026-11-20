@@ -25,7 +25,7 @@ per cell and the design pre-registered before each run.
 | H1 information: E helps; K, M, A1, P1, P2 do not | **supported** | Llama 3.3, Mistral Small 3.2 | DeepSeek, Gemma, Nemotron, Qwen, MiMo | Haiku, gpt-4o-mini, GLM |
 | H2 reasoning: K helps; E, M, A1, P1, P2 do not | inconclusive | none | DeepSeek, Mistral, gpt-4o-mini, MiMo, GLM | 5 (reason gate failed) |
 | H3 communication: M helps; K, E, A1, P1, P2 do not | inconclusive | Nemotron | DeepSeek, Qwen, MiMo | 6 (comm_ip gate failed) |
-| H4 A1 (more agents, same totals) gives no gain | inconclusive | Llama | DeepSeek, Mistral, gpt-4o-mini, MiMo, GLM | 4 |
+| H4 A1 (more agents, same totals) gives no gain | **supported** (design 2, reason only) | gpt-4o-mini, GLM | DeepSeek, Mistral, MiMo | 5 (reason gate failed) |
 | H5 A2 (compute split across agents) equals the same compute in one agent | **supported** | DeepSeek, gpt-4o-mini, MiMo | Mistral, GLM | 5 (reason gate failed) |
 | H5a no agent team beats one agent that spends as much | inconclusive | Mistral | MiMo, GLM | |
 | H5b each team within ±0.05 of one agent that spends as much | **contradicted** (Mistral, GLM) | | MiMo | |
@@ -37,8 +37,14 @@ per cell and the design pre-registered before each run.
   superiority by exact McNemar for the matching arm, and equivalence within ±0.05 by Newcombe TOST
   for every other arm.
 - A hypothesis needs two agreeing evaluable models.
-- No hypothesis from designs 1 and 2 was contradicted: no falsifier test rejected for any model.
+- No hypothesis from designs 1 and 2 was contradicted. Two falsifier tests rejected after Holm
+  (DeepSeek, design 2, A1 on reason: gain +0.045, Holm p = 0.043, and MiMo, design 2, A2 against
+  one agent: +0.014, Holm p = 0.0027), but both gains lie inside the ±0.05 margin, so by the
+  pre-registered rule they do not contradict H4 or H5.
   H5b (design 3) is contradicted on two models (below).
+- H4 is taken from design 2, which tested A1 on reason only. Design 1, which also covered the
+  info and comm families, gave inconclusive (supported on Llama only; inconclusive on DeepSeek,
+  Mistral, gpt-4o-mini, MiMo and GLM; 4 not evaluable).
 
 **What the inconclusive verdicts mean.** In every family the matching arm helps on every model,
 and the other arms barely move accuracy. But at n = 850 many of those near-zero differences do not
