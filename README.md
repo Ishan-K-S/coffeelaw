@@ -1,5 +1,7 @@
 # Coffee Law
 
+> **Note for reviewers.** This is an anonymized copy for double-blind review. The anonymizer replaces some names and links, so the three `config_frozen.json` files in `experiments/ceilings/prereg/` won't match the SHA-256 hashes printed in the paper until the copy is de-anonymized. The experiment code, frozen configurations and result files are in `experiments/ceilings/`. The raw run records aren't included.
+
 > **A collective of agents can never know more about the world than its
 > starting data plus what its tools can carry.**
 
